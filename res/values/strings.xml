@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">TestMobileDataCaptator</string>
+    <string name="KiesProject">Kies een project uit de lijst:</string>
+    <string name="OpenProject">Open project</string>
+    <string name="EerstProjectSelecteren">Eerst een project selecteren</string>
+    
+    <string name="BeschikbareData">datafiches:</string>
+    <string name="ActiveFiche">actieve fiche:</string>
+    <string name="OpenFiche">Open Fiche</string>
+    <string name="OpenFoto">Open Foto</string>
+    <string name="OpenSchets">Open Schets</string>
+    <string name="NoSelectedFiche">Geen fiche gekozen!</string>    
+    <string name="BestaandeFicheOpenen">Wilt u deze BESTAANDE fiche open?</string>
+    <string name="Yes">Ja</string>
+    <string name="No">Nee</string>
+    
+</resources>
