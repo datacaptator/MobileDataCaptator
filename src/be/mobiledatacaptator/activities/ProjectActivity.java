@@ -21,7 +21,7 @@ import android.widget.Toast;
 import be.mobiledatacaptator.model.Fiche;
 import be.mobiledatacaptator.model.Project;
 import be.mobiledatacaptator.model.UnitOfWork;
-import be.testmobiledatacaptator.R;
+import be.mobiledatacaptator.R;
 
 public class ProjectActivity extends Activity implements OnClickListener {
 

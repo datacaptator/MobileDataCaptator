@@ -3,7 +3,7 @@ package be.mobiledatacaptator.activities;
 import android.app.Activity;
 import android.os.Bundle;
 import be.mobiledatacaptator.model.UnitOfWork;
-import be.testmobiledatacaptator.R;
+import be.mobiledatacaptator.R;
 
 public class FicheActivity extends Activity {
 

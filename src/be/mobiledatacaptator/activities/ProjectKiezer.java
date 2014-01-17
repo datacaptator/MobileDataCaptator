@@ -25,7 +25,7 @@ import android.widget.Toast;
 import be.mobiledatacaptator.dao.DropBoxDao;
 import be.mobiledatacaptator.model.Project;
 import be.mobiledatacaptator.model.UnitOfWork;
-import be.testmobiledatacaptator.R;
+import be.mobiledatacaptator.R;
 
 import com.dropbox.sync.android.DbxAccountManager;
 import com.dropbox.sync.android.DbxFileSystem;
