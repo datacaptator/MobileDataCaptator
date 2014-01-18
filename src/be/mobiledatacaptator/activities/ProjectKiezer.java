@@ -22,23 +22,16 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
 import android.widget.Toast;
-import be.mobiledatacaptator.dao.DropBoxDao;
+import be.mobiledatacaptator.R;
+import be.mobiledatacaptator.dao.StartDropBoxApi;
 import be.mobiledatacaptator.model.Project;
 import be.mobiledatacaptator.model.UnitOfWork;
-import be.mobiledatacaptator.R;
-
-import com.dropbox.sync.android.DbxAccountManager;
-import com.dropbox.sync.android.DbxFileSystem;
 
 public class ProjectKiezer extends Activity {
 
-	public final static String APPKEY = "1bzrye5f167u7ov";
-	public final static String APPSECRET = "d0hprnxcunyp18h";
-	public final static int REQUEST_LINK_TO_DBX = 0;
+	public final static int REQUEST_INITDROPBOX = 1;
 
-	private DbxAccountManager dbxAccountManager;
 	private UnitOfWork unitOfWork;
-
 	private ListView listViewProjecten;
 	private Button btnOpenProject;
 
@@ -46,8 +39,15 @@ public class ProjectKiezer extends Activity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 
+		// Hier wordt de dropboxapi gestart.
+		Intent intent = new Intent(this, StartDropBoxApi.class);
+		startActivityForResult(intent, REQUEST_INITDROPBOX);
+
+	}
+
+	private void start() {
 		unitOfWork = UnitOfWork.getInstance();
-		initDao();
+
 		setContentView(R.layout.activity_project_kiezer);
 
 		listViewProjecten = (ListView) findViewById(R.id.listViewProjecten);
@@ -127,33 +127,12 @@ public class ProjectKiezer extends Activity {
 		}
 	}
 
-	private void initDao() {
-		try {
-			dbxAccountManager = DbxAccountManager.getInstance(getApplicationContext(), APPKEY, APPSECRET);
-
-			if (dbxAccountManager.hasLinkedAccount()) {
-				((DropBoxDao) unitOfWork.getDao()).setDbxFileSystem(DbxFileSystem.forAccount(dbxAccountManager
-						.getLinkedAccount()));
-			} else {
-				dbxAccountManager.startLink(this, REQUEST_LINK_TO_DBX);
-			}
-		} catch (Exception e) {
-			toonBoodschap(e.getLocalizedMessage());
-		}
-
-	}
-
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-		try {
-			if (requestCode == REQUEST_LINK_TO_DBX) {
-				((DropBoxDao) unitOfWork.getDao()).setDbxFileSystem(DbxFileSystem.forAccount(dbxAccountManager
-						.getLinkedAccount()));
-			} else {
-				super.onActivityResult(requestCode, resultCode, data);
-			}
-		} catch (Exception e) {
-			toonBoodschap(e.getLocalizedMessage());
+		if (requestCode == REQUEST_INITDROPBOX) {
+			start();
+		} else {
+			super.onActivityResult(requestCode, resultCode, data);
 		}
 	}
 
@@ -163,5 +142,7 @@ public class ProjectKiezer extends Activity {
 		}
 		Toast.makeText(getApplicationContext(), boodschap, Toast.LENGTH_SHORT).show();
 	}
+	
+	
 
 }

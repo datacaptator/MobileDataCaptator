@@ -1,4 +1,5 @@
 .settings
-bin/
 .classpath
+bin/
 gen/
+lint.xml
