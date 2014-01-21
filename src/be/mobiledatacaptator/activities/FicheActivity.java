@@ -11,6 +11,7 @@ import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
+import android.R.color;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -156,6 +157,7 @@ public class FicheActivity extends FragmentActivity {
 					layoutParams.height = ViewPager.LayoutParams.WRAP_CONTENT;
 					layoutParams.width = ViewPager.LayoutParams.MATCH_PARENT;
 					layoutParams.gravity = Gravity.TOP;
+					strip.setBackgroundResource(color.darker_gray);
 					viewPager.addView(strip, layoutParams);
 					
 					for (Tab tab : group.getTabs()) {
