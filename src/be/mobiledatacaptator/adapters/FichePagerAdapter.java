@@ -3,6 +3,7 @@ package be.mobiledatacaptator.adapters;
 import java.util.ArrayList;
 import java.util.List;
 
+import be.mobiledatacaptator.activities.FicheActivity.TabFragment;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
@@ -30,5 +31,10 @@ public class FichePagerAdapter extends FragmentPagerAdapter {
 		fragments.add(fragment);
 		notifyDataSetChanged();
 	}
+	
+	@Override
+    public CharSequence getPageTitle(int position) {
+        return ((TabFragment)fragments.get(position)).getTab().getName();
+    } 
 
 }
