@@ -147,11 +147,11 @@ public class FicheActivity extends FragmentActivity {
 				public View createTabContent(String tag) {
 
 					ViewPager viewPager = new ViewPager(context);
-					viewPager.setId(View.generateViewId());
+					viewPager.setId(getUniqueId());
 
 					FichePagerAdapter fichePagerAdapter = new FichePagerAdapter(getSupportFragmentManager());
 					viewPager.setAdapter(fichePagerAdapter);
-					
+
 					PagerTitleStrip strip = new PagerTitleStrip(context);
 					ViewPager.LayoutParams layoutParams = new ViewPager.LayoutParams();
 					layoutParams.height = ViewPager.LayoutParams.WRAP_CONTENT;
@@ -159,7 +159,7 @@ public class FicheActivity extends FragmentActivity {
 					layoutParams.gravity = Gravity.TOP;
 					strip.setBackgroundResource(color.darker_gray);
 					viewPager.addView(strip, layoutParams);
-					
+
 					for (Tab tab : group.getTabs()) {
 						TabFragment fragment = new TabFragment();
 						fragment.setTab(tab);
@@ -172,6 +172,18 @@ public class FicheActivity extends FragmentActivity {
 			tabHost.addTab(spec);
 		}
 
+	}
+
+	private int getUniqueId() {
+		int i = 0;
+		Boolean isUnique = false;
+		do {
+			i++;
+			if (findViewById(i) == null)
+				isUnique = true;
+		} while (!(isUnique));
+
+		return i;
 	}
 
 	private void toonBoodschap(String boodschap) {
@@ -196,6 +208,7 @@ public class FicheActivity extends FragmentActivity {
 					tableLayout.addView(dataField.getUiField());
 				}
 			}
+			tableLayout.setColumnStretchable(1, true);
 			scrollView.addView(tableLayout);
 			return scrollView;
 
