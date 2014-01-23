@@ -3,10 +3,10 @@ package be.mobiledatacaptator.model;
 
 public class Project {
 
-	String naam;
-	String filePrefix;
-	String datalocatie;
-	String template;
+	private String naam;
+	private String filePrefix;
+	private String datalocatie;
+	private String template;
 
 	public String getNaam() {
 		return naam;

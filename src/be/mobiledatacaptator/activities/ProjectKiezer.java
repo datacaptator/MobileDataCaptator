@@ -33,9 +33,8 @@ public class ProjectKiezer extends Activity {
 
 	private UnitOfWork unitOfWork;
 	private ListView listViewProjecten;
-	private Button btnOpenProject;
 
-	@Override
+    @Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 
@@ -51,7 +50,7 @@ public class ProjectKiezer extends Activity {
 		setContentView(R.layout.activity_project_kiezer);
 
 		listViewProjecten = (ListView) findViewById(R.id.listViewProjecten);
-		btnOpenProject = (Button) findViewById(R.id.buttonOpenProject);
+        Button btnOpenProject = (Button) findViewById(R.id.buttonOpenProject);
 
 		laadProjecten();
 
@@ -63,16 +62,16 @@ public class ProjectKiezer extends Activity {
 		});
 
 		btnOpenProject.setOnClickListener(new OnClickListener() {
-			@Override
-			public void onClick(View v) {
-				if (UnitOfWork.getInstance().getActiveProject() != null) {
-					Intent intent = new Intent(v.getContext(), ProjectActivity.class);
-					startActivity(intent);
-				} else {
-					toonBoodschap(v.getContext().getString(R.string.EerstProjectSelecteren));
-				}
-			}
-		});
+            @Override
+            public void onClick(View v) {
+                if (UnitOfWork.getInstance().getActiveProject() != null) {
+                    Intent intent = new Intent(v.getContext(), ProjectActivity.class);
+                    startActivity(intent);
+                } else {
+                    toonBoodschap(v.getContext().getString(R.string.EerstProjectSelecteren));
+                }
+            }
+        });
 	}
 
 	private void laadProjecten() {
