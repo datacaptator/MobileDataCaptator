@@ -21,20 +21,21 @@ import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
-import android.widget.Toast;
 import be.mobiledatacaptator.R;
 import be.mobiledatacaptator.dao.StartDropBoxApi;
 import be.mobiledatacaptator.model.Project;
 import be.mobiledatacaptator.model.UnitOfWork;
+import be.mobiledatacaptator.utilities.MdcUtil;
 
-public class ProjectKiezer extends Activity {
+public class SelectProjectActivity extends Activity {
 
 	public final static int REQUEST_INITDROPBOX = 1;
 
 	private UnitOfWork unitOfWork;
-	private ListView listViewProjecten;
+	private ListView listViewProjects;
+	private Button buttonOpenProject = null;
 
-    @Override
+	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 
@@ -47,39 +48,39 @@ public class ProjectKiezer extends Activity {
 	private void start() {
 		unitOfWork = UnitOfWork.getInstance();
 
-		setContentView(R.layout.activity_project_kiezer);
+		setContentView(R.layout.activity_select_project);
 
-		listViewProjecten = (ListView) findViewById(R.id.listViewProjecten);
-        Button btnOpenProject = (Button) findViewById(R.id.buttonOpenProject);
+		listViewProjects = (ListView) findViewById(R.id.listViewProjects);
+		buttonOpenProject = (Button) findViewById(R.id.buttonOpenProject);
 
-		laadProjecten();
+		loadProjects();
 
-		listViewProjecten.setOnItemClickListener(new OnItemClickListener() {
+		listViewProjects.setOnItemClickListener(new OnItemClickListener() {
 			@Override
-			public void onItemClick(AdapterView<?> arg0, View arg1, int arg2, long arg3) {
-				UnitOfWork.getInstance().setActiveProject((Project) listViewProjecten.getItemAtPosition(arg2));
+			public void onItemClick(AdapterView<?> arg0, View arg1, int indexListItem, long arg3) {
+				UnitOfWork.getInstance().setActiveProject((Project) listViewProjects.getItemAtPosition(indexListItem));
 			}
 		});
 
-		btnOpenProject.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (UnitOfWork.getInstance().getActiveProject() != null) {
-                    Intent intent = new Intent(v.getContext(), ProjectActivity.class);
-                    startActivity(intent);
-                } else {
-                    toonBoodschap(v.getContext().getString(R.string.EerstProjectSelecteren));
-                }
-            }
-        });
+		buttonOpenProject.setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				if (UnitOfWork.getInstance().getActiveProject() != null) {
+					Intent intent = new Intent(v.getContext(), ProjectActivity.class);
+					startActivity(intent);
+				} else {
+
+					MdcUtil.showToastShort(getString(R.string.select_project_first), getApplicationContext());
+				}
+			}
+		});
 	}
 
-	private void laadProjecten() {
+	private void loadProjects() {
 		try {
-			ArrayList<Project> projecten = new ArrayList<Project>();
+			ArrayList<Project> projects = new ArrayList<Project>();
 
-			String xml = unitOfWork.getDao().getFilecontent("DataCaptator/AppData/Projects.xml");
-
+			String xml = unitOfWork.getDao().getFilecontent(getString(R.string.dropbox_location_projects));
 			DocumentBuilder db = DocumentBuilderFactory.newInstance().newDocumentBuilder();
 			Document dom = db.parse(new ByteArrayInputStream(xml.getBytes()));
 
@@ -89,7 +90,7 @@ public class ProjectKiezer extends Activity {
 				Project myProject = new Project();
 				Node n = forms.item(i);
 
-				myProject.setNaam(n.getAttributes().getNamedItem("Naam").getNodeValue());
+				myProject.setName(n.getAttributes().getNamedItem("Naam").getNodeValue());
 
 				NodeList listChilds = n.getChildNodes();
 				for (int j = 0; j < listChilds.getLength(); j++) {
@@ -103,26 +104,25 @@ public class ProjectKiezer extends Activity {
 						if (childName.equalsIgnoreCase("DataLocatie")) {
 							if (!(childValue.endsWith("/")))
 								childValue += "/";
-							myProject.setDatalocatie(childValue);
+							myProject.setDataLocation(childValue);
 						}
 						if (childName.equalsIgnoreCase("Template")) {
 							myProject.setTemplate(childValue);
 						}
 					}
 				}
-				projecten.add(myProject);
+
+				projects.add(myProject);
 			}
 
-			ArrayAdapter<Project> myAdapter = new ArrayAdapter<Project>(this,
-					android.R.layout.simple_list_item_single_choice, projecten);
+			ArrayAdapter<Project> myAdapter = new ArrayAdapter<Project>(this, android.R.layout.simple_list_item_single_choice, projects);
 
-			listViewProjecten.setAdapter(myAdapter);
-			listViewProjecten.setItemsCanFocus(true);
-			listViewProjecten.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
+			listViewProjects.setAdapter(myAdapter);
+			listViewProjects.setItemsCanFocus(true);
+			listViewProjects.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
 
 		} catch (Exception e) {
-			e.printStackTrace();
-			toonBoodschap(e.getLocalizedMessage());
+			MdcUtil.showToastShort(e.getLocalizedMessage(), getApplicationContext());
 		}
 	}
 
@@ -134,14 +134,5 @@ public class ProjectKiezer extends Activity {
 			super.onActivityResult(requestCode, resultCode, data);
 		}
 	}
-
-	private void toonBoodschap(String boodschap) {
-		if (boodschap == null || boodschap == "") {
-			boodschap = "Niet nader omschreven fout";
-		}
-		Toast.makeText(getApplicationContext(), boodschap, Toast.LENGTH_SHORT).show();
-	}
-	
-	
 
 }

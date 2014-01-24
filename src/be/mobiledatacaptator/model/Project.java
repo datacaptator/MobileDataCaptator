@@ -3,17 +3,17 @@ package be.mobiledatacaptator.model;
 
 public class Project {
 
-	private String naam;
+	private String name;
 	private String filePrefix;
-	private String datalocatie;
+	private String dataLocation;
 	private String template;
 
-	public String getNaam() {
-		return naam;
+	public String getName() {
+		return name;
 	}
 
-	public void setNaam(String naam) {
-		this.naam = naam;
+	public void setName(String name) {
+		this.name = name;
 	}
 
 	public String getFilePrefix() {
@@ -24,12 +24,12 @@ public class Project {
 		this.filePrefix = filePrefix;
 	}
 
-	public String getDatalocatie() {
-		return datalocatie;
+	public String getDataLocation() {
+		return dataLocation;
 	}
 
-	public void setDatalocatie(String datalocatie) {
-		this.datalocatie = datalocatie;
+	public void setDataLocation(String dataLocation) {
+		this.dataLocation = dataLocation;
 	}
 
 	public String getTemplate() {
@@ -42,7 +42,7 @@ public class Project {
 
 	@Override
 	public String toString() {
-		return getNaam();
+		return getName();
 	}
 
 }

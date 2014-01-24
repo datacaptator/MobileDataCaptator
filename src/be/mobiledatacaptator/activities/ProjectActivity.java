@@ -24,167 +24,158 @@ import be.mobiledatacaptator.R;
 import be.mobiledatacaptator.model.Fiche;
 import be.mobiledatacaptator.model.Project;
 import be.mobiledatacaptator.model.UnitOfWork;
+import be.mobiledatacaptator.utilities.MdcUtil;
 
 public class ProjectActivity extends Activity implements OnClickListener {
 
-    private Project project;
+	private Project project;
 
-    private ListView listViewFiches;
-    private EditText editTextActieveFiche;
+	private ListView listViewFiches;
+	private EditText editTextActiveFiche;
 
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_project);
+	@Override
+	protected void onCreate(Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
+		setContentView(R.layout.activity_project);
 
-        project = UnitOfWork.getInstance().getActiveProject();
-        setTitle(project.getNaam());
+		project = UnitOfWork.getInstance().getActiveProject();
+		setTitle(project.getName());
 
-        listViewFiches = (ListView) findViewById(R.id.listViewFiches);
-        editTextActieveFiche = (EditText) findViewById(R.id.editTextActieveFiche);
-        Button buttonAddNumber = (Button) findViewById(R.id.buttonAddNumber);
-        Button buttonOpenFiche = (Button) findViewById(R.id.buttonOpenFiche);
-        Button buttonOpenFoto = (Button) findViewById(R.id.buttonOpenFoto);
-        Button buttonOpenSchets = (Button) findViewById(R.id.buttonOpenSchets);
-        buttonAddNumber.setOnClickListener(this);
-        buttonOpenFiche.setOnClickListener(this);
-        buttonOpenFoto.setOnClickListener(this);
-        buttonOpenSchets.setOnClickListener(this);
+		listViewFiches = (ListView) findViewById(R.id.listViewFiches);
+		editTextActiveFiche = (EditText) findViewById(R.id.editTextActiveFiche);
+		Button buttonAddNumber = (Button) findViewById(R.id.buttonAddNumber);
+		Button buttonOpenFiche = (Button) findViewById(R.id.buttonOpenFiche);
+		Button buttonOpenFoto = (Button) findViewById(R.id.buttonOpenFoto);
+		Button buttonOpenSchets = (Button) findViewById(R.id.buttonOpenSchets);
 
-        laadDataFiches();
-    }
+		buttonAddNumber.setOnClickListener(this);
+		buttonOpenFiche.setOnClickListener(this);
+		buttonOpenFoto.setOnClickListener(this);
+		buttonOpenSchets.setOnClickListener(this);
 
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case android.R.id.home:
-                UnitOfWork.getInstance().setActiveFiche(null);
-                finish();
-                return (true);
-        }
+		loadDataFiches();
+	}
 
-        return (super.onOptionsItemSelected(item));
-    }
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		switch (item.getItemId()) {
+		case android.R.id.home:
+			UnitOfWork.getInstance().setActiveFiche(null);
+			finish();
+			return (true);
+		}
 
-    private void laadDataFiches() {
-        try {
-            List<String> listDataFicheNamen = UnitOfWork.getInstance().getDao()
-                    .getAllFilesFromPathWithExtension(project.getDatalocatie(), ".xml", false);
+		return (super.onOptionsItemSelected(item));
+	}
 
-            ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,
-                    android.R.layout.simple_list_item_activated_1, listDataFicheNamen);
-            listViewFiches.setAdapter(adapter);
-            listViewFiches.setItemsCanFocus(true);
-            listViewFiches.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
+	private void loadDataFiches() {
+		try {
+			List<String> listDataFicheNamen = UnitOfWork.getInstance().getDao()
+					.getAllFilesFromPathWithExtension(project.getDataLocation(), ".xml", false);
 
-            listViewFiches.setOnItemClickListener(new OnItemClickListener() {
-                @Override
-                public void onItemClick(AdapterView<?> arg0, View arg1, int arg2, long arg3) {
-                    String tekst = (String) listViewFiches.getItemAtPosition(arg2);
+			ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_activated_1, listDataFicheNamen);
+			listViewFiches.setAdapter(adapter);
+			listViewFiches.setItemsCanFocus(true);
+			listViewFiches.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
+			listViewFiches.setOnItemClickListener(new OnItemClickListener() {
+				@Override
+				public void onItemClick(AdapterView<?> arg0, View arg1, int indexListItem, long arg3) {
+					String textListItem = (String) listViewFiches.getItemAtPosition(indexListItem);
 
-                    Fiche fiche = new Fiche();
-                    fiche.setNaam(tekst);
-                    fiche.setPath(project.getDatalocatie() + tekst + ".xml");
-                    UnitOfWork.getInstance().setActiveFiche(fiche);
+					Fiche fiche = new Fiche();
+					fiche.setName(textListItem);
+					fiche.setPath(project.getDataLocation() + textListItem + ".xml");
+					UnitOfWork.getInstance().setActiveFiche(fiche);
 
-                    tekst = tekst.substring(project.getFilePrefix().length());
-                    editTextActieveFiche.setText(tekst);
-                }
-            });
+					textListItem = textListItem.substring(project.getFilePrefix().length());
+					editTextActiveFiche.setText(textListItem);
+				}
+			});
 
-        } catch (Exception e) {
-            toonBoodschap(e.getMessage());
-        }
-    }
+		} catch (Exception e) {
+			MdcUtil.showToastShort(e.getMessage(), getApplicationContext());
+		}
+	}
 
-    private void toonBoodschap(String boodschap) {
+	@Override
+	public void onClick(View v) {
+		switch (v.getId()) {
 
-        if (boodschap == null || boodschap == "") {
-            boodschap = "Niet nader omschreven fout";
-        }
-        Toast.makeText(getApplicationContext(), boodschap, Toast.LENGTH_SHORT).show();
-    }
+		case R.id.buttonAddNumber:
+			increaseFicheNumber();
+			break;
 
-    @Override
-    public void onClick(View v) {
-        switch (v.getId()) {
+		case R.id.buttonOpenFiche:
+			openFiche();
+			break;
 
-            case R.id.buttonAddNumber:
-                verhoogFicheNummer();
-                break;
+		case R.id.buttonOpenFoto:
+			Toast.makeText(getApplicationContext(), "OpenFoto pressed", Toast.LENGTH_SHORT).show();
+			break;
 
-            case R.id.buttonOpenFiche:
-                openFiche();
-                break;
+		case R.id.buttonOpenSchets:
+			Toast.makeText(getApplicationContext(), "OpenSchets pressed", Toast.LENGTH_SHORT).show();
+			break;
 
-            case R.id.buttonOpenFoto:
-                Toast.makeText(getApplicationContext(), "OpenFoto pressed", Toast.LENGTH_SHORT).show();
-                break;
+		default:
+			break;
+		}
+	}
 
-            case R.id.buttonOpenSchets:
-                Toast.makeText(getApplicationContext(), "OpenSchets pressed", Toast.LENGTH_SHORT).show();
-                break;
+	private void increaseFicheNumber() {
+		String input = editTextActiveFiche.getText().toString();
+		String result = input;
+		Pattern p = Pattern.compile("[0-9]+$");
+		Matcher m = p.matcher(input);
+		if (m.find()) {
+			result = m.group();
+			int t = Integer.parseInt(result);
+			result = input.substring(0, input.length() - result.length()) + ++t;
 
-            default:
-                break;
-        }
-    }
+			Fiche fiche = new Fiche();
+			fiche.setName(project.getFilePrefix() + result);
+			fiche.setPath(project.getDataLocation() + fiche.getName() + ".xml");
+			UnitOfWork.getInstance().setActiveFiche(fiche);
 
-    private void verhoogFicheNummer() {
-        String input = editTextActieveFiche.getText().toString();
-        String result = input;
-        Pattern p = Pattern.compile("[0-9]+$");
-        Matcher m = p.matcher(input);
-        if (m.find()) {
-            result = m.group();
-            int t = Integer.parseInt(result);
-            result = input.substring(0, input.length() - result.length()) + ++t;
+			editTextActiveFiche.setText(result);
+		}
+	}
 
-            Fiche fiche = new Fiche();
-            fiche.setNaam(project.getFilePrefix() + result);
-            fiche.setPath(project.getDatalocatie() + fiche.getNaam() + ".xml");
-            UnitOfWork.getInstance().setActiveFiche(fiche);
+	private void openFiche() {
+		try {
+			if (UnitOfWork.getInstance().getActiveFiche() != null) {
 
-            editTextActieveFiche.setText(result);
-        }
-    }
+				final Intent intent = new Intent(this, FicheActivity.class);
 
-    private void openFiche() {
-        try {
-            if (UnitOfWork.getInstance().getActiveFiche() != null) {
+				if (UnitOfWork.getInstance().getDao().existsFile(UnitOfWork.getInstance().getActiveFiche().getPath())) {
+					DialogInterface.OnClickListener dialogClickListener = new DialogInterface.OnClickListener() {
+						@Override
+						public void onClick(DialogInterface dialog, int which) {
+							switch (which) {
+							case DialogInterface.BUTTON_POSITIVE:
+								startActivity(intent);
+								break;
 
-                final Intent intent = new Intent(this, FicheActivity.class);
+							case DialogInterface.BUTTON_NEGATIVE:
+								// No button clicked
+								break;
+							}
+						}
+					};
 
-                if (UnitOfWork.getInstance().getDao().existsFile(UnitOfWork.getInstance().getActiveFiche().getPath())) {
-                    DialogInterface.OnClickListener dialogClickListener = new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            switch (which) {
-                                case DialogInterface.BUTTON_POSITIVE:
-                                    startActivity(intent);
-                                    break;
+					AlertDialog.Builder builder = new AlertDialog.Builder(this);
+					builder.setMessage(R.string.open_existing_fiche).setPositiveButton(R.string.Yes, dialogClickListener)
+							.setNegativeButton(R.string.No, dialogClickListener).show();
+				} else {
+					startActivity(intent);
+				}
 
-                                case DialogInterface.BUTTON_NEGATIVE:
-                                    // No button clicked
-                                    break;
-                            }
-                        }
-                    };
-
-                    AlertDialog.Builder builder = new AlertDialog.Builder(this);
-                    builder.setMessage(R.string.BestaandeFicheOpenen)
-                            .setPositiveButton(R.string.Yes, dialogClickListener)
-                            .setNegativeButton(R.string.No, dialogClickListener).show();
-                } else {
-                    startActivity(intent);
-                }
-
-            } else {
-                Toast.makeText(getApplicationContext(), R.string.NoSelectedFiche, Toast.LENGTH_SHORT).show();
-            }
-        } catch (Exception e) {
-            toonBoodschap(e.getMessage());
-        }
-    }
+			} else {
+				MdcUtil.showToastShort(getString(R.string.no_fiche_selected), getApplicationContext());
+			}
+		} catch (Exception e) {
+			MdcUtil.showToastShort(e.getLocalizedMessage(), getApplicationContext());
+		}
+	}
 
 }

@@ -1,18 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string name="app_name">MobileDataCaptator</string>
-    <string name="KiesProject">Kies een project uit de lijst:</string>
-    <string name="OpenProject">Open project</string>
-    <string name="EerstProjectSelecteren">Eerst een project selecteren</string>
-    <string name="BeschikbareData">datafiches:</string>
-    <string name="ActiveFiche">actieve fiche:</string>
+    <string name="app_name">Mobile DataCaptator</string>
+    <string name="dropbox_location_projects">DataCaptator/AppData/Projects.xml</string>
+    <string name="select_project">Kies een project uit de lijst:</string>
+    <string name="unknown_error">Niet nader omschreven fout</string>
+    <string name="open_project">Open project</string>
+    <string name="select_project_first">Eerst een project selecteren</string>
+    <string name="data_fiches">Datafiches</string>
+    <string name="active_fiche">Actieve fiche</string>
     <string name="OpenFiche">Open Fiche</string>
     <string name="OpenFoto">Open Foto</string>
     <string name="OpenSchets">Open Schets</string>
-    <string name="NoSelectedFiche">Geen fiche gekozen!</string>
-    <string name="BestaandeFicheOpenen">Wilt u deze BESTAANDE fiche open?</string>
+    <string name="no_fiche_selected">Geen fiche gekozen!</string>
+    <string name="open_existing_fiche">Wilt u deze BESTAANDE fiche open?</string>
     <string name="Yes">Ja</string>
     <string name="No">Nee</string>
+    <string name="plus_sign">+</string>
 
 </resources>

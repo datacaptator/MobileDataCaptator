@@ -17,12 +17,12 @@
         android:layout_weight="1"
         android:orientation="vertical" >
 
-       <TextView
-            android:id="@+id/textView1"
+        <TextView
+            android:id="@+id/textViewDataFiche"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textAppearance="?android:attr/textAppearanceMedium"
-            android:text="@string/BeschikbareData" />
+            android:text="@string/data_fiches"
+            android:textAppearance="?android:attr/textAppearanceMedium" />
 
         <ListView
             android:id="@+id/listViewFiches"
@@ -38,11 +38,11 @@
         android:orientation="vertical" >
 
         <TextView
-            android:id="@+id/textView2"
+            android:id="@+id/textActiveFiche"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textAppearance="?android:attr/textAppearanceMedium"
-            android:text="@string/ActiveFiche" />
+            android:text="@string/active_fiche"
+            android:textAppearance="?android:attr/textAppearanceMedium" />
 
         <LinearLayout
             android:layout_width="fill_parent"
@@ -50,16 +50,17 @@
             android:orientation="horizontal" >
 
             <EditText
-                android:id="@+id/editTextActieveFiche"
+                android:id="@+id/editTextActiveFiche"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_weight="1" />
+                android:layout_weight="1"
+                android:inputType="number" />
 
             <Button
                 android:id="@+id/buttonAddNumber"
                 android:layout_width="35dip"
                 android:layout_height="wrap_content"
-                android:text="+" />
+                android:text="@string/plus_sign" />
         </LinearLayout>
 
         <Button

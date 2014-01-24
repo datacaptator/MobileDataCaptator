@@ -5,7 +5,7 @@ import java.util.List;
 
 public class Fiche {
 
-	private String naam;
+	private String name;
 	private String path;
 	private List<Group> groups;
 	
@@ -13,12 +13,12 @@ public class Fiche {
 		groups = new ArrayList<Group>();
 	}
 	
-	public String getNaam() {
-		return naam;
+	public String getName() {
+		return name;
 	}
 
-	public void setNaam(String naam) {
-		this.naam = naam;
+	public void setName(String name) {
+		this.name = name;
 	}
 
 	public String getPath() {
