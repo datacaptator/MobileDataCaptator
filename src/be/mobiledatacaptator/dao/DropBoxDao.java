@@ -28,18 +28,18 @@ public class DropBoxDao implements IMdcDao {
 	}
 
 	@Override
-	public List<String> getAllFilesFromPathWithExtension(String path, String extension, Boolean returnExtention)
+	public List<String> getAllFilesFromPathWithExtension(String path, String extension, Boolean returnExtension)
 			throws InvalidPathException, DbxException {
 
 		List<String> folderContent = new ArrayList<String>();
 		List<DbxFileInfo> fileInfoList = dbxFileSystem.listFolder(new DbxPath(path));
 
 		for (DbxFileInfo dbxFileInfo : fileInfoList) {
-			String naam = dbxFileInfo.path.getName();
-			if (naam.endsWith(extension)) {
-				if (!(returnExtention))
-					naam = naam.substring(0, naam.length() - extension.length());
-				folderContent.add(naam);
+			String name = dbxFileInfo.path.getName();
+			if (name.endsWith(extension)) {
+				if (!(returnExtension))
+					name = name.substring(0, name.length() - extension.length());
+				folderContent.add(name);
 			}
 		}
 		return folderContent;

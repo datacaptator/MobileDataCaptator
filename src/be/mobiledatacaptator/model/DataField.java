@@ -5,7 +5,7 @@ import java.util.List;
 
 public class DataField {
 
-	private String naam;
+	private String name;
 	private String label;
 	private Boolean required;
 	private VeldType type;
@@ -17,12 +17,12 @@ public class DataField {
 		choiceItems = new ArrayList<ChoiceItem>();
 	}
 
-	public String getNaam() {
-		return naam;
+	public String getName() {
+		return name;
 	}
 
-	public void setNaam(String naam) {
-		this.naam = naam;
+	public void setName(String name) {
+		this.name = name;
 	}
 
 	public String getLabel() {

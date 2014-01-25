@@ -6,6 +6,6 @@ import java.util.List;
 public interface IMdcDao {
 
 	public String getFilecontent(String path) throws IOException;
-	public List<String> getAllFilesFromPathWithExtension(String path, String extension, Boolean returnExtention) throws Exception;
+	public List<String> getAllFilesFromPathWithExtension(String path, String extension, Boolean returnExtension) throws Exception;
 	public boolean existsFile(String path) throws Exception;
 	}

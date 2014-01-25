@@ -1,14 +1,13 @@
 package be.mobiledatacaptator.dao;
 
-import be.mobiledatacaptator.model.UnitOfWork;
-
-import com.dropbox.sync.android.DbxAccountManager;
-import com.dropbox.sync.android.DbxFileSystem;
-
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
-import android.widget.Toast;
+import be.mobiledatacaptator.model.UnitOfWork;
+import be.mobiledatacaptator.utilities.MdcUtil;
+
+import com.dropbox.sync.android.DbxAccountManager;
+import com.dropbox.sync.android.DbxFileSystem;
 
 public class StartDropBoxApi extends Activity {
 
@@ -42,19 +41,10 @@ public class StartDropBoxApi extends Activity {
 
 	private void initDao() {
 		try {
-			((DropBoxDao) UnitOfWork.getInstance().getDao()).setDbxFileSystem(DbxFileSystem
-					.forAccount(dbxAccountManager.getLinkedAccount()));
+			((DropBoxDao) UnitOfWork.getInstance().getDao()).setDbxFileSystem(DbxFileSystem.forAccount(dbxAccountManager.getLinkedAccount()));
 			finish();
 		} catch (Exception e) {
-			toonBoodschap(e.getMessage());
+			MdcUtil.showToastShort(e.getMessage(), getApplicationContext());
 		}
-	}
-
-	private void toonBoodschap(String boodschap) {
-		if (boodschap == null || boodschap == "") {
-			boodschap = "Niet nader omschreven fout";
-		}
-		Toast.makeText(getApplicationContext(), boodschap, Toast.LENGTH_SHORT).show();
-		finish();
 	}
 }

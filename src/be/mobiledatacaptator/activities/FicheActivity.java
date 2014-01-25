@@ -90,7 +90,7 @@ public class FicheActivity extends FragmentActivity {
                         NamedNodeMap attr = fieldNode.getAttributes();
                         DataField dataField = new DataField();
                         if (attr.getNamedItem("Name") != null)
-                            dataField.setNaam(attr.getNamedItem("Name").getNodeValue());
+                            dataField.setName(attr.getNamedItem("Name").getNodeValue());
                         if (attr.getNamedItem("Label") != null)
                             dataField.setLabel(attr.getNamedItem("Label").getNodeValue());
                         if (attr.getNamedItem("DefaultValue") != null)
