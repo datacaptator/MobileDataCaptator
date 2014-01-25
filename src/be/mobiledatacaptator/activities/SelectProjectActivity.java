@@ -66,7 +66,7 @@ public class SelectProjectActivity extends Activity {
 			@Override
 			public void onClick(View v) {
 				if (UnitOfWork.getInstance().getActiveProject() != null) {
-					Intent intent = new Intent(v.getContext(), ProjectActivity.class);
+					Intent intent = new Intent(v.getContext(), SelectFicheActivity.class);
 					startActivity(intent);
 				} else {
 

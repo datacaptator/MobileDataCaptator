@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="utf-8"?>
+<TableLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:background="@color/application_background"
+    android:stretchColumns="*" >
+
+    <TableRow
+        android:id="@+id/tableRow0"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:padding="5dp" >
+
+        <TextView
+            android:id="@+id/textViewSelectFiche"
+            android:layout_span="2"
+            android:gravity="center"
+            android:text="@string/select_fiche"
+            android:textColor="@android:color/white"
+            android:textSize="25sp" />
+    </TableRow>
+
+    <TableRow
+        android:id="@+id/tableRow1"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="1" >
+
+        <ListView
+            android:id="@+id/listViewFiches"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_span="2" >
+        </ListView>
+    </TableRow>
+
+    <TableRow
+        android:id="@+id/tableRow2"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" >
+
+        <Button
+            android:id="@+id/buttonOpenFiche"
+            android:layout_width="@dimen/buttonOpenFiche"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dp"
+            android:text="@string/button_open_fiche"
+            android:textColor="@color/button_white" />
+
+        <Button
+            android:id="@+id/buttonAddNumber"
+            android:layout_width="@dimen/buttonAddNumber"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dp"
+            android:text="@string/plus_sign"
+            android:textColor="@color/button_white" />
+    </TableRow>
+
+    <TableRow
+        android:id="@+id/tableRow3"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" >
+
+        <Button
+            android:id="@+id/buttonOpenFoto"
+            android:layout_width="@dimen/buttonOpenFoto"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dp"
+            android:text="@string/button_open_foto"
+            android:textColor="@color/button_white" />
+
+        <Button
+            android:id="@+id/buttonOpenSchets"
+            android:layout_width="@dimen/buttonOpenSchets"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dp"
+            android:text="@string/button_open_schets"
+            android:textColor="@color/button_white" />
+    </TableRow>
+
+</TableLayout>

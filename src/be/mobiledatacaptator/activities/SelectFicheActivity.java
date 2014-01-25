@@ -1,5 +1,9 @@
 package be.mobiledatacaptator.activities;
 
+import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
@@ -12,37 +16,30 @@ import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.Toast;
-
-import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
 import be.mobiledatacaptator.R;
 import be.mobiledatacaptator.model.Fiche;
 import be.mobiledatacaptator.model.Project;
 import be.mobiledatacaptator.model.UnitOfWork;
 import be.mobiledatacaptator.utilities.MdcUtil;
 
-public class ProjectActivity extends Activity implements OnClickListener {
+public class SelectFicheActivity extends Activity implements OnClickListener {
 
 	private Project project;
-
 	private ListView listViewFiches;
-	private EditText editTextActiveFiche;
+	//private EditText editTextActiveFiche;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.activity_project);
+		setContentView(R.layout.activity_select_fiche);
 
 		project = UnitOfWork.getInstance().getActiveProject();
 		setTitle(project.getName());
 
 		listViewFiches = (ListView) findViewById(R.id.listViewFiches);
-		editTextActiveFiche = (EditText) findViewById(R.id.editTextActiveFiche);
+//		editTextActiveFiche = (EditText) findViewById(R.id.editTextActiveFiche);
 		Button buttonAddNumber = (Button) findViewById(R.id.buttonAddNumber);
 		Button buttonOpenFiche = (Button) findViewById(R.id.buttonOpenFiche);
 		Button buttonOpenFoto = (Button) findViewById(R.id.buttonOpenFoto);
@@ -73,7 +70,7 @@ public class ProjectActivity extends Activity implements OnClickListener {
 			List<String> listDataFicheNamen = UnitOfWork.getInstance().getDao()
 					.getAllFilesFromPathWithExtension(project.getDataLocation(), ".xml", false);
 
-			ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_activated_1, listDataFicheNamen);
+			ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_single_choice, listDataFicheNamen);
 			listViewFiches.setAdapter(adapter);
 			listViewFiches.setItemsCanFocus(true);
 			listViewFiches.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
@@ -88,7 +85,8 @@ public class ProjectActivity extends Activity implements OnClickListener {
 					UnitOfWork.getInstance().setActiveFiche(fiche);
 
 					textListItem = textListItem.substring(project.getFilePrefix().length());
-					editTextActiveFiche.setText(textListItem);
+					setTitle(project.getName() + " - " + getString(R.string.fiche) + " " + textListItem);
+					//editTextActiveFiche.setText(textListItem);
 				}
 			});
 
@@ -123,7 +121,8 @@ public class ProjectActivity extends Activity implements OnClickListener {
 	}
 
 	private void increaseFicheNumber() {
-		String input = editTextActiveFiche.getText().toString();
+		String ficheName = UnitOfWork.getInstance().getActiveFiche().getName();
+		String input = ficheName.substring(project.getFilePrefix().length());
 		String result = input;
 		Pattern p = Pattern.compile("[0-9]+$");
 		Matcher m = p.matcher(input);
@@ -137,7 +136,9 @@ public class ProjectActivity extends Activity implements OnClickListener {
 			fiche.setPath(project.getDataLocation() + fiche.getName() + ".xml");
 			UnitOfWork.getInstance().setActiveFiche(fiche);
 
-			editTextActiveFiche.setText(result);
+			setTitle(project.getName() + " - " + getString(R.string.fiche) + " " + result);
+			
+			//editTextActiveFiche.setText(result);
 		}
 	}
 
@@ -164,7 +165,10 @@ public class ProjectActivity extends Activity implements OnClickListener {
 					};
 
 					AlertDialog.Builder builder = new AlertDialog.Builder(this);
-					builder.setMessage(R.string.open_existing_fiche).setPositiveButton(R.string.Yes, dialogClickListener)
+					
+					String ficheName = UnitOfWork.getInstance().getActiveFiche().getName();
+					String builderMessage = getString(R.string.wil_u_fiche) + " " + ficheName + " " + getString(R.string.openen);
+					builder.setMessage(builderMessage).setPositiveButton(R.string.Yes, dialogClickListener)
 							.setNegativeButton(R.string.No, dialogClickListener).show();
 				} else {
 					startActivity(intent);

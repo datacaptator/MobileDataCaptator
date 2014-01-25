@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="application_background">#000000</color>
+    <color name="textview_white">#FFFFFF</color>
+    
+    <color name="button_white">#FFFFFF</color>
+</resources>

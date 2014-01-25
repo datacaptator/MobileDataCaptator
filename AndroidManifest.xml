@@ -26,7 +26,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name="be.mobiledatacaptator.activities.ProjectActivity"
+            android:name="be.mobiledatacaptator.activities.SelectFicheActivity"
             android:parentActivityName="be.mobiledatacaptator.activities.SelectProjectActivity" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
@@ -34,7 +34,7 @@
         </activity>
         <activity
             android:name="be.mobiledatacaptator.activities.FicheActivity"
-            android:parentActivityName="be.mobiledatacaptator.activities.ProjectActivity" >
+            android:parentActivityName="be.mobiledatacaptator.activities.SelectFicheActivity" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="be.mobiledatacaptator.activities.ProjectActivity" />
