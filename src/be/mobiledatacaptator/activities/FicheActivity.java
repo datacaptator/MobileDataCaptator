@@ -39,6 +39,7 @@ import be.mobiledatacaptator.model.Tab;
 import be.mobiledatacaptator.model.UIField;
 import be.mobiledatacaptator.model.UnitOfWork;
 import be.mobiledatacaptator.model.VeldType;
+import be.mobiledatacaptator.utilities.MdcUtil;
 
 public class FicheActivity extends FragmentActivity {
 
@@ -49,6 +50,9 @@ public class FicheActivity extends FragmentActivity {
         super.onCreate(savedInstanceState);
 
         unitOfWork = UnitOfWork.getInstance();
+        
+        setTitle(MdcUtil.setActivityTitle(unitOfWork, getApplicationContext()));
+        
         LoadTemplate();
         toonFiche();
     }

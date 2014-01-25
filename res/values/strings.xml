@@ -3,20 +3,19 @@
 
     <string name="app_name">Mobile DataCaptator</string>
     <string name="dropbox_location_projects">DataCaptator/AppData/Projects.xml</string>
-    <string name="select_project">Kies een project uit de lijst:</string>
+    <string name="select_project">Selecteer een Project</string>
     <string name="unknown_error">Niet nader omschreven fout</string>
     <string name="open_project">Open project</string>
-    <string name="select_project_first">Eerst een project selecteren</string>
-    <string name="select_fiche">Selecteer Fiche</string>
+    <string name="select_project_first">Selecteer eerst een Project!</string>
+    <string name="select_fiche">Selecteer een Fiche</string>
     <string name="data_fiches">Datafiches</string>
     <string name="active_fiche">Actieve fiche</string>
     <string name="button_open_fiche">Open Fiche</string>
     <string name="button_open_foto">Open Foto</string>
     <string name="button_open_schets">Open Schets</string>
-    <string name="no_fiche_selected">Geen fiche gekozen!</string>
-    <string name="open_existing_fiche">Wilt u deze BESTAANDE fiche open?</string>
-    <string name="Yes">Ja</string>
-    <string name="No">Nee</string>
+    <string name="select_fiche_first">Selecteeer eerst een Fiche!</string>
+    <string name="yes">Ja</string>
+    <string name="no">Nee</string>
     <string name="plus_sign">+</string>
 	<string name="fiche">fiche</string>
 	<string name="wil_u_fiche">Wil u fiche</string>

@@ -4,6 +4,8 @@ import android.app.Activity;
 import android.content.Context;
 import android.widget.Toast;
 import be.mobiledatacaptator.R;
+import be.mobiledatacaptator.model.Project;
+import be.mobiledatacaptator.model.UnitOfWork;
 
 
 public class MdcUtil extends Activity{
@@ -26,6 +28,17 @@ public class MdcUtil extends Activity{
 		Toast.makeText(context, message, Toast.LENGTH_LONG).show();
 	}
 	
+	public static String setActivityTitle(UnitOfWork unitOfWork, Context context)
+	{
+		Project project = unitOfWork.getActiveProject();
+		String projectName = unitOfWork.getActiveProject().getName();
+        String ficheName = unitOfWork.getActiveFiche().getName().substring(project.getFilePrefix().length());	
+        
+        return projectName + " - " + context.getString(R.string.fiche) + " " + ficheName;
+        
+		
+		
+	}
 
 	
 }

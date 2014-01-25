@@ -28,18 +28,20 @@ public class SelectFicheActivity extends Activity implements OnClickListener {
 
 	private Project project;
 	private ListView listViewFiches;
-	//private EditText editTextActiveFiche;
+	private UnitOfWork unitOfWork;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_select_fiche);
 
-		project = UnitOfWork.getInstance().getActiveProject();
+		unitOfWork = UnitOfWork.getInstance();
+		project = unitOfWork.getActiveProject();
+
 		setTitle(project.getName());
 
 		listViewFiches = (ListView) findViewById(R.id.listViewFiches);
-//		editTextActiveFiche = (EditText) findViewById(R.id.editTextActiveFiche);
+
 		Button buttonAddNumber = (Button) findViewById(R.id.buttonAddNumber);
 		Button buttonOpenFiche = (Button) findViewById(R.id.buttonOpenFiche);
 		Button buttonOpenFoto = (Button) findViewById(R.id.buttonOpenFoto);
@@ -67,8 +69,7 @@ public class SelectFicheActivity extends Activity implements OnClickListener {
 
 	private void loadDataFiches() {
 		try {
-			List<String> listDataFicheNamen = UnitOfWork.getInstance().getDao()
-					.getAllFilesFromPathWithExtension(project.getDataLocation(), ".xml", false);
+			List<String> listDataFicheNamen = unitOfWork.getDao().getAllFilesFromPathWithExtension(project.getDataLocation(), ".xml", false);
 
 			ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_single_choice, listDataFicheNamen);
 			listViewFiches.setAdapter(adapter);
@@ -82,11 +83,10 @@ public class SelectFicheActivity extends Activity implements OnClickListener {
 					Fiche fiche = new Fiche();
 					fiche.setName(textListItem);
 					fiche.setPath(project.getDataLocation() + textListItem + ".xml");
-					UnitOfWork.getInstance().setActiveFiche(fiche);
+			
+					unitOfWork.setActiveFiche(fiche);
 
-					textListItem = textListItem.substring(project.getFilePrefix().length());
-					setTitle(project.getName() + " - " + getString(R.string.fiche) + " " + textListItem);
-					//editTextActiveFiche.setText(textListItem);
+					setTitle(MdcUtil.setActivityTitle(unitOfWork, getApplicationContext()));
 				}
 			});
 
@@ -121,7 +121,7 @@ public class SelectFicheActivity extends Activity implements OnClickListener {
 	}
 
 	private void increaseFicheNumber() {
-		String ficheName = UnitOfWork.getInstance().getActiveFiche().getName();
+		String ficheName = unitOfWork.getActiveFiche().getName();
 		String input = ficheName.substring(project.getFilePrefix().length());
 		String result = input;
 		Pattern p = Pattern.compile("[0-9]+$");
@@ -137,8 +137,6 @@ public class SelectFicheActivity extends Activity implements OnClickListener {
 			UnitOfWork.getInstance().setActiveFiche(fiche);
 
 			setTitle(project.getName() + " - " + getString(R.string.fiche) + " " + result);
-			
-			//editTextActiveFiche.setText(result);
 		}
 	}
 
@@ -147,16 +145,18 @@ public class SelectFicheActivity extends Activity implements OnClickListener {
 			if (UnitOfWork.getInstance().getActiveFiche() != null) {
 
 				final Intent intent = new Intent(this, FicheActivity.class);
-
-				if (UnitOfWork.getInstance().getDao().existsFile(UnitOfWork.getInstance().getActiveFiche().getPath())) {
+				// if (UnitOfWork.getInstance().getDao().existsFile(UnitOfWork.getInstance().getActiveFiche().getPath())) {
+				if (unitOfWork.getDao().existsFile(UnitOfWork.getInstance().getActiveFiche().getPath())) {
 					DialogInterface.OnClickListener dialogClickListener = new DialogInterface.OnClickListener() {
 						@Override
 						public void onClick(DialogInterface dialog, int which) {
 							switch (which) {
+							// TODO : programma crasht als je bij terugkeer uit
+							// een fiche, en je deze fiche onmiddellijk opnieuw
+							// tracht te openen
 							case DialogInterface.BUTTON_POSITIVE:
 								startActivity(intent);
 								break;
-
 							case DialogInterface.BUTTON_NEGATIVE:
 								// No button clicked
 								break;
@@ -165,17 +165,17 @@ public class SelectFicheActivity extends Activity implements OnClickListener {
 					};
 
 					AlertDialog.Builder builder = new AlertDialog.Builder(this);
-					
-					String ficheName = UnitOfWork.getInstance().getActiveFiche().getName();
+
+					String ficheName = unitOfWork.getActiveFiche().getName();
 					String builderMessage = getString(R.string.wil_u_fiche) + " " + ficheName + " " + getString(R.string.openen);
-					builder.setMessage(builderMessage).setPositiveButton(R.string.Yes, dialogClickListener)
-							.setNegativeButton(R.string.No, dialogClickListener).show();
+					builder.setNegativeButton(R.string.no, dialogClickListener).setMessage(builderMessage)
+							.setPositiveButton(R.string.yes, dialogClickListener).show();
 				} else {
 					startActivity(intent);
 				}
 
 			} else {
-				MdcUtil.showToastShort(getString(R.string.no_fiche_selected), getApplicationContext());
+				MdcUtil.showToastShort(getString(R.string.select_fiche_first), getApplicationContext());
 			}
 		} catch (Exception e) {
 			MdcUtil.showToastShort(e.getLocalizedMessage(), getApplicationContext());
