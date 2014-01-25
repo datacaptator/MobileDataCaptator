@@ -1,28 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <!--  -->
-    <dimen name="projectTextView">210dp</dimen>
-    <dimen name="openProjectButtonWidth">70dp</dimen>
-    <dimen name="fileTextView">210dp</dimen>
     <dimen name="title_size">25sp</dimen>
-    
-    <dimen name="openFileButtonWidth">70dp</dimen>
-    <dimen name="fotoFileButtonWidth">65dp</dimen>
-    <dimen name="drawFileButtonWidth">80dp</dimen>
-    <dimen name="newProjectFileNameWidth">180dp</dimen>
-    <dimen name="newProjectFileNameCancelWidth">120dp</dimen>
-    <dimen name="newProjectFileNameSaveWidth">120dp</dimen>
-    <!--  -->
-
     <dimen name="buttonOpenFiche">120dp</dimen>
     <dimen name="buttonOpenFoto">120dp</dimen>
     <dimen name="buttonOpenSchets">120dp</dimen>
     <dimen name="buttonAddNumber">120dp</dimen>
-    
-    
-    <dimen name="button_data_input">200dp</dimen>
-    <dimen name="button_add_picture">200dp</dimen>
-    <dimen name="button_add_drawing">200dp</dimen>
 
 </resources>

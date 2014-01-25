@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-
     <string name="app_name">Mobile DataCaptator</string>
     <string name="dropbox_location_projects">DataCaptator/AppData/Projects.xml</string>
     <string name="select_project">Selecteer een Project</string>
@@ -8,8 +7,6 @@
     <string name="open_project">Open project</string>
     <string name="select_project_first">Selecteer eerst een Project!</string>
     <string name="select_fiche">Selecteer een Fiche</string>
-    <string name="data_fiches">Datafiches</string>
-    <string name="active_fiche">Actieve fiche</string>
     <string name="button_open_fiche">Open Fiche</string>
     <string name="button_open_foto">Open Foto</string>
     <string name="button_open_schets">Open Schets</string>

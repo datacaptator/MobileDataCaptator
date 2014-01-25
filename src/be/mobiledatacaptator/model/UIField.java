@@ -25,6 +25,7 @@ public class UIField extends TableRow {
 		// Label plaatsen
 		textViewLabel = new TextView(context);
 		textViewLabel.setText(dataField.getLabel()+": ");
+		//TODO : Field requires API level 14 (current min is 11): android.R.style#TextAppearance_DeviceDefault_Medium
 		textViewLabel.setTextAppearance(context, android.R.style.TextAppearance_DeviceDefault_Medium);
 		addView(textViewLabel);
 

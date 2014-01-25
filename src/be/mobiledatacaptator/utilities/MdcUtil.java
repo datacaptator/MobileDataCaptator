@@ -1,6 +1,5 @@
 package be.mobiledatacaptator.utilities;
 
-import android.app.Activity;
 import android.content.Context;
 import android.widget.Toast;
 import be.mobiledatacaptator.R;
@@ -8,7 +7,7 @@ import be.mobiledatacaptator.model.Project;
 import be.mobiledatacaptator.model.UnitOfWork;
 
 
-public class MdcUtil extends Activity{
+public class MdcUtil {
 
 	public static void showToastShort(String message, Context context)
 	{
