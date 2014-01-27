@@ -1,5 +1,9 @@
 package be.mobiledatacaptator.activities;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -8,7 +12,10 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
+import android.os.Environment;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -24,11 +31,18 @@ import be.mobiledatacaptator.model.Project;
 import be.mobiledatacaptator.model.UnitOfWork;
 import be.mobiledatacaptator.utilities.MdcUtil;
 
+import com.dropbox.sync.android.DbxPath.InvalidPathException;
+
 public class SelectFicheActivity extends Activity implements OnClickListener {
 
 	private Project project;
 	private ListView listViewFiches;
 	private UnitOfWork unitOfWork;
+
+	// foto
+	private Bitmap bitMap;
+	final static int cameraData = 0;
+	private Intent myFotoIntent;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -53,6 +67,11 @@ public class SelectFicheActivity extends Activity implements OnClickListener {
 		buttonOpenSchets.setOnClickListener(this);
 
 		loadDataFiches();
+
+		// foto
+		InputStream inputStream = getResources().openRawResource(R.drawable.ic_launcher);
+		bitMap = BitmapFactory.decodeStream(inputStream);
+
 	}
 
 	@Override
@@ -83,7 +102,7 @@ public class SelectFicheActivity extends Activity implements OnClickListener {
 					Fiche fiche = new Fiche();
 					fiche.setName(textListItem);
 					fiche.setPath(project.getDataLocation() + textListItem + ".xml");
-			
+
 					unitOfWork.setActiveFiche(fiche);
 
 					setTitle(MdcUtil.setActivityTitle(unitOfWork, getApplicationContext()));
@@ -108,7 +127,8 @@ public class SelectFicheActivity extends Activity implements OnClickListener {
 			break;
 
 		case R.id.buttonOpenFoto:
-			Toast.makeText(getApplicationContext(), "OpenFoto pressed", Toast.LENGTH_SHORT).show();
+			// Toast.makeText(getApplicationContext(), "OpenFoto pressed", Toast.LENGTH_SHORT).show();
+			openFoto();
 			break;
 
 		case R.id.buttonOpenSchets:
@@ -145,7 +165,6 @@ public class SelectFicheActivity extends Activity implements OnClickListener {
 			if (UnitOfWork.getInstance().getActiveFiche() != null) {
 
 				final Intent intent = new Intent(this, FicheActivity.class);
-				// if (UnitOfWork.getInstance().getDao().existsFile(UnitOfWork.getInstance().getActiveFiche().getPath())) {
 				if (unitOfWork.getDao().existsFile(UnitOfWork.getInstance().getActiveFiche().getPath())) {
 					DialogInterface.OnClickListener dialogClickListener = new DialogInterface.OnClickListener() {
 						@Override
@@ -180,6 +199,99 @@ public class SelectFicheActivity extends Activity implements OnClickListener {
 		} catch (Exception e) {
 			MdcUtil.showToastShort(e.getLocalizedMessage(), getApplicationContext());
 		}
+	}
+
+	private void openFoto() {
+		try {
+			if (UnitOfWork.getInstance().getActiveFiche() != null) {
+
+				final Intent intent = new Intent(this, FicheActivity.class);
+				if (unitOfWork.getDao().existsFile(UnitOfWork.getInstance().getActiveFiche().getPath())) {
+					DialogInterface.OnClickListener dialogClickListener = new DialogInterface.OnClickListener() {
+						@Override
+						public void onClick(DialogInterface dialog, int which) {
+							switch (which) {
+							// TODO : programma crasht als je bij terugkeer uit
+							// een fiche, en je deze fiche onmiddellijk opnieuw
+							// tracht te openen
+							case DialogInterface.BUTTON_POSITIVE:
+								myFotoIntent = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
+								startActivityForResult(myFotoIntent, cameraData);
+								break;
+							case DialogInterface.BUTTON_NEGATIVE:
+								// No button clicked
+								break;
+							}
+						}
+					};
+
+					AlertDialog.Builder builder = new AlertDialog.Builder(this);
+
+					String ficheName = unitOfWork.getActiveFiche().getName();
+					String builderMessage = getString(R.string.wil_u_aan_fiche) + " " + ficheName + " " + getString(R.string.een_foto_toevoegen);
+					builder.setNegativeButton(R.string.no, dialogClickListener).setMessage(builderMessage)
+							.setPositiveButton(R.string.yes, dialogClickListener).show();
+				} else {
+					startActivity(intent);
+				}
+
+			} else {
+				MdcUtil.showToastShort(getString(R.string.select_fiche_first), getApplicationContext());
+			}
+		} catch (Exception e) {
+			MdcUtil.showToastShort(e.getLocalizedMessage(), getApplicationContext());
+		}
+	}
+
+	
+	// TODO - code verder te verfijnen -> upload to dropbox werkt!
+	@Override
+	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+		super.onActivityResult(requestCode, resultCode, data);
+
+		if (resultCode == RESULT_OK) {
+			Bundle extrasBundle = data.getExtras();
+
+			bitMap = (Bitmap) extrasBundle.get("data");
+
+			final String dir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES) + "/picFolder/";
+			File newdir = new File(dir);
+			newdir.mkdirs();
+
+			String file = dir + "myFile.jpg";
+			File newfile = new File(file);
+			try {
+				newfile.createNewFile();
+			} catch (IOException e) {
+			}
+
+			FileOutputStream fos;
+			try {
+				fos = new FileOutputStream(newfile);
+				bitMap.compress(Bitmap.CompressFormat.JPEG, 85, fos);
+				fos.flush();
+				fos.close();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+
+			
+			try {
+				MdcUtil.showToastShort("net voor dao!", getApplicationContext());	
+				unitOfWork.getDao().uploadPicture(newfile);
+			} catch (InvalidPathException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+
+			
+
+		}
+
 	}
 
 }

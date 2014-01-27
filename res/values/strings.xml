@@ -17,4 +17,7 @@
 	<string name="fiche">fiche</string>
 	<string name="wil_u_fiche">Wil u fiche</string>
 	<string name="openen">openen?</string>
+	<string name="wil_u_aan_fiche">Wil u aan fiche</string>
+	<string name="een_foto_toevoegen">een foto toevoegen?</string>
+	
 </resources>

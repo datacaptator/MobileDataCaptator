@@ -1,5 +1,6 @@
 package be.mobiledatacaptator.dao;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -28,8 +29,8 @@ public class DropBoxDao implements IMdcDao {
 	}
 
 	@Override
-	public List<String> getAllFilesFromPathWithExtension(String path, String extension, Boolean returnExtension)
-			throws InvalidPathException, DbxException {
+	public List<String> getAllFilesFromPathWithExtension(String path, String extension, Boolean returnExtension) throws InvalidPathException,
+			DbxException {
 
 		List<String> folderContent = new ArrayList<String>();
 		List<DbxFileInfo> fileInfoList = dbxFileSystem.listFolder(new DbxPath(path));
@@ -48,6 +49,22 @@ public class DropBoxDao implements IMdcDao {
 	@Override
 	public boolean existsFile(String path) throws InvalidPathException, DbxException {
 		return dbxFileSystem.exists(new DbxPath(path));
+	}
+
+
+	//TODO  nog verder te verfijnen - uploadfunctionaliteit werkt!
+	@Override
+	public void uploadPicture(File file) {
+		try {
+			DbxFile testFile = dbxFileSystem.create(new DbxPath("myFile.jpg"));
+			testFile.writeFromExistingFile(file, false);
+			testFile.close();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} finally {
+
+		}
 	}
 
 }
