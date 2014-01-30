@@ -56,7 +56,8 @@ public class DropBoxDao implements IMdcDao {
 	@Override
 	public void uploadPicture(File file) {
 		try {
-			DbxFile testFile = dbxFileSystem.create(new DbxPath("myFile.jpg"));
+			//DbxFile testFile = dbxFileSystem.create(new DbxPath("myFile.jpg"));
+			DbxFile testFile = dbxFileSystem.create(new DbxPath(file.getName()));
 			testFile.writeFromExistingFile(file, false);
 			testFile.close();
 		} catch (IOException e) {
@@ -65,6 +66,21 @@ public class DropBoxDao implements IMdcDao {
 		} finally {
 
 		}
+	}
+
+	@Override
+	public void uploadPicture(File file, String path) throws Exception {
+		try {
+			DbxFile testFile = dbxFileSystem.create(new DbxPath(path + file.getName()));
+			testFile.writeFromExistingFile(file, false);
+			testFile.close();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} finally {
+
+		}
+		
 	}
 
 }

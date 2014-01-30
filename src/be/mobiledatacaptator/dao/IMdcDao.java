@@ -10,5 +10,6 @@ public interface IMdcDao {
 	public List<String> getAllFilesFromPathWithExtension(String path, String extension, Boolean returnExtension) throws Exception;
 	public boolean existsFile(String path) throws Exception;
 	public void uploadPicture(File file) throws Exception;
+	public void uploadPicture(File file, String path) throws Exception;
 	
 }

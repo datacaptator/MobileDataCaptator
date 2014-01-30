@@ -10,8 +10,8 @@
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
-    <uses-permission android:name="android.permission.CAMERA"/>
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
+    <uses-permission android:name="android.permission.CAMERA" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
 
     <application
         android:name="be.mobiledatacaptator.MdcApplication"
@@ -65,6 +65,10 @@
             android:exported="false"
             android:label="Dropbox Sync" />
         <!-- ____________________________________________________________________________________________________ -->
+        <activity
+            android:name="be.mobiledatacaptator.TakePictureActivity"
+            android:label="@string/title_activity_take_picture" >
+        </activity>
     </application>
 
 </manifest>

@@ -26,6 +26,7 @@ import android.widget.Button;
 import android.widget.ListView;
 import android.widget.Toast;
 import be.mobiledatacaptator.R;
+import be.mobiledatacaptator.TakePictureActivity;
 import be.mobiledatacaptator.model.Fiche;
 import be.mobiledatacaptator.model.Project;
 import be.mobiledatacaptator.model.UnitOfWork;
@@ -205,7 +206,7 @@ public class SelectFicheActivity extends Activity implements OnClickListener {
 		try {
 			if (UnitOfWork.getInstance().getActiveFiche() != null) {
 
-				final Intent intent = new Intent(this, FicheActivity.class);
+				final Intent takePictureIntent = new Intent(this, TakePictureActivity.class);
 				if (unitOfWork.getDao().existsFile(UnitOfWork.getInstance().getActiveFiche().getPath())) {
 					DialogInterface.OnClickListener dialogClickListener = new DialogInterface.OnClickListener() {
 						@Override
@@ -215,8 +216,7 @@ public class SelectFicheActivity extends Activity implements OnClickListener {
 							// een fiche, en je deze fiche onmiddellijk opnieuw
 							// tracht te openen
 							case DialogInterface.BUTTON_POSITIVE:
-								myFotoIntent = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
-								startActivityForResult(myFotoIntent, cameraData);
+								startActivity(takePictureIntent);
 								break;
 							case DialogInterface.BUTTON_NEGATIVE:
 								// No button clicked
@@ -232,7 +232,7 @@ public class SelectFicheActivity extends Activity implements OnClickListener {
 					builder.setNegativeButton(R.string.no, dialogClickListener).setMessage(builderMessage)
 							.setPositiveButton(R.string.yes, dialogClickListener).show();
 				} else {
-					startActivity(intent);
+					//startActivity(intent);
 				}
 
 			} else {
@@ -279,7 +279,12 @@ public class SelectFicheActivity extends Activity implements OnClickListener {
 			
 			try {
 				MdcUtil.showToastShort("net voor dao!", getApplicationContext());	
-				unitOfWork.getDao().uploadPicture(newfile);
+				String path = project.getDataLocation();
+				MdcUtil.showToastShort(project.getDataLocation(), getApplicationContext());
+								
+				unitOfWork.getDao().uploadPicture(newfile, path);
+				//unitOfWork.getDao().uploadPicture(newfile, "DataCaptator/AppData/Pidpa/Bonheiden");
+				//unitOfWork.getDao().uploadPicture(newfile);
 			} catch (InvalidPathException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
