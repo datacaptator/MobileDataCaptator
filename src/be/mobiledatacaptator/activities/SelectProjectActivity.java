@@ -2,12 +2,15 @@ package be.mobiledatacaptator.activities;
 
 import java.io.ByteArrayInputStream;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
@@ -23,6 +26,7 @@ import android.widget.Button;
 import android.widget.ListView;
 import be.mobiledatacaptator.R;
 import be.mobiledatacaptator.dao.StartDropBoxApi;
+import be.mobiledatacaptator.model.ChoiceItem;
 import be.mobiledatacaptator.model.Project;
 import be.mobiledatacaptator.model.UnitOfWork;
 import be.mobiledatacaptator.utilities.MdcUtil;
@@ -66,6 +70,15 @@ public class SelectProjectActivity extends Activity {
 			@Override
 			public void onClick(View v) {
 				if (UnitOfWork.getInstance().getActiveProject() != null) {
+					try {
+						if (unitOfWork.getActiveProject().isPictureFunctionalityEnabled()) {
+							MdcUtil.showToastLong("pictureEnabled", getApplicationContext());
+						}
+					} catch (Exception e) {
+						MdcUtil.showToastShort(e.getMessage(), getApplicationContext());
+
+					}
+
 					Intent intent = new Intent(v.getContext(), SelectFicheActivity.class);
 					startActivity(intent);
 				} else {
@@ -88,11 +101,11 @@ public class SelectProjectActivity extends Activity {
 			NodeList forms = root.getElementsByTagName("Project");
 			for (int i = 0; i < forms.getLength(); i++) {
 				Project myProject = new Project();
-				Node n = forms.item(i);
+				Node projectNode = forms.item(i);
 
-				myProject.setName(n.getAttributes().getNamedItem("Naam").getNodeValue());
+				myProject.setName(projectNode.getAttributes().getNamedItem("Naam").getNodeValue());
 
-				NodeList listChilds = n.getChildNodes();
+				NodeList listChilds = projectNode.getChildNodes();
 				for (int j = 0; j < listChilds.getLength(); j++) {
 					Node child = listChilds.item(j);
 					if (child.getNodeType() == Node.ELEMENT_NODE) {
@@ -108,6 +121,25 @@ public class SelectProjectActivity extends Activity {
 						}
 						if (childName.equalsIgnoreCase("Template")) {
 							myProject.setTemplate(childValue);
+
+						}
+						// TODO - onderstaande code bepaalt of een project fotocategories heeft
+						if (childName.equalsIgnoreCase("FotoCategories")) {
+							NodeList categories = ((Element) projectNode).getElementsByTagName("FotoCategories");
+							for (int k = 0; k < categories.getLength(); k++) {
+								Node categorieNode = categories.item(k);
+
+								NodeList temp = ((Element) categorieNode).getElementsByTagName("FotoCategorie");
+								if (temp.getLength() > 0) {
+									Map<String, String> fotoCategories = new HashMap<String, String>();
+									for (int l = 0; l < temp.getLength(); l++) {
+										Node fotoCategorieNode = temp.item(l);
+										fotoCategories.put(fotoCategorieNode.getAttributes().getNamedItem("suffix").getNodeValue(),
+												fotoCategorieNode.getTextContent());
+									}
+									myProject.setFotoCategories(fotoCategories);
+								}
+							}
 						}
 					}
 				}
@@ -122,7 +154,7 @@ public class SelectProjectActivity extends Activity {
 			listViewProjects.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
 
 		} catch (Exception e) {
-			MdcUtil.showToastShort(e.getLocalizedMessage(), getApplicationContext());
+			MdcUtil.showToastLong(e.getLocalizedMessage(), getApplicationContext());
 		}
 	}
 

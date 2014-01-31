@@ -66,7 +66,7 @@
             android:label="Dropbox Sync" />
         <!-- ____________________________________________________________________________________________________ -->
         <activity
-            android:name="be.mobiledatacaptator.TakePictureActivity"
+            android:name="be.mobiledatacaptator.activities.TakePictureActivity"
             android:label="@string/title_activity_take_picture" >
         </activity>
     </application>

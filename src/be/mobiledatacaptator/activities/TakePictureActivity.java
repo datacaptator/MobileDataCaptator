@@ -1,4 +1,4 @@
-package be.mobiledatacaptator;
+package be.mobiledatacaptator.activities;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -12,6 +12,9 @@ import android.os.Environment;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
+import be.mobiledatacaptator.R;
+import be.mobiledatacaptator.R.id;
+import be.mobiledatacaptator.R.layout;
 import be.mobiledatacaptator.model.Project;
 import be.mobiledatacaptator.model.UnitOfWork;
 import be.mobiledatacaptator.utilities.MdcUtil;

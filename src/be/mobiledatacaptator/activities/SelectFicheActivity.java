@@ -26,7 +26,6 @@ import android.widget.Button;
 import android.widget.ListView;
 import android.widget.Toast;
 import be.mobiledatacaptator.R;
-import be.mobiledatacaptator.TakePictureActivity;
 import be.mobiledatacaptator.model.Fiche;
 import be.mobiledatacaptator.model.Project;
 import be.mobiledatacaptator.model.UnitOfWork;

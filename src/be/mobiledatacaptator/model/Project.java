@@ -1,5 +1,8 @@
 package be.mobiledatacaptator.model;
 
+import java.util.HashMap;
+import java.util.Map;
+
 
 public class Project {
 
@@ -7,6 +10,11 @@ public class Project {
 	private String filePrefix;
 	private String dataLocation;
 	private String template;
+	
+	// TODO - een project heeft fotocategorie of niet
+	private boolean pictureFunctionalityEnabled;// 
+	private Map <String,String> fotoCategories = new HashMap<String,String>();
+
 
 	public String getName() {
 		return name;
@@ -38,6 +46,23 @@ public class Project {
 
 	public void setTemplate(String template) {
 		this.template = template;
+	}
+
+	public Map <String,String> getFotoCategories() {
+		return fotoCategories;
+	}
+
+	public void setFotoCategories(Map <String,String> fotoCategories) {
+		this.fotoCategories = fotoCategories;
+		setPictureFunctionalityEnabled(true);
+	}
+
+	public boolean isPictureFunctionalityEnabled() {
+		return pictureFunctionalityEnabled;
+	}
+
+	public void setPictureFunctionalityEnabled(boolean pictureFunctionalityEnabled) {
+		this.pictureFunctionalityEnabled = pictureFunctionalityEnabled;
 	}
 
 	@Override
