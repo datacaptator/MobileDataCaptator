@@ -13,6 +13,7 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.Spinner;
 import be.mobiledatacaptator.R;
 import be.mobiledatacaptator.model.FotoCategorie;
@@ -24,19 +25,26 @@ public class TakePictureActivity extends Activity implements OnClickListener {
 
 	private Project project;
 	private UnitOfWork unitOfWork;
+	private EditText editTextSelectFotoType;
 	private Button buttonTakePicture;
 	private Spinner spinnerFotoCategories;
 	private Bitmap bitMap;
 	final static int cameraData = 0;
 	private Intent startCameraIntent;
+	private String ficheName;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_take_picture);
 
+		editTextSelectFotoType = (EditText) findViewById(R.id.editTextSelectFotoType);
 		buttonTakePicture = (Button) findViewById(R.id.buttonTakePicture);
 		spinnerFotoCategories = (Spinner) findViewById(R.id.spinnerPictureCategories);
+		
+		ficheName =  getIntent().getExtras().getString("ficheName");
+		editTextSelectFotoType.setText(ficheName);
+		
 		
 		buttonTakePicture.setOnClickListener(this);
 
@@ -52,11 +60,11 @@ public class TakePictureActivity extends Activity implements OnClickListener {
 		spinnerFotoCategories.setAdapter(adapter);
 		
 		
-		
+		setTitle(project.getName() + " - " + ficheName);
 		
 		
 
-		setTitle(project.getName());
+		//setTitle(project.getName());
 	}
 
 	// TODO - code verder te verfijnen -> upload to dropbox werkt!

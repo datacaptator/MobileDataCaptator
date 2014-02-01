@@ -40,7 +40,7 @@ public class SelectFicheActivity extends Activity implements OnClickListener {
 	private Project project;
 	private ListView listViewFiches;
 	private UnitOfWork unitOfWork;
-
+	private String ficheName = "";
 	Button buttonAddNumber;
 	Button buttonOpenFiche;
 	Button buttonOpenFoto;
@@ -150,15 +150,21 @@ public class SelectFicheActivity extends Activity implements OnClickListener {
 
 	@Override
 	public void onClick(View v) {
-
-		String tekst = editTextFicheName.getText().toString();
+		ficheName = editTextFicheName.getText().toString();
+		
 		unitOfWork.setActiveFiche(null);
 
-		if (tekst != null && !(tekst.equals(""))) {
+		if (ficheName != null && !(ficheName.equals(""))) {
 			Fiche fiche = new Fiche();
-			fiche.setName(project.getFilePrefix() + tekst);
+			fiche.setName(project.getFilePrefix() + ficheName);
 			fiche.setPath(project.getDataLocation() + fiche.getName() + ".xml");
 			unitOfWork.setActiveFiche(fiche);
+		
+			//TODO - Moet er steeds fichenaam opgegeven worden? - indien ja, hier het switch statement 
+		}
+		else{
+			//TODO -  Hier AlertDialog indien geen fiche geselecteerd!
+			
 		}
 
 		switch (v.getId()) {
@@ -185,11 +191,9 @@ public class SelectFicheActivity extends Activity implements OnClickListener {
 	}
 
 	private void increaseFicheNumber() {
-
-		String tekst = editTextFicheName.getText().toString();
-
-		if (tekst != null && !(tekst.equals(""))) {
-			String input = tekst;
+		if (ficheName != null && !(ficheName.equals(""))) {
+			
+			String input = ficheName;
 			String result = input;
 			Pattern p = Pattern.compile("[0-9]+$");
 			Matcher m = p.matcher(input);
@@ -251,6 +255,7 @@ public class SelectFicheActivity extends Activity implements OnClickListener {
 		try {
 			if (UnitOfWork.getInstance().getActiveFiche() != null) {
 
+				
 				final Intent takePictureIntent = new Intent(this, TakePictureActivity.class);
 				if (unitOfWork.getDao().existsFile(UnitOfWork.getInstance().getActiveFiche().getPath())) {
 					DialogInterface.OnClickListener dialogClickListener = new DialogInterface.OnClickListener() {
@@ -261,7 +266,9 @@ public class SelectFicheActivity extends Activity implements OnClickListener {
 							// een fiche, en je deze fiche onmiddellijk opnieuw
 							// tracht te openen
 							case DialogInterface.BUTTON_POSITIVE:
+								takePictureIntent.putExtra("ficheName", ficheName);
 								startActivity(takePictureIntent);
+								
 								break;
 							case DialogInterface.BUTTON_NEGATIVE:
 								// No button clicked
@@ -272,7 +279,7 @@ public class SelectFicheActivity extends Activity implements OnClickListener {
 
 					AlertDialog.Builder builder = new AlertDialog.Builder(this);
 
-					String ficheName = unitOfWork.getActiveFiche().getName();
+					
 					String builderMessage = getString(R.string.wil_u_aan_fiche) + " " + ficheName + " "
 							+ getString(R.string.een_foto_toevoegen);
 					builder.setNegativeButton(R.string.no, dialogClickListener).setMessage(builderMessage)
