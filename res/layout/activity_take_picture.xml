@@ -11,10 +11,10 @@
         android:layout_height="wrap_content" >
 
         <EditText
-            android:id="@+id/editTextSelectFotoType"
+            android:id="@+id/editTextFotoName"
             android:layout_height="match_parent"
             android:layout_gravity="center_vertical"
-            android:hint="@string/select_foto_type"
+            android:hint="@string/enter_foto_name"
             android:imeOptions="actionDone" />
 
         <Button
@@ -37,10 +37,22 @@
             android:layout_span="2" />
     </TableRow>
 
+ <TableRow
+        android:id="@+id/tableRow2"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="1" >
 
+        <ListView
+            android:id="@+id/listViewFotos"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_span="2" >
+        </ListView>
+    </TableRow>
 
     <TableRow
-        android:id="@+id/tableRow2"
+        android:id="@+id/tableRow3"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" >
 

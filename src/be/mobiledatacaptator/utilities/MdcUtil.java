@@ -1,5 +1,8 @@
 package be.mobiledatacaptator.utilities;
 
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 import android.content.Context;
 import android.widget.Toast;
 import be.mobiledatacaptator.R;
@@ -31,13 +34,33 @@ public class MdcUtil {
 	{
 		Project project = unitOfWork.getActiveProject();
 		String projectName = unitOfWork.getActiveProject().getName();
-        String ficheName = unitOfWork.getActiveFiche().getName().substring(project.getFilePrefix().length());	
+        String inputString = unitOfWork.getActiveFiche().getName().substring(project.getFilePrefix().length());	
         
-        return projectName + " - " + context.getString(R.string.fiche) + " " + ficheName;
+        return projectName + " - " + context.getString(R.string.fiche) + " " + inputString;
         
 		
 		
 	}
 
+	public String increaseNumber(String inputString) {
+		if (inputString != null && !(inputString.equals(""))) {
+			
+			String input = inputString;
+			String result = input;
+			Pattern p = Pattern.compile("[0-9]+$");
+			Matcher m = p.matcher(input);
+			if (m.find()) {
+				result = m.group();
+				int t = Integer.parseInt(result);
+				result = input.substring(0, input.length() - result.length()) + ++t;
+				return result;
+			} else {
+				return result + "1";
+			}
+
+		}
+		return null;
+	}
+	
 	
 }

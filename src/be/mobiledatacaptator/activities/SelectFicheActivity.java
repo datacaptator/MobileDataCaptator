@@ -266,7 +266,7 @@ public class SelectFicheActivity extends Activity implements OnClickListener {
 							// een fiche, en je deze fiche onmiddellijk opnieuw
 							// tracht te openen
 							case DialogInterface.BUTTON_POSITIVE:
-								takePictureIntent.putExtra("ficheName", ficheName);
+								takePictureIntent.putExtra("fotoName", project.getFilePrefix() + "_" + ficheName);
 								startActivity(takePictureIntent);
 								
 								break;
