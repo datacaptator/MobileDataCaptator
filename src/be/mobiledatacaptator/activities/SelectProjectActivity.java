@@ -2,15 +2,12 @@ package be.mobiledatacaptator.activities;
 
 import java.io.ByteArrayInputStream;
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
-import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
@@ -26,7 +23,6 @@ import android.widget.Button;
 import android.widget.ListView;
 import be.mobiledatacaptator.R;
 import be.mobiledatacaptator.dao.StartDropBoxApi;
-import be.mobiledatacaptator.model.ChoiceItem;
 import be.mobiledatacaptator.model.Project;
 import be.mobiledatacaptator.model.UnitOfWork;
 import be.mobiledatacaptator.utilities.MdcUtil;

@@ -5,8 +5,7 @@ public class FotoCategorie {
 	private String name;
 	private String suffix;
 	
-	
-	
+		
 	public FotoCategorie(String name, String suffix) {
 		this.name = name;
 		this.suffix = suffix;
@@ -27,5 +26,12 @@ public class FotoCategorie {
 	public void setSuffix(String suffix) {
 		this.suffix = suffix;
 	}
+
+	@Override
+	public String toString() {
+		return getName();
+	}
+	
+	
 
 }

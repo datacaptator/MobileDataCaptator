@@ -111,6 +111,7 @@ public class SelectFicheActivity extends Activity implements OnClickListener {
 				buttonOpenSchets.setVisibility(View.INVISIBLE);
 			}
 
+			//TODO - Robrecht zou je onderstaande code altijd uitvoeren of enkel als loadFotoActivity = true
 			NodeList nodes = root.getElementsByTagName("FotoCategorie");
 			for (int i = 0; i < nodes.getLength(); i++) {
 				Node node = nodes.item(i);

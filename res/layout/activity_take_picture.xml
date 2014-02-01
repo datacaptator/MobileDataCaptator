@@ -31,36 +31,16 @@
         android:layout_height="wrap_content" >
 
         <Spinner
-            android:id="@+id/spinner1"
+            android:id="@+id/spinnerPictureCategories"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_span="2" />
     </TableRow>
 
+
+
     <TableRow
         android:id="@+id/tableRow2"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_weight="1" >
-
-        <ScrollView
-            android:id="@+id/queryScrollView"
-            android:layout_width="match_parent"
-            android:layout_span="2"
-            android:padding="5dp" >
-
-            <TableLayout
-                android:id="@+id/queryTableLayout"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:padding="5dp"
-                android:stretchColumns="*" >
-            </TableLayout>
-        </ScrollView>
-    </TableRow>
-
-    <TableRow
-        android:id="@+id/tableRow3"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" >
 

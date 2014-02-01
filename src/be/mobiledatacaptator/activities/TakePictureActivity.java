@@ -11,10 +11,11 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.Spinner;
 import be.mobiledatacaptator.R;
-import be.mobiledatacaptator.R.id;
-import be.mobiledatacaptator.R.layout;
+import be.mobiledatacaptator.model.FotoCategorie;
 import be.mobiledatacaptator.model.Project;
 import be.mobiledatacaptator.model.UnitOfWork;
 import be.mobiledatacaptator.utilities.MdcUtil;
@@ -23,23 +24,37 @@ public class TakePictureActivity extends Activity implements OnClickListener {
 
 	private Project project;
 	private UnitOfWork unitOfWork;
-
 	private Button buttonTakePicture;
-	// foto
+	private Spinner spinnerFotoCategories;
 	private Bitmap bitMap;
 	final static int cameraData = 0;
-	private Intent myFotoIntent;
-	
+	private Intent startCameraIntent;
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_take_picture);
 
 		buttonTakePicture = (Button) findViewById(R.id.buttonTakePicture);
+		spinnerFotoCategories = (Spinner) findViewById(R.id.spinnerPictureCategories);
+		
 		buttonTakePicture.setOnClickListener(this);
 
 		unitOfWork = UnitOfWork.getInstance();
 		project = unitOfWork.getActiveProject();
+		
+		for (FotoCategorie fotoCategorie : project.getFotoCategories()) {
+			MdcUtil.showToastLong(fotoCategorie.getName(), getApplicationContext());
+		}
+		
+		ArrayAdapter<FotoCategorie> adapter = new ArrayAdapter<FotoCategorie>(this,
+				android.R.layout.simple_spinner_dropdown_item, project.getFotoCategories());
+		spinnerFotoCategories.setAdapter(adapter);
+		
+		
+		
+		
+		
 
 		setTitle(project.getName());
 	}
@@ -73,18 +88,13 @@ public class TakePictureActivity extends Activity implements OnClickListener {
 				bitMap.compress(Bitmap.CompressFormat.JPEG, 85, fos);
 				fos.flush();
 				fos.close();
-				
-//				unitOfWork.getDao().uploadPicture(newfile);
-//				MdcUtil.showToastLong("DataLocation = " + project.getDataLocation(), getApplicationContext());
-//				
-				
-				MdcUtil.showToastShort("net voor dao!", getApplicationContext());	
+
+				MdcUtil.showToastShort("net voor dao!", getApplicationContext());
 				String path = project.getDataLocation();
 				MdcUtil.showToastShort(project.getDataLocation(), getApplicationContext());
-								
+
 				unitOfWork.getDao().uploadPicture(newfile, path);
-				
-				
+
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -93,40 +103,22 @@ public class TakePictureActivity extends Activity implements OnClickListener {
 				e.printStackTrace();
 			}
 
-//			try {
-//
-//				unitOfWork.getDao().uploadPicture(newfile);
-//				MdcUtil.showToastLong("DataLocation = " + project.getDataLocation(), getApplicationContext());
-//
-//				// unitOfWork.getDao().uploadPicture("DataCaptator/AppData/Pidpa/Bonheiden", newfile);
-//			} catch (InvalidPathException e) {
-//				// TODO Auto-generated catch block
-//				e.printStackTrace();
-//			} catch (Exception e) {
-//				// TODO Auto-generated catch block
-//				e.printStackTrace();
-//			}
-
 		}
 	}
-	
-	
+
 	@Override
 	public void onClick(View v) {
 
 		switch (v.getId()) {
 		case R.id.buttonTakePicture:
-			myFotoIntent = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
-			startActivityForResult(myFotoIntent, cameraData);
+			startCameraIntent = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
+			startActivityForResult(startCameraIntent, cameraData);
 			break;
 
 		default:
 			break;
 		}
-		
-		
-		
-	}
 
+	}
 
 }
