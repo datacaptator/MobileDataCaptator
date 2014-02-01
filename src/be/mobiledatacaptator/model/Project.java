@@ -1,8 +1,7 @@
 package be.mobiledatacaptator.model;
 
-import java.util.HashMap;
-import java.util.Map;
-
+import java.util.ArrayList;
+import java.util.List;
 
 public class Project {
 
@@ -10,11 +9,9 @@ public class Project {
 	private String filePrefix;
 	private String dataLocation;
 	private String template;
-	
-	// TODO - een project heeft fotocategorie of niet
-	private boolean pictureFunctionalityEnabled;// 
-	private Map <String,String> fotoCategories = new HashMap<String,String>();
-
+	private boolean LoadFotoActivity;
+	private boolean LoadSchetsActivity;
+	private List<FotoCategorie> fotoCategories = new ArrayList<FotoCategorie>();
 
 	public String getName() {
 		return name;
@@ -37,6 +34,8 @@ public class Project {
 	}
 
 	public void setDataLocation(String dataLocation) {
+		if (!(dataLocation.endsWith("/")))
+			dataLocation += "/";
 		this.dataLocation = dataLocation;
 	}
 
@@ -48,21 +47,28 @@ public class Project {
 		this.template = template;
 	}
 
-	public Map <String,String> getFotoCategories() {
+	public boolean isLoadFotoActivity() {
+		return LoadFotoActivity;
+	}
+
+	public void setLoadFotoActivity(boolean loadFotoActivity) {
+		LoadFotoActivity = loadFotoActivity;
+	}
+
+	public List<FotoCategorie> getFotoCategories() {
 		return fotoCategories;
 	}
 
-	public void setFotoCategories(Map <String,String> fotoCategories) {
+	public void setFotoCategories(List<FotoCategorie> fotoCategories) {
 		this.fotoCategories = fotoCategories;
-		setPictureFunctionalityEnabled(true);
 	}
 
-	public boolean isPictureFunctionalityEnabled() {
-		return pictureFunctionalityEnabled;
+	public boolean isLoadSchetsActivity() {
+		return LoadSchetsActivity;
 	}
 
-	public void setPictureFunctionalityEnabled(boolean pictureFunctionalityEnabled) {
-		this.pictureFunctionalityEnabled = pictureFunctionalityEnabled;
+	public void setLoadSchetsActivity(boolean loadSchetsActivity) {
+		LoadSchetsActivity = loadSchetsActivity;
 	}
 
 	@Override

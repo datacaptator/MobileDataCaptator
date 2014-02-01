@@ -1,21 +1,23 @@
 package be.mobiledatacaptator.activities;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.ByteArrayInputStream;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.os.Bundle;
-import android.os.Environment;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -23,15 +25,15 @@ import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.Toast;
 import be.mobiledatacaptator.R;
 import be.mobiledatacaptator.model.Fiche;
+import be.mobiledatacaptator.model.FotoCategorie;
 import be.mobiledatacaptator.model.Project;
 import be.mobiledatacaptator.model.UnitOfWork;
 import be.mobiledatacaptator.utilities.MdcUtil;
-
-import com.dropbox.sync.android.DbxPath.InvalidPathException;
 
 public class SelectFicheActivity extends Activity implements OnClickListener {
 
@@ -39,10 +41,11 @@ public class SelectFicheActivity extends Activity implements OnClickListener {
 	private ListView listViewFiches;
 	private UnitOfWork unitOfWork;
 
-	// foto
-	private Bitmap bitMap;
-	final static int cameraData = 0;
-	private Intent myFotoIntent;
+	Button buttonAddNumber;
+	Button buttonOpenFiche;
+	Button buttonOpenFoto;
+	Button buttonOpenSchets;
+	EditText editTextFicheName;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -56,21 +59,19 @@ public class SelectFicheActivity extends Activity implements OnClickListener {
 
 		listViewFiches = (ListView) findViewById(R.id.listViewFiches);
 
-		Button buttonAddNumber = (Button) findViewById(R.id.buttonAddNumber);
-		Button buttonOpenFiche = (Button) findViewById(R.id.buttonOpenFiche);
-		Button buttonOpenFoto = (Button) findViewById(R.id.buttonOpenFoto);
-		Button buttonOpenSchets = (Button) findViewById(R.id.buttonOpenSchets);
+		buttonAddNumber = (Button) findViewById(R.id.buttonAddNumber);
+		buttonOpenFiche = (Button) findViewById(R.id.buttonOpenFiche);
+		buttonOpenFoto = (Button) findViewById(R.id.buttonOpenFoto);
+		buttonOpenSchets = (Button) findViewById(R.id.buttonOpenSchets);
+		editTextFicheName = (EditText) findViewById(R.id.editTextFicheName);
 
 		buttonAddNumber.setOnClickListener(this);
 		buttonOpenFiche.setOnClickListener(this);
 		buttonOpenFoto.setOnClickListener(this);
 		buttonOpenSchets.setOnClickListener(this);
 
+		loadProjectData();
 		loadDataFiches();
-
-		// foto
-		InputStream inputStream = getResources().openRawResource(R.drawable.ic_launcher);
-		bitMap = BitmapFactory.decodeStream(inputStream);
 
 	}
 
@@ -86,11 +87,50 @@ public class SelectFicheActivity extends Activity implements OnClickListener {
 		return (super.onOptionsItemSelected(item));
 	}
 
+	private void loadProjectData() {
+		try {
+			String xml = unitOfWork.getDao().getFilecontent(unitOfWork.getActiveProject().getTemplate());
+
+			DocumentBuilder db = DocumentBuilderFactory.newInstance().newDocumentBuilder();
+			Document dom = db.parse(new ByteArrayInputStream(xml.getBytes()));
+
+			Element root = dom.getDocumentElement();
+
+			project.setDataLocation(root.getAttribute("DataLocatie"));
+			project.setFilePrefix(root.getAttribute("FilePrefix"));
+
+			project.setLoadFotoActivity(true);
+			if (!(root.getAttribute("LoadFotoActivity").equals("true"))) {
+				project.setLoadFotoActivity(false);
+				buttonOpenFoto.setVisibility(View.INVISIBLE);
+			}
+
+			project.setLoadSchetsActivity(true);
+			if (!(root.getAttribute("LoadSchetsActivity").equals("true"))) {
+				project.setLoadSchetsActivity(false);
+				buttonOpenSchets.setVisibility(View.INVISIBLE);
+			}
+
+			NodeList nodes = root.getElementsByTagName("FotoCategorie");
+			for (int i = 0; i < nodes.getLength(); i++) {
+				Node node = nodes.item(i);
+				project.getFotoCategories().add(
+						new FotoCategorie(((Element) node).getAttribute("Name"), ((Element) node)
+								.getAttribute("Suffix")));
+			}
+
+		} catch (Exception e) {
+			MdcUtil.showToastShort(e.getMessage(), this);
+		}
+	}
+
 	private void loadDataFiches() {
 		try {
-			List<String> listDataFicheNamen = unitOfWork.getDao().getAllFilesFromPathWithExtension(project.getDataLocation(), ".xml", false);
+			List<String> listDataFicheNamen = unitOfWork.getDao().getAllFilesFromPathWithExtension(
+					project.getDataLocation(), ".xml", false);
 
-			ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_single_choice, listDataFicheNamen);
+			ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1,
+					listDataFicheNamen);
 			listViewFiches.setAdapter(adapter);
 			listViewFiches.setItemsCanFocus(true);
 			listViewFiches.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
@@ -98,24 +138,28 @@ public class SelectFicheActivity extends Activity implements OnClickListener {
 				@Override
 				public void onItemClick(AdapterView<?> arg0, View arg1, int indexListItem, long arg3) {
 					String textListItem = (String) listViewFiches.getItemAtPosition(indexListItem);
-
-					Fiche fiche = new Fiche();
-					fiche.setName(textListItem);
-					fiche.setPath(project.getDataLocation() + textListItem + ".xml");
-
-					unitOfWork.setActiveFiche(fiche);
-
-					setTitle(MdcUtil.setActivityTitle(unitOfWork, getApplicationContext()));
+					editTextFicheName.setText(textListItem.substring(project.getFilePrefix().length()));
 				}
 			});
 
 		} catch (Exception e) {
-			MdcUtil.showToastShort(e.getMessage(), getApplicationContext());
+			MdcUtil.showToastShort(R.string.LoadFiches_error + e.getMessage(), getApplicationContext());
 		}
 	}
 
 	@Override
 	public void onClick(View v) {
+
+		String tekst = editTextFicheName.getText().toString();
+		unitOfWork.setActiveFiche(null);
+
+		if (tekst != null && !(tekst.equals(""))) {
+			Fiche fiche = new Fiche();
+			fiche.setName(project.getFilePrefix() + tekst);
+			fiche.setPath(project.getDataLocation() + fiche.getName() + ".xml");
+			unitOfWork.setActiveFiche(fiche);
+		}
+
 		switch (v.getId()) {
 
 		case R.id.buttonAddNumber:
@@ -127,7 +171,6 @@ public class SelectFicheActivity extends Activity implements OnClickListener {
 			break;
 
 		case R.id.buttonOpenFoto:
-			// Toast.makeText(getApplicationContext(), "OpenFoto pressed", Toast.LENGTH_SHORT).show();
 			openFoto();
 			break;
 
@@ -141,22 +184,23 @@ public class SelectFicheActivity extends Activity implements OnClickListener {
 	}
 
 	private void increaseFicheNumber() {
-		String ficheName = unitOfWork.getActiveFiche().getName();
-		String input = ficheName.substring(project.getFilePrefix().length());
-		String result = input;
-		Pattern p = Pattern.compile("[0-9]+$");
-		Matcher m = p.matcher(input);
-		if (m.find()) {
-			result = m.group();
-			int t = Integer.parseInt(result);
-			result = input.substring(0, input.length() - result.length()) + ++t;
 
-			Fiche fiche = new Fiche();
-			fiche.setName(project.getFilePrefix() + result);
-			fiche.setPath(project.getDataLocation() + fiche.getName() + ".xml");
-			UnitOfWork.getInstance().setActiveFiche(fiche);
+		String tekst = editTextFicheName.getText().toString();
 
-			setTitle(project.getName() + " - " + getString(R.string.fiche) + " " + result);
+		if (tekst != null && !(tekst.equals(""))) {
+			String input = tekst;
+			String result = input;
+			Pattern p = Pattern.compile("[0-9]+$");
+			Matcher m = p.matcher(input);
+			if (m.find()) {
+				result = m.group();
+				int t = Integer.parseInt(result);
+				result = input.substring(0, input.length() - result.length()) + ++t;
+				editTextFicheName.setText(result);
+			} else {
+				editTextFicheName.setText(result + "1");
+			}
+
 		}
 	}
 
@@ -186,7 +230,8 @@ public class SelectFicheActivity extends Activity implements OnClickListener {
 					AlertDialog.Builder builder = new AlertDialog.Builder(this);
 
 					String ficheName = unitOfWork.getActiveFiche().getName();
-					String builderMessage = getString(R.string.wil_u_fiche) + " " + ficheName + " " + getString(R.string.openen);
+					String builderMessage = getString(R.string.wil_u_fiche) + " " + ficheName + " "
+							+ getString(R.string.openen);
 					builder.setNegativeButton(R.string.no, dialogClickListener).setMessage(builderMessage)
 							.setPositiveButton(R.string.yes, dialogClickListener).show();
 				} else {
@@ -227,11 +272,12 @@ public class SelectFicheActivity extends Activity implements OnClickListener {
 					AlertDialog.Builder builder = new AlertDialog.Builder(this);
 
 					String ficheName = unitOfWork.getActiveFiche().getName();
-					String builderMessage = getString(R.string.wil_u_aan_fiche) + " " + ficheName + " " + getString(R.string.een_foto_toevoegen);
+					String builderMessage = getString(R.string.wil_u_aan_fiche) + " " + ficheName + " "
+							+ getString(R.string.een_foto_toevoegen);
 					builder.setNegativeButton(R.string.no, dialogClickListener).setMessage(builderMessage)
 							.setPositiveButton(R.string.yes, dialogClickListener).show();
 				} else {
-					//startActivity(intent);
+					// startActivity(intent);
 				}
 
 			} else {
@@ -240,62 +286,6 @@ public class SelectFicheActivity extends Activity implements OnClickListener {
 		} catch (Exception e) {
 			MdcUtil.showToastShort(e.getLocalizedMessage(), getApplicationContext());
 		}
-	}
-
-	
-	// TODO - code verder te verfijnen -> upload to dropbox werkt!
-	@Override
-	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-		super.onActivityResult(requestCode, resultCode, data);
-
-		if (resultCode == RESULT_OK) {
-			Bundle extrasBundle = data.getExtras();
-
-			bitMap = (Bitmap) extrasBundle.get("data");
-
-			final String dir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES) + "/picFolder/";
-			File newdir = new File(dir);
-			newdir.mkdirs();
-
-			String file = dir + "myFile.jpg";
-			File newfile = new File(file);
-			try {
-				newfile.createNewFile();
-			} catch (IOException e) {
-			}
-
-			FileOutputStream fos;
-			try {
-				fos = new FileOutputStream(newfile);
-				bitMap.compress(Bitmap.CompressFormat.JPEG, 85, fos);
-				fos.flush();
-				fos.close();
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-
-			
-			try {
-				MdcUtil.showToastShort("net voor dao!", getApplicationContext());	
-				String path = project.getDataLocation();
-				MdcUtil.showToastShort(project.getDataLocation(), getApplicationContext());
-								
-				unitOfWork.getDao().uploadPicture(newfile, path);
-				//unitOfWork.getDao().uploadPicture(newfile, "DataCaptator/AppData/Pidpa/Bonheiden");
-				//unitOfWork.getDao().uploadPicture(newfile);
-			} catch (InvalidPathException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (Exception e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-
-			
-
-		}
-
 	}
 
 }

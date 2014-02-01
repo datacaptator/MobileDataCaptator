@@ -1,13 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
+    <!-- Algemeen -->
     <string name="app_name">Mobile DataCaptator</string>
     <string name="dropbox_location_projects">DataCaptator/AppData/Projects.xml</string>
-    <string name="select_project">Selecteer een Project</string>
     <string name="unknown_error">Niet nader omschreven fout</string>
+
+    <!-- SelectProjectActivity -->
+    <string name="select_project">Selecteer een Project</string>
     <string name="open_project">Open project</string>
     <string name="select_project_first">Selecteer eerst een Project!</string>
+    <string name="LoadProjects_error">Fout bij openen projecten </string>
+
+    <!-- SelectFicheActivity -->
     <string name="select_fiche">Selecteer een Fiche</string>
+    <string name="selected_fiche">Gekozen fiche:</string>
     <string name="button_open_fiche">Open Fiche</string>
     <string name="button_open_foto">Open Foto</string>
     <string name="button_open_schets">Open Schets</string>
@@ -20,12 +27,12 @@
     <string name="openen">openen?</string>
     <string name="wil_u_aan_fiche">Wil u aan fiche</string>
     <string name="een_foto_toevoegen">een foto toevoegen?</string>
+    <string name="LoadFiches_error">Fout bij laden fiches </string>
+
+    <!-- TakePictureActivity -->
     <string name="title_activity_take_picture">TakePictureActivity</string>
     <string name="button_take_picture">Neem Foto</string>
     <string name="select_foto_type">Selecteer het Type Foto</string>
     <string name="edit_foto_name">Bewerk</string>
-    
-    
-    
 
 </resources>

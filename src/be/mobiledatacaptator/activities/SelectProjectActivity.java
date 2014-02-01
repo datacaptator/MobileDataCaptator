@@ -51,7 +51,7 @@ public class SelectProjectActivity extends Activity {
 
 	private void start() {
 		unitOfWork = UnitOfWork.getInstance();
-
+		// TODO: Nakijken of actief project op null moet worden gezet.
 		setContentView(R.layout.activity_select_project);
 
 		listViewProjects = (ListView) findViewById(R.id.listViewProjects);
@@ -69,20 +69,12 @@ public class SelectProjectActivity extends Activity {
 		buttonOpenProject.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
+
 				if (UnitOfWork.getInstance().getActiveProject() != null) {
-					try {
-						if (unitOfWork.getActiveProject().isPictureFunctionalityEnabled()) {
-							MdcUtil.showToastLong("pictureEnabled", getApplicationContext());
-						}
-					} catch (Exception e) {
-						MdcUtil.showToastShort(e.getMessage(), getApplicationContext());
-
-					}
-
 					Intent intent = new Intent(v.getContext(), SelectFicheActivity.class);
 					startActivity(intent);
-				} else {
 
+				} else {
 					MdcUtil.showToastShort(getString(R.string.select_project_first), getApplicationContext());
 				}
 			}
@@ -103,58 +95,21 @@ public class SelectProjectActivity extends Activity {
 				Project myProject = new Project();
 				Node projectNode = forms.item(i);
 
-				myProject.setName(projectNode.getAttributes().getNamedItem("Naam").getNodeValue());
-
-				NodeList listChilds = projectNode.getChildNodes();
-				for (int j = 0; j < listChilds.getLength(); j++) {
-					Node child = listChilds.item(j);
-					if (child.getNodeType() == Node.ELEMENT_NODE) {
-						String childName = child.getNodeName();
-						String childValue = ((Element) child).getTextContent();
-						if (childName.equalsIgnoreCase("FilePrefix")) {
-							myProject.setFilePrefix(childValue);
-						}
-						if (childName.equalsIgnoreCase("DataLocatie")) {
-							if (!(childValue.endsWith("/")))
-								childValue += "/";
-							myProject.setDataLocation(childValue);
-						}
-						if (childName.equalsIgnoreCase("Template")) {
-							myProject.setTemplate(childValue);
-
-						}
-						// TODO - onderstaande code bepaalt of een project fotocategories heeft
-						if (childName.equalsIgnoreCase("FotoCategories")) {
-							NodeList categories = ((Element) projectNode).getElementsByTagName("FotoCategories");
-							for (int k = 0; k < categories.getLength(); k++) {
-								Node categorieNode = categories.item(k);
-
-								NodeList temp = ((Element) categorieNode).getElementsByTagName("FotoCategorie");
-								if (temp.getLength() > 0) {
-									Map<String, String> fotoCategories = new HashMap<String, String>();
-									for (int l = 0; l < temp.getLength(); l++) {
-										Node fotoCategorieNode = temp.item(l);
-										fotoCategories.put(fotoCategorieNode.getAttributes().getNamedItem("suffix").getNodeValue(),
-												fotoCategorieNode.getTextContent());
-									}
-									myProject.setFotoCategories(fotoCategories);
-								}
-							}
-						}
-					}
-				}
+				myProject.setName(projectNode.getAttributes().getNamedItem("Name").getNodeValue());
+				myProject.setTemplate(projectNode.getAttributes().getNamedItem("Template").getNodeValue());
 
 				projects.add(myProject);
 			}
 
-			ArrayAdapter<Project> myAdapter = new ArrayAdapter<Project>(this, android.R.layout.simple_list_item_single_choice, projects);
+			ArrayAdapter<Project> myAdapter = new ArrayAdapter<Project>(this,
+					android.R.layout.simple_list_item_single_choice, projects);
 
 			listViewProjects.setAdapter(myAdapter);
 			listViewProjects.setItemsCanFocus(true);
 			listViewProjects.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
 
 		} catch (Exception e) {
-			MdcUtil.showToastLong(e.getLocalizedMessage(), getApplicationContext());
+			MdcUtil.showToastLong(R.string.LoadProjects_error + e.getMessage(), getApplicationContext());
 		}
 	}
 

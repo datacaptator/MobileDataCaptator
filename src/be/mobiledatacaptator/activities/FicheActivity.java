@@ -43,189 +43,208 @@ import be.mobiledatacaptator.utilities.MdcUtil;
 
 public class FicheActivity extends FragmentActivity {
 
-    private UnitOfWork unitOfWork;
+	private UnitOfWork unitOfWork;
 
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
+	@Override
+	protected void onCreate(Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
 
-        unitOfWork = UnitOfWork.getInstance();
-        
-        setTitle(MdcUtil.setActivityTitle(unitOfWork, getApplicationContext()));
-        
-        LoadTemplate();
-        toonFiche();
-    }
+		unitOfWork = UnitOfWork.getInstance();
 
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case android.R.id.home:
-                finish();
-                return (true);
-        }
+		setTitle(MdcUtil.setActivityTitle(unitOfWork, getApplicationContext()));
 
-        return (super.onOptionsItemSelected(item));
-    }
+		LoadTemplate();
+		toonFiche();
+	}
 
-    private void LoadTemplate() {
-        try {
-            String xml = unitOfWork.getDao().getFilecontent(unitOfWork.getActiveProject().getTemplate());
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		switch (item.getItemId()) {
+		case android.R.id.home:
+			finish();
+			return (true);
+		}
 
-            DocumentBuilder db = DocumentBuilderFactory.newInstance().newDocumentBuilder();
-            Document dom = db.parse(new ByteArrayInputStream(xml.getBytes()));
+		return (super.onOptionsItemSelected(item));
+	}
 
-            Element root = dom.getDocumentElement();
-            NodeList groups = root.getElementsByTagName("Group");
-            for (int i = 0; i < groups.getLength(); i++) {
-                Node groupNode = groups.item(i);
-                Group group = new Group(groupNode.getAttributes().getNamedItem("Name").getNodeValue());
-                NodeList tabs = ((Element) groupNode).getElementsByTagName("Tab");
-                for (int j = 0; j < tabs.getLength(); j++) {
-                    Node tabNode = tabs.item(j);
-                    Tab tab = new Tab(tabNode.getAttributes().getNamedItem("Name").getNodeValue());
-                    NodeList fields = ((Element) tabNode).getElementsByTagName("Field");
-                    for (int k = 0; k < fields.getLength(); k++) {
-                        Node fieldNode = fields.item(k);
-                        NamedNodeMap attr = fieldNode.getAttributes();
-                        DataField dataField = new DataField();
-                        if (attr.getNamedItem("Name") != null)
-                            dataField.setName(attr.getNamedItem("Name").getNodeValue());
-                        if (attr.getNamedItem("Label") != null)
-                            dataField.setLabel(attr.getNamedItem("Label").getNodeValue());
-                        if (attr.getNamedItem("DefaultValue") != null)
-                            dataField.setDefaultValue(attr.getNamedItem("DefaultValue").getNodeValue());
-                        if (attr.getNamedItem("Required") != null)
-                            if (attr.getNamedItem("Required").getNodeValue().equals("Y"))
-                                dataField.setRequired(true);
+	@Override
+	protected void onStop() {
+		
+		//TEST
+		
+		String data = "";
 
-                        if (attr.getNamedItem("Type") != null) {
-                            String strType = attr.getNamedItem("Type").getNodeValue();
-                            if (strType.equals("Text"))
-                                dataField.setType(VeldType.TEXT);
-                            if (strType.equals("Choice"))
-                                dataField.setType(VeldType.CHOICE);
-                            if (strType.equals("Int"))
-                                dataField.setType(VeldType.INT);
-                            if (strType.equals("Double"))
-                                dataField.setType(VeldType.DOUBLE);
-                        }
+		for (Group g : unitOfWork.getActiveFiche().getGroups()) {
+			for (Tab t : g.getTabs()) {
+				for (DataField d : t.getDataFields()) {
+					data += d.getName() +": "  + d.getUiField().getValue() + "\r\n";
+				}
+			}
+		}
+		Toast.makeText(this, data, Toast.LENGTH_LONG).show();
+		super.onStop();
+	}
 
-                        NodeList temp = ((Element) fieldNode).getElementsByTagName("Choice");
-                        if (temp.getLength() > 0) {
-                            NodeList keuzes = ((Element) temp.item(0)).getElementsByTagName("W");
-                            for (int l = 0; l < keuzes.getLength(); l++) {
-                                Node keuzeNode = keuzes.item(l);
-                                dataField.getChoiceItems().add(
-                                        new ChoiceItem(Integer.parseInt(keuzeNode.getAttributes().getNamedItem("idn")
-                                                .getNodeValue()), keuzeNode.getTextContent()));
-                            }
-                        }
-                        dataField.setUiField(new UIField(this, dataField));
-                        tab.getDataFields().add(dataField);
-                    }
-                    group.getTabs().add(tab);
-                }
-                unitOfWork.getActiveFiche().getGroups().add(group);
-            }
+	private void LoadTemplate() {
+		try {
+			String xml = unitOfWork.getDao().getFilecontent(unitOfWork.getActiveProject().getTemplate());
 
-        } catch (Exception e) {
-            toonBoodschap(e.getMessage());
-        }
+			DocumentBuilder db = DocumentBuilderFactory.newInstance().newDocumentBuilder();
+			Document dom = db.parse(new ByteArrayInputStream(xml.getBytes()));
 
-    }
+			Element root = dom.getDocumentElement();
+			NodeList groups = root.getElementsByTagName("Group");
+			for (int i = 0; i < groups.getLength(); i++) {
+				Node groupNode = groups.item(i);
+				Group group = new Group(groupNode.getAttributes().getNamedItem("Name").getNodeValue());
+				NodeList tabs = ((Element) groupNode).getElementsByTagName("Tab");
+				for (int j = 0; j < tabs.getLength(); j++) {
+					Node tabNode = tabs.item(j);
+					Tab tab = new Tab(tabNode.getAttributes().getNamedItem("Name").getNodeValue());
+					NodeList fields = ((Element) tabNode).getElementsByTagName("Field");
+					for (int k = 0; k < fields.getLength(); k++) {
+						Node fieldNode = fields.item(k);
+						NamedNodeMap attr = fieldNode.getAttributes();
+						DataField dataField = new DataField();
+						if (attr.getNamedItem("Name") != null)
+							dataField.setName(attr.getNamedItem("Name").getNodeValue());
+						if (attr.getNamedItem("Label") != null)
+							dataField.setLabel(attr.getNamedItem("Label").getNodeValue());
+						if (attr.getNamedItem("DefaultValue") != null)
+							dataField.setDefaultValue(attr.getNamedItem("DefaultValue").getNodeValue());
+						if (attr.getNamedItem("Required") != null)
+							if (attr.getNamedItem("Required").getNodeValue().equals("Y"))
+								dataField.setRequired(true);
 
-    private void toonFiche() {
+						if (attr.getNamedItem("Type") != null) {
+							String strType = attr.getNamedItem("Type").getNodeValue();
+							if (strType.equals("Text"))
+								dataField.setType(VeldType.TEXT);
+							if (strType.equals("Choice"))
+								dataField.setType(VeldType.CHOICE);
+							if (strType.equals("Int"))
+								dataField.setType(VeldType.INT);
+							if (strType.equals("Double"))
+								dataField.setType(VeldType.DOUBLE);
+						}
 
-        setContentView(R.layout.activity_fiche);
-        final Context context = this;
+						NodeList temp = ((Element) fieldNode).getElementsByTagName("Choice");
+						if (temp.getLength() > 0) {
+							NodeList keuzes = ((Element) temp.item(0)).getElementsByTagName("W");
+							for (int l = 0; l < keuzes.getLength(); l++) {
+								Node keuzeNode = keuzes.item(l);
+								dataField.getChoiceItems().add(
+										new ChoiceItem(Integer.parseInt(keuzeNode.getAttributes().getNamedItem("idn")
+												.getNodeValue()), keuzeNode.getTextContent()));
+							}
+						}
+						dataField.setUiField(new UIField(this, dataField));
+						tab.getDataFields().add(dataField);
+					}
+					group.getTabs().add(tab);
+				}
+				unitOfWork.getActiveFiche().getGroups().add(group);
+			}
 
-        TabHost tabHost = (TabHost) findViewById(R.id.tabHost_Fiche);
-        tabHost.setup();
+		} catch (Exception e) {
+			toonBoodschap(e.getMessage());
+		}
 
-        for (final Group group : unitOfWork.getActiveFiche().getGroups()) {
-            TabSpec spec = tabHost.newTabSpec(group.getName());
-            spec.setIndicator(group.getName());
-            spec.setContent(new TabContentFactory() {
+	}
 
-                @Override
-                public View createTabContent(String tag) {
+	private void toonFiche() {
 
-                    ViewPager viewPager = new ViewPager(context);
-                    viewPager.setId(getUniqueId());
+		setContentView(R.layout.activity_fiche);
+		final Context context = this;
 
-                    FichePagerAdapter fichePagerAdapter = new FichePagerAdapter(getSupportFragmentManager());
-                    viewPager.setAdapter(fichePagerAdapter);
+		TabHost tabHost = (TabHost) findViewById(R.id.tabHost_Fiche);
+		tabHost.setup();
 
-                    PagerTitleStrip strip = new PagerTitleStrip(context);
-                    ViewPager.LayoutParams layoutParams = new ViewPager.LayoutParams();
-                    layoutParams.height = ViewPager.LayoutParams.WRAP_CONTENT;
-                    layoutParams.width = ViewPager.LayoutParams.MATCH_PARENT;
-                    layoutParams.gravity = Gravity.TOP;
-                    strip.setBackgroundResource(color.darker_gray);
-                    viewPager.addView(strip, layoutParams);
+		for (final Group group : unitOfWork.getActiveFiche().getGroups()) {
+			TabSpec spec = tabHost.newTabSpec(group.getName());
+			spec.setIndicator(group.getName());
+			spec.setContent(new TabContentFactory() {
 
-                    for (Tab tab : group.getTabs()) {
-                        TabFragment fragment = new TabFragment();
-                        fragment.setTab(tab);
-                        fichePagerAdapter.addItem(fragment);
-                    }
+				@Override
+				public View createTabContent(String tag) {
 
-                    return viewPager;
-                }
-            });
-            tabHost.addTab(spec);
-        }
+					ViewPager viewPager = new ViewPager(context);
+					viewPager.setId(getUniqueId());
 
-    }
+					FichePagerAdapter fichePagerAdapter = new FichePagerAdapter(getSupportFragmentManager());
+					viewPager.setAdapter(fichePagerAdapter);
 
-    private int getUniqueId() {
-        int i = 0;
-        Boolean isUnique = false;
-        do {
-            i++;
-            if (findViewById(i) == null)
-                isUnique = true;
-        } while (!(isUnique));
+					PagerTitleStrip strip = new PagerTitleStrip(context);
+					ViewPager.LayoutParams layoutParams = new ViewPager.LayoutParams();
+					layoutParams.height = ViewPager.LayoutParams.WRAP_CONTENT;
+					layoutParams.width = ViewPager.LayoutParams.MATCH_PARENT;
+					layoutParams.gravity = Gravity.TOP;
+					strip.setBackgroundResource(color.darker_gray);
+					viewPager.addView(strip, layoutParams);
 
-        return i;
-    }
+					for (Tab tab : group.getTabs()) {
+						TabFragment fragment = new TabFragment();
+						fragment.setTab(tab);
+						fichePagerAdapter.addItem(fragment);
+					}
 
-    private void toonBoodschap(String boodschap) {
+					return viewPager;
+				}
+			});
+			tabHost.addTab(spec);
+		}
 
-        if (boodschap == null || boodschap.equals("")) {
-            boodschap = "Niet nader omschreven fout";
-        }
-        Toast.makeText(getApplicationContext(), boodschap, Toast.LENGTH_SHORT).show();
-    }
+	}
 
-    public static class TabFragment extends Fragment {
+	private int getUniqueId() {
+		int i = 0;
+		Boolean isUnique = false;
+		do {
+			i++;
+			if (findViewById(i) == null)
+				isUnique = true;
+		} while (!(isUnique));
 
-        private Tab tab;
+		return i;
+	}
 
-        @Override
-        public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+	private void toonBoodschap(String boodschap) {
 
-            ScrollView scrollView = new ScrollView(getActivity());
-            TableLayout tableLayout = new TableLayout(getActivity());
-            if (tab != null) {
-                for (DataField dataField : tab.getDataFields()) {
-                    tableLayout.addView(dataField.getUiField());
-                }
-            }
-            tableLayout.setColumnStretchable(1, true);
-            scrollView.addView(tableLayout);
-            return scrollView;
+		if (boodschap == null || boodschap.equals("")) {
+			boodschap = "Niet nader omschreven fout";
+		}
+		Toast.makeText(getApplicationContext(), boodschap, Toast.LENGTH_SHORT).show();
+	}
 
-        }
+	public static class TabFragment extends Fragment {
 
-        public Tab getTab() {
-            return tab;
-        }
+		private Tab tab;
 
-        public void setTab(Tab tab) {
-            this.tab = tab;
-        }
+		@Override
+		public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
-    }
+			ScrollView scrollView = new ScrollView(getActivity());
+			TableLayout tableLayout = new TableLayout(getActivity());
+			if (tab != null) {
+				for (DataField dataField : tab.getDataFields()) {
+					tableLayout.addView(dataField.getUiField());
+				}
+			}
+			tableLayout.setColumnStretchable(1, true);
+			scrollView.addView(tableLayout);
+			return scrollView;
+
+		}
+
+		public Tab getTab() {
+			return tab;
+		}
+
+		public void setTab(Tab tab) {
+			this.tab = tab;
+		}
+
+	}
+
 }

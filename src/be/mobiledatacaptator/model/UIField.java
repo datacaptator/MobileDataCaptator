@@ -19,13 +19,14 @@ public class UIField extends TableRow {
 
 	public UIField(Context context, DataField dataField) {
 		super(context);
-		
+
 		this.dataField = dataField;
 
 		// Label plaatsen
 		textViewLabel = new TextView(context);
-		textViewLabel.setText(dataField.getLabel()+": ");
-		//TODO : Field requires API level 14 (current min is 11): android.R.style#TextAppearance_DeviceDefault_Medium
+		textViewLabel.setText(dataField.getLabel() + ": ");
+		// TODO : Field requires API level 14 (current min is 11):
+		// android.R.style#TextAppearance_DeviceDefault_Medium
 		textViewLabel.setTextAppearance(context, android.R.style.TextAppearance_DeviceDefault_Medium);
 		addView(textViewLabel);
 
@@ -51,6 +52,18 @@ public class UIField extends TableRow {
 
 	public UIField(Context context, AttributeSet attrs) {
 		super(context, attrs);
+	}
+
+	public String getValue() {
+		if (dataField.getType().equals(VeldType.CHOICE))
+			return spinnerChoice.getSelectedItem().toString();
+		return editTextValue.getText().toString();
+	}
+
+	public int getId() {
+		if (dataField.getType().equals(VeldType.CHOICE))
+			return ((ChoiceItem) spinnerChoice.getSelectedItem()).getId();
+		return 0;
 	}
 
 }
