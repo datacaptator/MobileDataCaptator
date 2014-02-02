@@ -18,11 +18,11 @@
             android:imeOptions="actionDone" />
 
         <Button
-            android:id="@+id/editFotoName"
+            android:id="@+id/buttonEditFotoName"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
-            android:text="@string/edit_foto_name" />
+            android:text="@string/manual" />
     </TableRow>
 
     <TableRow

@@ -5,6 +5,7 @@
     <string name="app_name">Mobile DataCaptator</string>
     <string name="dropbox_location_projects">DataCaptator/AppData/Projects.xml</string>
     <string name="unknown_error">Niet nader omschreven fout</string>
+    <string name="ok">OK</string>
 
     <!-- SelectProjectActivity -->
     <string name="select_project">Selecteer een Project</string>
@@ -30,12 +31,11 @@
     <string name="LoadFiches_error">Fout bij laden fiches </string>
 
     <!-- TakePictureActivity -->
-    <string name="title_activity_take_picture">TakePictureActivity</string>
     <string name="enter_foto_name">Geef Foto-naam in</string>
     <string name="button_take_picture">Neem Foto</string>
-    <string name="select_foto_type">Selecteer Foto-Type</string>
-    <string name="edit_foto_name">Bewerk</string>
-    <string name="tpa_fiche"></string>
+    <string name="select_foto_type">Selecteer Type Foto</string>
+    <string name="auto">Auto</string>
+    <string name="manual">Man.</string>
+    <string name="name_photo_required">Geef een Foto-naam in aub!</string>
     
-
 </resources>

@@ -115,9 +115,21 @@ public class SelectFicheActivity extends Activity implements OnClickListener {
 			NodeList nodes = root.getElementsByTagName("FotoCategorie");
 			for (int i = 0; i < nodes.getLength(); i++) {
 				Node node = nodes.item(i);
-				project.getFotoCategories().add(
-						new FotoCategorie(((Element) node).getAttribute("Name"), ((Element) node)
-								.getAttribute("Suffix")));
+				//extra controle-inbouw of er reeds een zelfde categorie aanwezig - zoniet komt fotocategorie dubbel voor in Spinner-takePicture
+				FotoCategorie fotoCategorie = new FotoCategorie(((Element) node).getAttribute("Name"), ((Element) node).getAttribute("Suffix")); 
+				
+				if (!project.getFotoCategories().contains(fotoCategorie)) {
+					project.getFotoCategories().add(fotoCategorie);
+				}
+				
+				
+				
+				
+//				project.getFotoCategories().add(
+//						new FotoCategorie(((Element) node).getAttribute("Name"), ((Element) node)
+//								.getAttribute("Suffix")));
+//				
+				
 			}
 
 		} catch (Exception e) {
