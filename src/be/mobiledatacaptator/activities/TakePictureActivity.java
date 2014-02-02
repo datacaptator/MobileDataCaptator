@@ -4,7 +4,10 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -41,73 +44,71 @@ public class TakePictureActivity extends Activity implements OnClickListener, On
 	private Intent startCameraIntent;
 	private String fotoName;
 	private List<String> listFotoNames;
-	
+	private List<String> listThisFicheFotoNames;
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_take_picture);
 
-		
 		unitOfWork = UnitOfWork.getInstance();
 		project = unitOfWork.getActiveProject();
-		
-		fotoName =  getIntent().getExtras().getString("fotoName");
-		
+
+		fotoName = getIntent().getExtras().getString("fotoName");
+
 		editTextFotoName = (EditText) findViewById(R.id.editTextFotoName);
 		spinnerFotoCategories = (Spinner) findViewById(R.id.spinnerPictureCategories);
 		buttonTakePicture = (Button) findViewById(R.id.buttonTakePicture);
 		listViewFotos = (ListView) findViewById(R.id.listViewFotos);
-		
+
 		buttonTakePicture.setOnClickListener(this);
-		
+
 		setTitle(MdcUtil.setActivityTitle(unitOfWork, getApplicationContext()));
-		
-		//extra code om 'select foto type' aan de spinner te kunnen toevoegen
+
+		// extra code om 'select foto type' aan de spinner te kunnen toevoegen
 		FotoCategorie selectTypeFoto = new FotoCategorie(getString(R.string.select_foto_type), "_");
 		if (!project.getFotoCategories().contains(selectTypeFoto)) {
 			project.getFotoCategories().add(selectTypeFoto);
-		} 
-				
-		ArrayAdapter<FotoCategorie> adapter = new ArrayAdapter<FotoCategorie>(this,
-				android.R.layout.simple_spinner_dropdown_item, project.getFotoCategories());
-		
+		}
+
+		ArrayAdapter<FotoCategorie> adapter = new ArrayAdapter<FotoCategorie>(this, android.R.layout.simple_spinner_dropdown_item,
+				project.getFotoCategories());
+
 		spinnerFotoCategories.setAdapter(adapter);
-		
+
 		int spinnerPosition = adapter.getPosition(selectTypeFoto);
 		spinnerFotoCategories.setSelection(spinnerPosition);
 		spinnerFotoCategories.setOnItemSelectedListener(this);
 
-		MdcUtil.showToastShort(fotoName, getApplicationContext());
-		
+		//MdcUtil.showToastShort(fotoName, getApplicationContext());
+
 		loadFotoNames();
 
 		editTextFotoName.setText(fotoName);
-	
+
 	}
 
 	private void loadFotoNames() {
 		try {
-			listFotoNames = unitOfWork.getDao().getAllFilesFromPathWithExtension(
-					project.getDataLocation(), ".jpg", false);
+			listFotoNames = unitOfWork.getDao().getAllFilesFromPathWithExtension(project.getDataLocation(), ".jpg", false);
 
-			List<String> startsWithFotoNameList = new ArrayList<String>();
-			
+			listThisFicheFotoNames = new ArrayList<String>();
+
 			for (String myFotoName : listFotoNames) {
 				if (myFotoName.startsWith(fotoName)) {
-					startsWithFotoNameList.add(myFotoName);
+					listThisFicheFotoNames.add(myFotoName);
 				}
 			}
-					
-			ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1,
-					startsWithFotoNameList);
+
+			ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, listThisFicheFotoNames);
 			listViewFotos.setAdapter(adapter);
 			listViewFotos.setItemsCanFocus(true);
 			listViewFotos.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
 			listViewFotos.setOnItemClickListener(new OnItemClickListener() {
 				@Override
 				public void onItemClick(AdapterView<?> arg0, View arg1, int indexListItem, long arg3) {
-				//String textListItem = (String) listViewFotos.getItemAtPosition(indexListItem);
-				//editTextFotoName.setText(fotoName + "_" + textListItem);
+					// String textListItem = (String) listViewFotos.getItemAtPosition(indexListItem);
+					// editTextFotoName.setText(fotoName + "_" + textListItem);
 				}
 			});
 
@@ -115,9 +116,7 @@ public class TakePictureActivity extends Activity implements OnClickListener, On
 			MdcUtil.showToastShort(R.string.LoadFiches_error + e.getMessage(), getApplicationContext());
 		}
 	}
-	
-	
-	
+
 	// TODO - code verder te verfijnen -> upload to dropbox werkt!
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -132,7 +131,7 @@ public class TakePictureActivity extends Activity implements OnClickListener, On
 			File newdir = new File(dir);
 			newdir.mkdirs();
 
-			String file = dir + editTextFotoName.getText().toString()+ ".jpg";
+			String file = dir + editTextFotoName.getText().toString() + ".jpg";
 			File newfile = new File(file);
 			try {
 				newfile.createNewFile();
@@ -155,7 +154,7 @@ public class TakePictureActivity extends Activity implements OnClickListener, On
 				unitOfWork.getDao().uploadPicture(newfile, path);
 
 				loadFotoNames();
-				
+
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -188,30 +187,67 @@ public class TakePictureActivity extends Activity implements OnClickListener, On
 		String tempFotoName = fotoName;
 		FotoCategorie selectedFotoCategorie = (FotoCategorie) parent.getItemAtPosition(itemPosition);
 		if (selectedFotoCategorie.getSuffix().equals("_")) {
-			if (!fotoName.substring(fotoName.length()-1, fotoName.length()).equals("_")) {
+			if (!fotoName.substring(fotoName.length() - 1, fotoName.length()).equals("_")) {
 				tempFotoName = fotoName + selectedFotoCategorie.getSuffix();
 			}
-		}
-		else
-		{
+		} else {
 			tempFotoName = fotoName + "_" + selectedFotoCategorie.getSuffix() + "_";
 		}
-		
-		
-		
+
+		if (listThisFicheFotoNames.size() == 0) {
+			tempFotoName = tempFotoName + "1";
+		} else {
+			int number = 0;
+			
+			if (!selectedFotoCategorie.getSuffix().equals("_")) {
+				List<Integer> numbers = new ArrayList<Integer>();
+				for (String thisFotoName : listThisFicheFotoNames) {
+					
+					if (thisFotoName.startsWith(tempFotoName) ) {
+						String numberFoto = thisFotoName.substring(tempFotoName.length());
+						
+						Pattern p = Pattern.compile("\\d+");
+						Matcher m = p.matcher(numberFoto);
+						while (m.find()) {
+							numbers.add(Integer.valueOf(m.group()));
+						}
+					}
+				}
+				
+				
+				try {
+					number = Collections.max(numbers) + 1;
+					//MdcUtil.showToastShort(selectedFotoCategorie.getSuffix() + ":" +  Collections.max(numbers).toString(), getApplicationContext());	
+				} catch (Exception e) {
+					number = 1;
+					//MdcUtil.showToastShort("geen nummer", getApplicationContext());
+				}
+				
+				
+			}
+			else // geen categorie selected
+			{
+				MdcUtil.showToastShort(selectedFotoCategorie.getSuffix()  , getApplicationContext());	
+			}
+			
+			
+			
+			tempFotoName = tempFotoName + number;
+			
+		}
+
 		editTextFotoName.setText(tempFotoName);
-		
-		//Hides the soft keyboard - normaal zou ik deze code als laatste bij onCreate zetten ... maar daar werkt het niet
+
+		// Hides the soft keyboard - normaal zou ik deze code als laatste bij onCreate zetten ... maar daar werkt het niet
 		InputMethodManager inputManager = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
 		inputManager.hideSoftInputFromWindow(editTextFotoName.getWindowToken(), 0);
-		
-		
+
 	}
 
 	@Override
 	public void onNothingSelected(AdapterView<?> arg0) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 }
