@@ -9,9 +9,9 @@ public class Project {
 	private String filePrefix;
 	private String dataLocation;
 	private String template;
-	private boolean LoadFotoActivity;
+	private boolean LoadPhotoActivity;
 	private boolean LoadSchetsActivity;
-	private List<FotoCategorie> fotoCategories = new ArrayList<FotoCategorie>();
+	private List<PhotoCategory> photoCategories = new ArrayList<PhotoCategory>();
 
 	public String getName() {
 		return name;
@@ -47,20 +47,20 @@ public class Project {
 		this.template = template;
 	}
 
-	public boolean isLoadFotoActivity() {
-		return LoadFotoActivity;
+	public boolean isLoadPhotoActivity() {
+		return LoadPhotoActivity;
 	}
 
-	public void setLoadFotoActivity(boolean loadFotoActivity) {
-		LoadFotoActivity = loadFotoActivity;
+	public void setLoadPhotoActivity(boolean loadFotoActivity) {
+		LoadPhotoActivity = loadFotoActivity;
 	}
 
-	public List<FotoCategorie> getFotoCategories() {
-		return fotoCategories;
+	public List<PhotoCategory> getPhotoCategories() {
+		return photoCategories;
 	}
 
-	public void setFotoCategories(List<FotoCategorie> fotoCategories) {
-		this.fotoCategories = fotoCategories;
+	public void setPhotoCategories(List<PhotoCategory> photoCategories) {
+		this.photoCategories = photoCategories;
 	}
 
 	public boolean isLoadSchetsActivity() {

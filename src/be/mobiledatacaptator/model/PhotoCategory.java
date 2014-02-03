@@ -1,12 +1,12 @@
 package be.mobiledatacaptator.model;
 
-public class FotoCategorie {
+public class PhotoCategory {
 	
 	private String name;
 	private String suffix;
 	
 		
-	public FotoCategorie(String name, String suffix) {
+	public PhotoCategory(String name, String suffix) {
 		this.name = name;
 		this.suffix = suffix;
 	}
@@ -45,7 +45,7 @@ public class FotoCategorie {
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
-		FotoCategorie other = (FotoCategorie) obj;
+		PhotoCategory other = (PhotoCategory) obj;
 		if (name == null) {
 			if (other.name != null)
 				return false;

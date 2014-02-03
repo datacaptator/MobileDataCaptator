@@ -3,14 +3,6 @@
     android:layout_height="fill_parent"
     android:orientation="vertical" >
 
-    <TextView
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:gravity="center"
-        android:text="@string/select_project"
-        android:textColor="@android:color/white"
-        android:textSize="@dimen/title_size" />
-
     <ListView
         android:id="@+id/listViewProjects"
         android:layout_width="match_parent"

@@ -14,7 +14,7 @@
             android:id="@+id/editTextFotoName"
             android:layout_height="match_parent"
             android:layout_gravity="center_vertical"
-            android:hint="@string/enter_foto_name"
+            android:hint="@string/enter_photo_name"
             android:imeOptions="actionDone" />
 
         <Button
@@ -62,7 +62,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="5dp"
             android:layout_span="2"
-            android:text="@string/button_take_picture" >
+            android:text="@string/button_take_photo" >
         </Button>
     </TableRow>
 

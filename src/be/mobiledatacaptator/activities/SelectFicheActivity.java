@@ -21,6 +21,7 @@ import android.os.Bundle;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
@@ -30,7 +31,7 @@ import android.widget.ListView;
 import android.widget.Toast;
 import be.mobiledatacaptator.R;
 import be.mobiledatacaptator.model.Fiche;
-import be.mobiledatacaptator.model.FotoCategorie;
+import be.mobiledatacaptator.model.PhotoCategory;
 import be.mobiledatacaptator.model.Project;
 import be.mobiledatacaptator.model.UnitOfWork;
 import be.mobiledatacaptator.utilities.MdcUtil;
@@ -50,12 +51,13 @@ public class SelectFicheActivity extends Activity implements OnClickListener {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+
 		setContentView(R.layout.activity_select_fiche);
 
 		unitOfWork = UnitOfWork.getInstance();
 		project = unitOfWork.getActiveProject();
 
-		setTitle(project.getName());
+		setTitle(getString(R.string.project) + " " + project.getName());
 
 		listViewFiches = (ListView) findViewById(R.id.listViewFiches);
 
@@ -72,6 +74,12 @@ public class SelectFicheActivity extends Activity implements OnClickListener {
 
 		loadProjectData();
 		loadDataFiches();
+
+		listViewFiches.requestFocus();
+
+		// Hides the soft keyboard
+		InputMethodManager inputManager = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
+		inputManager.hideSoftInputFromWindow(editTextFicheName.getWindowToken(), 0);
 
 	}
 
@@ -99,9 +107,9 @@ public class SelectFicheActivity extends Activity implements OnClickListener {
 			project.setDataLocation(root.getAttribute("DataLocatie"));
 			project.setFilePrefix(root.getAttribute("FilePrefix"));
 
-			project.setLoadFotoActivity(true);
+			project.setLoadPhotoActivity(true);
 			if (!(root.getAttribute("LoadFotoActivity").equals("true"))) {
-				project.setLoadFotoActivity(false);
+				project.setLoadPhotoActivity(false);
 				buttonOpenFoto.setVisibility(View.INVISIBLE);
 			}
 
@@ -111,25 +119,17 @@ public class SelectFicheActivity extends Activity implements OnClickListener {
 				buttonOpenSchets.setVisibility(View.INVISIBLE);
 			}
 
-			//TODO - Robrecht zou je onderstaande code altijd uitvoeren of enkel als loadFotoActivity = true
+			// TODO - Robrecht zou je onderstaande code altijd uitvoeren of enkel als loadFotoActivity = true
 			NodeList nodes = root.getElementsByTagName("FotoCategorie");
 			for (int i = 0; i < nodes.getLength(); i++) {
 				Node node = nodes.item(i);
-				//extra controle-inbouw of er reeds een zelfde categorie aanwezig - zoniet komt fotocategorie dubbel voor in Spinner-takePicture
-				FotoCategorie fotoCategorie = new FotoCategorie(((Element) node).getAttribute("Name"), ((Element) node).getAttribute("Suffix")); 
-				
-				if (!project.getFotoCategories().contains(fotoCategorie)) {
-					project.getFotoCategories().add(fotoCategorie);
+				// extra controle-inbouw of er reeds een zelfde categorie aanwezig - zoniet komt fotocategorie dubbel voor in
+				// Spinner-takePicture
+				PhotoCategory photoCategorie = new PhotoCategory(((Element) node).getAttribute("Name"), ((Element) node).getAttribute("Suffix"));
+
+				if (!project.getPhotoCategories().contains(photoCategorie)) {
+					project.getPhotoCategories().add(photoCategorie);
 				}
-				
-				
-				
-				
-//				project.getFotoCategories().add(
-//						new FotoCategorie(((Element) node).getAttribute("Name"), ((Element) node)
-//								.getAttribute("Suffix")));
-//				
-				
 			}
 
 		} catch (Exception e) {
@@ -139,11 +139,9 @@ public class SelectFicheActivity extends Activity implements OnClickListener {
 
 	private void loadDataFiches() {
 		try {
-			List<String> listDataFicheNamen = unitOfWork.getDao().getAllFilesFromPathWithExtension(
-					project.getDataLocation(), ".xml", false);
+			List<String> listDataFicheNamen = unitOfWork.getDao().getAllFilesFromPathWithExtension(project.getDataLocation(), ".xml", false);
 
-			ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1,
-					listDataFicheNamen);
+			ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, listDataFicheNamen);
 			listViewFiches.setAdapter(adapter);
 			listViewFiches.setItemsCanFocus(true);
 			listViewFiches.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
@@ -152,6 +150,7 @@ public class SelectFicheActivity extends Activity implements OnClickListener {
 				public void onItemClick(AdapterView<?> arg0, View arg1, int indexListItem, long arg3) {
 					String textListItem = (String) listViewFiches.getItemAtPosition(indexListItem);
 					editTextFicheName.setText(textListItem.substring(project.getFilePrefix().length()));
+					setTitle(getString(R.string.selected_fiche));
 				}
 			});
 
@@ -163,7 +162,7 @@ public class SelectFicheActivity extends Activity implements OnClickListener {
 	@Override
 	public void onClick(View v) {
 		ficheName = editTextFicheName.getText().toString();
-		
+
 		unitOfWork.setActiveFiche(null);
 
 		if (ficheName != null && !(ficheName.equals(""))) {
@@ -171,12 +170,11 @@ public class SelectFicheActivity extends Activity implements OnClickListener {
 			fiche.setName(project.getFilePrefix() + ficheName);
 			fiche.setPath(project.getDataLocation() + fiche.getName() + ".xml");
 			unitOfWork.setActiveFiche(fiche);
-		
-			//TODO - Moet er steeds fichenaam opgegeven worden? - indien ja, hier het switch statement 
-		}
-		else{
-			//TODO -  Hier AlertDialog indien geen fiche geselecteerd!
-			
+
+			// TODO - Moet er steeds fichenaam opgegeven worden? - indien ja, hier het switch statement
+		} else {
+			// TODO - Hier AlertDialog indien geen fiche geselecteerd!
+
 		}
 
 		switch (v.getId()) {
@@ -204,7 +202,7 @@ public class SelectFicheActivity extends Activity implements OnClickListener {
 
 	private void increaseFicheNumber() {
 		if (ficheName != null && !(ficheName.equals(""))) {
-			
+
 			String input = ficheName;
 			String result = input;
 			Pattern p = Pattern.compile("[0-9]+$");
@@ -231,9 +229,6 @@ public class SelectFicheActivity extends Activity implements OnClickListener {
 						@Override
 						public void onClick(DialogInterface dialog, int which) {
 							switch (which) {
-							// TODO : programma crasht als je bij terugkeer uit
-							// een fiche, en je deze fiche onmiddellijk opnieuw
-							// tracht te openen
 							case DialogInterface.BUTTON_POSITIVE:
 								startActivity(intent);
 								break;
@@ -247,8 +242,7 @@ public class SelectFicheActivity extends Activity implements OnClickListener {
 					AlertDialog.Builder builder = new AlertDialog.Builder(this);
 
 					String ficheName = unitOfWork.getActiveFiche().getName();
-					String builderMessage = getString(R.string.wil_u_fiche) + " " + ficheName + " "
-							+ getString(R.string.openen);
+					String builderMessage = getString(R.string.wil_u_fiche) + " " + ficheName + " " + getString(R.string.openen);
 					builder.setNegativeButton(R.string.no, dialogClickListener).setMessage(builderMessage)
 							.setPositiveButton(R.string.yes, dialogClickListener).show();
 				} else {
@@ -258,54 +252,17 @@ public class SelectFicheActivity extends Activity implements OnClickListener {
 			} else {
 				MdcUtil.showToastShort(getString(R.string.select_fiche_first), getApplicationContext());
 			}
+
 		} catch (Exception e) {
 			MdcUtil.showToastShort(e.getLocalizedMessage(), getApplicationContext());
 		}
 	}
 
 	private void openFoto() {
-		try {
-			if (UnitOfWork.getInstance().getActiveFiche() != null) {
 
-				
-				final Intent takePictureIntent = new Intent(this, TakePictureActivity.class);
-				if (unitOfWork.getDao().existsFile(UnitOfWork.getInstance().getActiveFiche().getPath())) {
-					DialogInterface.OnClickListener dialogClickListener = new DialogInterface.OnClickListener() {
-						@Override
-						public void onClick(DialogInterface dialog, int which) {
-							switch (which) {
-							// TODO : programma crasht als je bij terugkeer uit
-							// een fiche, en je deze fiche onmiddellijk opnieuw
-							// tracht te openen
-							case DialogInterface.BUTTON_POSITIVE:
-								takePictureIntent.putExtra("fotoName", project.getFilePrefix() + "_" + ficheName);
-								startActivity(takePictureIntent);
-								
-								break;
-							case DialogInterface.BUTTON_NEGATIVE:
-								// No button clicked
-								break;
-							}
-						}
-					};
-
-					AlertDialog.Builder builder = new AlertDialog.Builder(this);
-
-					
-					String builderMessage = getString(R.string.wil_u_aan_fiche) + " " + ficheName + " "
-							+ getString(R.string.een_foto_toevoegen);
-					builder.setNegativeButton(R.string.no, dialogClickListener).setMessage(builderMessage)
-							.setPositiveButton(R.string.yes, dialogClickListener).show();
-				} else {
-					// startActivity(intent);
-				}
-
-			} else {
-				MdcUtil.showToastShort(getString(R.string.select_fiche_first), getApplicationContext());
-			}
-		} catch (Exception e) {
-			MdcUtil.showToastShort(e.getLocalizedMessage(), getApplicationContext());
-		}
+		final Intent takePictureIntent = new Intent(this, TakePhotoActivity.class);
+		takePictureIntent.putExtra("fotoName", project.getFilePrefix() + ficheName);
+		startActivity(takePictureIntent);
 	}
 
 }

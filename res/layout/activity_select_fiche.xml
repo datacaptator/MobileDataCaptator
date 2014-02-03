@@ -7,16 +7,16 @@
 
     <TableRow
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:padding="5dp" >
+        android:layout_height="wrap_content" >
 
-        <TextView
-            android:id="@+id/textViewSelectFiche"
+        <EditText
+            android:id="@+id/editTextFicheName"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:layout_span="2"
-            android:gravity="center"
-            android:text="@string/select_fiche"
-            android:textColor="@android:color/white"
-            android:textSize="@dimen/title_size" />
+            android:ems="10"
+            android:hint="@string/select_fiche" >
+        </EditText>
     </TableRow>
 
     <TableRow
@@ -30,31 +30,6 @@
             android:layout_height="wrap_content"
             android:layout_span="2" >
         </ListView>
-    </TableRow>
-
-    <TableRow
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content" >
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_span="2"
-            android:background="@android:color/holo_blue_dark"
-            android:text="@string/selected_fiche" />
-    </TableRow>
-
-    <TableRow
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content" >
-
-        <EditText
-            android:id="@+id/editTextFicheName"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_span="2"
-            android:ems="10" >
-        </EditText>
     </TableRow>
 
     <TableRow
