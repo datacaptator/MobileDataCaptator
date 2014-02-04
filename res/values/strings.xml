@@ -34,9 +34,12 @@
     <!-- TakePhotoActivity -->
     <string name="enter_photo_name">Geef Foto-naam in</string>
     <string name="button_take_photo">Neem Foto</string>
-    <string name="select_photo_type">Selecteer Type Foto</string>
     <string name="auto">Auto</string>
     <string name="manual">Man.</string>
     <string name="name_photo_required">Geef een Foto-naam in aub!</string>
+    <string name="vrije_suffix">Vrije suffix</string>
+    <string name="button_vrije_suffix">Vrije suffix</string>
+    <string name="button_open_photo">Open</string>
+    <string name="button_delete_photo">Verwijder</string>
     
 </resources>

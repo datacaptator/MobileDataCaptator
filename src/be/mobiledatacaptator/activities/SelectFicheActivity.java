@@ -21,7 +21,6 @@ import android.os.Bundle;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
-import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
@@ -76,11 +75,7 @@ public class SelectFicheActivity extends Activity implements OnClickListener {
 		loadDataFiches();
 
 		listViewFiches.requestFocus();
-
-		// Hides the soft keyboard
-		InputMethodManager inputManager = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
-		inputManager.hideSoftInputFromWindow(editTextFicheName.getWindowToken(), 0);
-
+	
 	}
 
 	@Override
@@ -150,7 +145,7 @@ public class SelectFicheActivity extends Activity implements OnClickListener {
 				public void onItemClick(AdapterView<?> arg0, View arg1, int indexListItem, long arg3) {
 					String textListItem = (String) listViewFiches.getItemAtPosition(indexListItem);
 					editTextFicheName.setText(textListItem.substring(project.getFilePrefix().length()));
-					setTitle(getString(R.string.selected_fiche));
+					setTitle(MdcUtil.setActivityTitle(textListItem, unitOfWork, getApplicationContext()));
 				}
 			});
 
@@ -162,7 +157,6 @@ public class SelectFicheActivity extends Activity implements OnClickListener {
 	@Override
 	public void onClick(View v) {
 		ficheName = editTextFicheName.getText().toString();
-
 		unitOfWork.setActiveFiche(null);
 
 		if (ficheName != null && !(ficheName.equals(""))) {
@@ -170,11 +164,6 @@ public class SelectFicheActivity extends Activity implements OnClickListener {
 			fiche.setName(project.getFilePrefix() + ficheName);
 			fiche.setPath(project.getDataLocation() + fiche.getName() + ".xml");
 			unitOfWork.setActiveFiche(fiche);
-
-			// TODO - Moet er steeds fichenaam opgegeven worden? - indien ja, hier het switch statement
-		} else {
-			// TODO - Hier AlertDialog indien geen fiche geselecteerd!
-
 		}
 
 		switch (v.getId()) {
@@ -216,6 +205,7 @@ public class SelectFicheActivity extends Activity implements OnClickListener {
 				editTextFicheName.setText(result + "1");
 			}
 
+			setTitle(MdcUtil.setActivityTitle(editTextFicheName.getText().toString(), unitOfWork, getApplicationContext()));
 		}
 	}
 
@@ -259,10 +249,20 @@ public class SelectFicheActivity extends Activity implements OnClickListener {
 	}
 
 	private void openFoto() {
+		try {
+			if (UnitOfWork.getInstance().getActiveFiche() != null) {
 
-		final Intent takePictureIntent = new Intent(this, TakePhotoActivity.class);
-		takePictureIntent.putExtra("fotoName", project.getFilePrefix() + ficheName);
-		startActivity(takePictureIntent);
+				final Intent takePictureIntent = new Intent(this, TakePhotoActivity.class);
+				takePictureIntent.putExtra("fotoName", project.getFilePrefix() + ficheName);
+				startActivity(takePictureIntent);
+
+			} else {
+				MdcUtil.showToastShort(getString(R.string.select_fiche_first), getApplicationContext());
+			}
+
+		} catch (Exception e) {
+			MdcUtil.showToastShort(e.getLocalizedMessage(), getApplicationContext());
+		}
 	}
 
 }

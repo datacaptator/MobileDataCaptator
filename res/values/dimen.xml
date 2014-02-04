@@ -6,5 +6,8 @@
     <dimen name="buttonOpenFoto">120dp</dimen>
     <dimen name="buttonOpenSchets">120dp</dimen>
     <dimen name="buttonAddNumber">120dp</dimen>
+    
+    <dimen name="buttonNewPhotoCategory">120dp</dimen>
+    
 
 </resources>

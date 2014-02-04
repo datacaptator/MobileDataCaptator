@@ -1,69 +1,97 @@
-<TableLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/tableLayout"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
-    android:padding="5dp"
-    android:stretchColumns="*" >
+    android:orientation="vertical" >
 
-    <TableRow
-        android:id="@+id/tableRow0"
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" >
-
-        <EditText
-            android:id="@+id/editTextFotoName"
-            android:layout_height="match_parent"
-            android:layout_gravity="center_vertical"
-            android:hint="@string/enter_photo_name"
-            android:imeOptions="actionDone" />
-
-        <Button
-            android:id="@+id/buttonEditFotoName"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_vertical"
-            android:text="@string/manual" />
-    </TableRow>
-
-    <TableRow
-        android:id="@+id/tableRow1"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content" >
-
-        <Spinner
-            android:id="@+id/spinnerPictureCategories"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_span="2" />
-    </TableRow>
-
- <TableRow
-        android:id="@+id/tableRow2"
-        android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:layout_weight="1" >
+        android:layout_weight="1"
+        android:orientation="horizontal" >
 
-        <ListView
-            android:id="@+id/listViewFotos"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:layout_span="2" >
-        </ListView>
-    </TableRow>
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" >
 
-    <TableRow
-        android:id="@+id/tableRow3"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content" >
+            <ListView
+                android:id="@+id/listViewFotos"
+                android:layout_width="160dp"
+                android:layout_height="wrap_content" >
+                <requestFocus />
+            </ListView>
+        </LinearLayout>
+
+        <TableLayout
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent" >
+
+            <TableRow
+                android:id="@+id/tableRow0"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1" >
+
+                <ScrollView
+                    android:id="@+id/scrollView1"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" >
+
+                    <TableLayout
+                        android:id="@+id/tableLayoutPhotoCategory"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical" >
+                    </TableLayout>
+                </ScrollView>
+            </TableRow>
+
+            <TableRow
+                android:id="@+id/tableRow1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" >
+
+                <EditText
+                    android:id="@+id/editTextVrijeSuffix"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:hint="@string/vrije_suffix" >
+                </EditText>
+            </TableRow>
+
+            <TableRow
+                android:id="@+id/tableRow2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" >
+
+                <Button
+                    android:id="@+id/buttonVrijeSuffix"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:tag="suffix"
+                    android:text="@string/button_vrije_suffix" />
+
+            </TableRow>
+        </TableLayout>
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal" >
 
         <Button
-            android:id="@+id/buttonTakePicture"
+            android:id="@+id/buttonOpenPhoto"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="5dp"
-            android:layout_span="2"
-            android:text="@string/button_take_photo" >
-        </Button>
-    </TableRow>
+            android:layout_weight="1"
+            android:text="@string/button_open_photo" />
 
-</TableLayout>
+        <Button
+            android:id="@+id/buttonDeletePhoto"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="@string/button_delete_photo" />
+    </LinearLayout>
+
+</LinearLayout>
