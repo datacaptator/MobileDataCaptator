@@ -1,6 +1,9 @@
 package be.mobiledatacaptator.activities;
 
 import java.io.ByteArrayInputStream;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -136,16 +139,21 @@ public class SelectFicheActivity extends Activity implements OnClickListener {
 		try {
 			List<String> listDataFicheNamen = unitOfWork.getDao().getAllFilesFromPathWithExtension(project.getDataLocation(), ".xml", false);
 
-			ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, listDataFicheNamen);
+			Collections.sort(listDataFicheNamen, Collections.reverseOrder());
+			
+			ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_single_choice, listDataFicheNamen);
 			listViewFiches.setAdapter(adapter);
 			listViewFiches.setItemsCanFocus(true);
 			listViewFiches.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
+			
 			listViewFiches.setOnItemClickListener(new OnItemClickListener() {
 				@Override
 				public void onItemClick(AdapterView<?> arg0, View arg1, int indexListItem, long arg3) {
 					String textListItem = (String) listViewFiches.getItemAtPosition(indexListItem);
 					editTextFicheName.setText(textListItem.substring(project.getFilePrefix().length()));
 					setTitle(MdcUtil.setActivityTitle(textListItem, unitOfWork, getApplicationContext()));
+					
+					
 				}
 			});
 
