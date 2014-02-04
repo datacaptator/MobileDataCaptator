@@ -10,7 +10,6 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import android.app.Activity;
-import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -27,7 +26,6 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
-import android.widget.Spinner;
 import android.widget.TableLayout;
 import android.widget.TableRow;
 import be.mobiledatacaptator.R;
@@ -49,6 +47,7 @@ public class TakePhotoActivity extends Activity implements OnClickListener, OnIt
 	private List<String> listThisFicheFotoNames;
 	private TableLayout tableLayoutPhotoCategory;
 	private Button buttonVrijeSuffix, buttonOpenPhoto, buttonDeletePhoto;
+	private EditText editTextVrijeSuffix;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -69,6 +68,8 @@ public class TakePhotoActivity extends Activity implements OnClickListener, OnIt
 		buttonOpenPhoto = (Button) findViewById(R.id.buttonOpenPhoto);
 		buttonDeletePhoto = (Button) findViewById(R.id.buttonDeletePhoto);
 
+		editTextVrijeSuffix = (EditText) findViewById(R.id.editTextVrijeSuffix);
+
 		buttonOpenPhoto.setOnClickListener(this);
 		buttonDeletePhoto.setOnClickListener(this);
 
@@ -81,6 +82,7 @@ public class TakePhotoActivity extends Activity implements OnClickListener, OnIt
 		}
 
 		loadFotoNames();
+
 	}
 
 	private void loadFotoNames() {
@@ -137,26 +139,63 @@ public class TakePhotoActivity extends Activity implements OnClickListener, OnIt
 		@Override
 		public void onClick(View buttonClicked) {
 
-			
-
 			if (buttonClicked.getId() == R.id.buttonVrijeSuffix) {
-				photoNameToSave = prefixFicheFotoName + "_suffix";
+
+				String suffix = editTextVrijeSuffix.getText().toString();
+				
+				if (suffix.length() > 0) {
+					photoNameToSave = prefixFicheFotoName + "_" + suffix + "_";
+					photoNameToSave = composePhotoName(photoNameToSave);
+			
+					startCameraIntent = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
+					startActivityForResult(startCameraIntent, cameraData);
+				}
+				else
+				{
+					MdcUtil.showToastShort("Vul een suffix in!", getApplicationContext());
+				}
+				
 			} else {
 				TableRow buttonTableRow = (TableRow) buttonClicked.getParent();
 				Button buttonNewPhotoCategory = (Button) buttonTableRow.findViewById(R.id.buttonNewPhotoCategory);
 
-				photoNameToSave = prefixFicheFotoName + "_" + buttonNewPhotoCategory.getTag().toString();
-
+				photoNameToSave = prefixFicheFotoName + "_" + buttonNewPhotoCategory.getTag().toString() + "_";
+				photoNameToSave = composePhotoName(photoNameToSave);
+				startCameraIntent = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
+				startActivityForResult(startCameraIntent, cameraData);
+				
 			}
-
-			
-			startCameraIntent = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
-			startActivityForResult(startCameraIntent, cameraData);
 
 			
 
 		}
 	};
+
+	private String composePhotoName(String photoNameToSave) {
+		int number = 0;
+		List<Integer> numbers = new ArrayList<Integer>();
+		for (String thisFotoName : listThisFicheFotoNames) {
+			if (thisFotoName.startsWith(photoNameToSave)) {
+				String numberFoto = thisFotoName.substring(photoNameToSave.length());
+
+				Pattern p = Pattern.compile("\\d+");
+				Matcher m = p.matcher(numberFoto);
+				while (m.find()) {
+					numbers.add(Integer.valueOf(m.group()));
+				}
+			}
+		}
+
+		try {
+			number = Collections.max(numbers) + 1;
+		} catch (Exception e) {
+			number = 1;
+		}
+
+		photoNameToSave = photoNameToSave + number;
+
+		return photoNameToSave;
+	}
 
 	// TODO - code verder te verfijnen -> upload to dropbox werkt!
 	@Override
@@ -171,7 +210,7 @@ public class TakePhotoActivity extends Activity implements OnClickListener, OnIt
 			final String dir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES) + "/picFolder/";
 			File newdir = new File(dir);
 			newdir.mkdirs();
-			
+
 			String file = dir + photoNameToSave + ".jpg";
 			File newfile = new File(file);
 			try {
@@ -207,6 +246,13 @@ public class TakePhotoActivity extends Activity implements OnClickListener, OnIt
 
 	@Override
 	public void onItemSelected(AdapterView<?> arg0, View arg1, int arg2, long arg3) {
+		// // Hides the soft keyboard - normaal zou ik deze code als laatste bij onCreate zetten ... maar daar werkt het niet
+		InputMethodManager inputManager = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
+		inputManager.hideSoftInputFromWindow(editTextVrijeSuffix.getWindowToken(), 0);
+	}
+	
+	@Override
+	public void onClick(View v) {
 		// TODO Auto-generated method stub
 
 	}
@@ -216,132 +262,5 @@ public class TakePhotoActivity extends Activity implements OnClickListener, OnIt
 		// TODO Auto-generated method stub
 
 	}
-
-	@Override
-	public void onClick(View v) {
-		// TODO Auto-generated method stub
-
-	}
-
-	//
-	// @Override
-	// public void onClick(View v) {
-	//
-	// switch (v.getId()) {
-	// case R.id.buttonTakePicture:
-	// if (editTextFotoName.getText().length() == 0) {
-	// AlertDialog.Builder builder = new AlertDialog.Builder(this);
-	// String builderMessage = getString(R.string.name_photo_required);
-	// builder.setMessage(builderMessage).setPositiveButton(R.string.ok, null).show();
-	// } else {
-	// startCameraIntent = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
-	// startActivityForResult(startCameraIntent, cameraData);
-	// }
-	// break;
-	//
-	// case R.id.buttonEditFotoName:
-	// if (buttonEditFotoName.getText().toString().equalsIgnoreCase(getString(R.string.auto))) {
-	// buttonEditFotoName.setText(R.string.manual);
-	// editTextFotoName.setEnabled(false);
-	// spinnerFotoCategories.setVisibility(View.VISIBLE);
-	// spinnerFotoCategories.setSelection(spinnerPosition);
-	//
-	// } else {
-	// buttonEditFotoName.setText(R.string.auto);
-	//
-	// editTextFotoName.setEnabled(true);
-	// editTextFotoName.setText("");
-	// editTextFotoName.requestFocus();
-	// spinnerFotoCategories.setVisibility(View.GONE);
-	// // show soft keyboard
-	// InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-	// imm.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0);
-	//
-	// }
-	// break;
-	// default:
-	// break;
-	// }
-	//
-	// }
-	//
-	// @Override
-	// public void onItemSelected(AdapterView<?> parent, View arg1, int itemPosition, long arg3) {
-	//
-	// String tempFotoName = fotoName;
-	// FotoCategorie selectedFotoCategorie = (FotoCategorie) parent.getItemAtPosition(itemPosition);
-	//
-	// if (selectedFotoCategorie.getSuffix().equals("_")) {
-	// if (!fotoName.substring(fotoName.length() - 1, fotoName.length()).equals("_")) {
-	// tempFotoName = fotoName + selectedFotoCategorie.getSuffix();
-	// }
-	// } else {
-	// tempFotoName = fotoName + "_" + selectedFotoCategorie.getSuffix() + "_";
-	// }
-	//
-	// if (listThisFicheFotoNames.size() == 0) {
-	// tempFotoName = tempFotoName + "1";
-	// } else {
-	// int number = 0;
-	//
-	// if (!selectedFotoCategorie.getSuffix().equals("_")) {
-	// List<Integer> numbers = new ArrayList<Integer>();
-	// for (String thisFotoName : listThisFicheFotoNames) {
-	// if (thisFotoName.startsWith(tempFotoName)) {
-	// String numberFoto = thisFotoName.substring(tempFotoName.length());
-	//
-	// Pattern p = Pattern.compile("\\d+");
-	// Matcher m = p.matcher(numberFoto);
-	// while (m.find()) {
-	// numbers.add(Integer.valueOf(m.group()));
-	// }
-	// }
-	// }
-	//
-	// try {
-	// number = Collections.max(numbers) + 1;
-	// } catch (Exception e) {
-	// number = 1;
-	// }
-	// } else // geen categorie selected
-	// {
-	// List<Integer> numbers = new ArrayList<Integer>();
-	// for (String thisFotoName : listThisFicheFotoNames) {
-	// if (thisFotoName.startsWith(tempFotoName)) {
-	// String numberFoto = thisFotoName.substring(tempFotoName.length());
-	// if (!numberFoto.contains("_")) {
-	// Pattern p = Pattern.compile("\\d+");
-	// Matcher m = p.matcher(numberFoto);
-	// while (m.find()) {
-	// numbers.add(Integer.valueOf(m.group()));
-	// }
-	// }
-	// }
-	// }
-	//
-	// try {
-	// number = Collections.max(numbers) + 1;
-	// } catch (Exception e) {
-	// number = 1;
-	// }
-	// }
-	//
-	// tempFotoName = tempFotoName + number;
-	//
-	// }
-	//
-	// editTextFotoName.setText(tempFotoName);
-	//
-	// // Hides the soft keyboard - normaal zou ik deze code als laatste bij onCreate zetten ... maar daar werkt het niet
-	// InputMethodManager inputManager = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
-	// inputManager.hideSoftInputFromWindow(editTextFotoName.getWindowToken(), 0);
-	//
-	// }
-	//
-	// @Override
-	// public void onNothingSelected(AdapterView<?> arg0) {
-	// // TODO Auto-generated method stub
-	//
-	// }
 
 }
