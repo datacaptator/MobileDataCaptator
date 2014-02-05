@@ -1,10 +1,5 @@
 package be.mobiledatacaptator.dao;
 
-import java.io.File;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-
 import com.dropbox.sync.android.DbxException;
 import com.dropbox.sync.android.DbxFile;
 import com.dropbox.sync.android.DbxFileInfo;
@@ -12,75 +7,56 @@ import com.dropbox.sync.android.DbxFileSystem;
 import com.dropbox.sync.android.DbxPath;
 import com.dropbox.sync.android.DbxPath.InvalidPathException;
 
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+
 public class DropBoxDao implements IMdcDao {
 
-	private DbxFileSystem dbxFileSystem;
+    private DbxFileSystem dbxFileSystem;
 
-	public void setDbxFileSystem(DbxFileSystem dbxFileSystem) {
-		this.dbxFileSystem = dbxFileSystem;
-	}
+    public void setDbxFileSystem(DbxFileSystem dbxFileSystem) {
+        this.dbxFileSystem = dbxFileSystem;
+    }
 
-	@Override
-	public String getFilecontent(String path) throws IOException {
-		DbxFile dbxFile = dbxFileSystem.open(new DbxPath(path));
-		String s = dbxFile.readString();
-		dbxFile.close();
-		return s;
-	}
+    @Override
+    public String getFilecontent(String path) throws IOException {
+        DbxFile dbxFile = dbxFileSystem.open(new DbxPath(path));
+        String s = dbxFile.readString();
+        dbxFile.close();
+        return s;
+    }
 
-	@Override
-	public List<String> getAllFilesFromPathWithExtension(String path, String extension, Boolean returnExtension) throws InvalidPathException,
-			DbxException {
+    @Override
+    public List<String> getAllFilesFromPathWithExtension(String path, String extension, Boolean returnExtension) throws InvalidPathException,
+            DbxException {
 
-		List<String> folderContent = new ArrayList<String>();
-		List<DbxFileInfo> fileInfoList = dbxFileSystem.listFolder(new DbxPath(path));
+        List<String> folderContent = new ArrayList<String>();
+        List<DbxFileInfo> fileInfoList = dbxFileSystem.listFolder(new DbxPath(path));
 
-		for (DbxFileInfo dbxFileInfo : fileInfoList) {
-			String name = dbxFileInfo.path.getName();
-			if (name.endsWith(extension)) {
-				if (!(returnExtension))
-					name = name.substring(0, name.length() - extension.length());
-				folderContent.add(name);
-			}
-		}
-		return folderContent;
-	}
+        for (DbxFileInfo dbxFileInfo : fileInfoList) {
+            String name = dbxFileInfo.path.getName();
+            if (name.endsWith(extension)) {
+                if (!(returnExtension))
+                    name = name.substring(0, name.length() - extension.length());
+                folderContent.add(name);
+            }
+        }
+        return folderContent;
+    }
 
-	@Override
-	public boolean existsFile(String path) throws InvalidPathException, DbxException {
-		return dbxFileSystem.exists(new DbxPath(path));
-	}
+    @Override
+    public boolean existsFile(String path) throws InvalidPathException, DbxException {
+        return dbxFileSystem.exists(new DbxPath(path));
+    }
 
+    @Override
+    public FileOutputStream getWriteStreamForNewFile(String path) throws IOException {
+        DbxFile dbxFile = dbxFileSystem.create(new DbxPath(path));
+        return dbxFile.getWriteStream();
 
-	//TODO  nog verder te verfijnen - uploadfunctionaliteit werkt!
-	@Override
-	public void uploadPicture(File file) {
-		try {
-			//DbxFile testFile = dbxFileSystem.create(new DbxPath("myFile.jpg"));
-			DbxFile testFile = dbxFileSystem.create(new DbxPath(file.getName()));
-			testFile.writeFromExistingFile(file, false);
-			testFile.close();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} finally {
+    }
 
-		}
-	}
-
-	@Override
-	public void uploadPicture(File file, String path) throws Exception {
-		try {
-			DbxFile testFile = dbxFileSystem.create(new DbxPath(path + file.getName()));
-			testFile.writeFromExistingFile(file, false);
-			testFile.close();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} finally {
-
-		}
-		
-	}
 
 }
