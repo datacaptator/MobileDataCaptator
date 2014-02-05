@@ -41,5 +41,7 @@
     <string name="button_vrije_suffix">Vrije suffix</string>
     <string name="button_open_photo">Open</string>
     <string name="button_delete_photo">Verwijder</string>
+    <string name="delete_photo_">Foto Verwijderen?</string>
+    <string name="click_yes_to_delete_photo">Klik Ja om Foto %1$s te Verwijderen</string>
     
 </resources>

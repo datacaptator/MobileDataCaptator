@@ -103,7 +103,7 @@ public class SelectProjectActivity extends Activity {
 			}
 
 			ArrayAdapter<Project> myAdapter = new ArrayAdapter<Project>(this,
-					android.R.layout.simple_list_item_single_choice, projects);
+					android.R.layout.simple_list_item_activated_1, projects);
 
 			listViewProjects.setAdapter(myAdapter);
 			listViewProjects.setItemsCanFocus(true);

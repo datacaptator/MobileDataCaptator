@@ -1,7 +1,9 @@
 package be.mobiledatacaptator.activities;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -43,7 +45,7 @@ public class TakePhotoActivity extends Activity implements OnClickListener, OnIt
 	final static int TAKE_PICTURE = 0;
 	private Project project;
 	private UnitOfWork unitOfWork;
-	private ListView listViewFotos;
+	private ListView listViewPhotos;
 	private Intent startCameraIntent;
 	private String prefixFicheFotoName, photoNameToSave, tempFileName;
 
@@ -52,6 +54,7 @@ public class TakePhotoActivity extends Activity implements OnClickListener, OnIt
 	private TableLayout tableLayoutPhotoCategory;
 	private Button buttonVrijeSuffix, buttonOpenPhoto, buttonDeletePhoto;
 	private EditText editTextVrijeSuffix;
+	private String textSelectedPhoto;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -64,7 +67,7 @@ public class TakePhotoActivity extends Activity implements OnClickListener, OnIt
 		// fotoName = PUT3014
 		prefixFicheFotoName = getIntent().getExtras().getString("fotoName");
 
-		listViewFotos = (ListView) findViewById(R.id.listViewFotos);
+		listViewPhotos = (ListView) findViewById(R.id.listViewPhotos);
 		tableLayoutPhotoCategory = (TableLayout) findViewById(R.id.tableLayoutPhotoCategory);
 		buttonVrijeSuffix = (Button) findViewById(R.id.buttonVrijeSuffix);
 		buttonVrijeSuffix.setOnClickListener(photoCategoryListener);
@@ -91,8 +94,7 @@ public class TakePhotoActivity extends Activity implements OnClickListener, OnIt
 
 	private void loadFotoNames() {
 		try {
-			listFotoNames = unitOfWork.getDao().getAllFilesFromPathWithExtension(project.getDataLocation(), ".jpg",
-					false);
+			listFotoNames = unitOfWork.getDao().getAllFilesFromPathWithExtension(project.getDataLocation(), ".jpg", false);
 
 			listThisFicheFotoNames = new ArrayList<String>();
 
@@ -102,17 +104,15 @@ public class TakePhotoActivity extends Activity implements OnClickListener, OnIt
 				}
 			}
 
-			ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1,
-					listThisFicheFotoNames);
-			listViewFotos.setAdapter(adapter);
-			listViewFotos.setItemsCanFocus(true);
-			listViewFotos.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
-			listViewFotos.setOnItemClickListener(new OnItemClickListener() {
+			ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_activated_1, listThisFicheFotoNames);
+			listViewPhotos.setAdapter(adapter);
+			listViewPhotos.setItemsCanFocus(true);
+			listViewPhotos.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
+			listViewPhotos.setOnItemClickListener(new OnItemClickListener() {
 				@Override
 				public void onItemClick(AdapterView<?> arg0, View arg1, int indexListItem, long arg3) {
-					// String textListItem = (String)
-					// listViewFotos.getItemAtPosition(indexListItem);
-					// editTextFotoName.setText(fotoName + "_" + textListItem);
+					textSelectedPhoto = (String) listViewPhotos.getItemAtPosition(indexListItem);
+					MdcUtil.showToastShort(project.getDataLocation() + textSelectedPhoto + ".jpg", getApplicationContext());
 				}
 			});
 
@@ -255,8 +255,7 @@ public class TakePhotoActivity extends Activity implements OnClickListener, OnIt
 			}
 
 			// Wegschrijven
-			FileOutputStream fos = unitOfWork.getDao().getWriteStreamForNewFile(
-					project.getDataLocation() + photoNameToSave + ".jpg");
+			FileOutputStream fos = unitOfWork.getDao().getWriteStreamForNewFile(project.getDataLocation() + photoNameToSave + ".jpg");
 			bitmap.compress(Bitmap.CompressFormat.JPEG, 80, fos);
 			fos.flush();
 			fos.close();
@@ -271,16 +270,52 @@ public class TakePhotoActivity extends Activity implements OnClickListener, OnIt
 	}
 
 	@Override
-	public void onItemSelected(AdapterView<?> arg0, View arg1, int arg2, long arg3) {
+	public void onItemSelected(AdapterView<?> arg0, View arg1, int indexListItem, long arg3) {
+
 		// // Hides the soft keyboard - normaal zou ik deze code als laatste bij
 		// onCreate zetten ... maar daar werkt het niet
 		InputMethodManager inputManager = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
 		inputManager.hideSoftInputFromWindow(editTextVrijeSuffix.getWindowToken(), 0);
+
 	}
 
 	@Override
 	public void onClick(View v) {
-		// TODO Auto-generated method stub
+		switch (v.getId()) {
+		case R.id.buttonDeletePhoto:
+
+			AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
+			alertDialogBuilder.setTitle(getString(R.string.delete_photo_));
+			
+			alertDialogBuilder.setMessage(String.format(getString(R.string.click_yes_to_delete_photo), textSelectedPhoto)).setCancelable(false).setPositiveButton(getString(R.string.yes), new DialogInterface.OnClickListener() {
+				public void onClick(DialogInterface dialog, int id) {
+					// if yes is clicked, close
+					// current activity
+					try {
+						unitOfWork.getDao().delete(project.getDataLocation() + textSelectedPhoto + ".jpg");
+						loadFotoNames();
+					} catch (Exception e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+				}
+			}).setNegativeButton(getString(R.string.no), new DialogInterface.OnClickListener() {
+				public void onClick(DialogInterface dialog, int id) {
+					// if no is clicked, just close
+					// the dialog box and do nothing
+					dialog.cancel();
+				}
+			});
+
+			AlertDialog alertDialog = alertDialogBuilder.create();
+
+			alertDialog.show();
+
+			break;
+
+		default:
+			break;
+		}
 
 	}
 

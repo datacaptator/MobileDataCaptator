@@ -58,5 +58,10 @@ public class DropBoxDao implements IMdcDao {
 
     }
 
+	@Override
+	public void delete(String path) throws Exception {
+		dbxFileSystem.delete(new DbxPath(path));
+	}
+
 
 }
