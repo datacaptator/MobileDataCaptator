@@ -1,9 +1,7 @@
 package be.mobiledatacaptator.activities;
 
 import java.io.ByteArrayInputStream;
-import java.util.Arrays;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -117,17 +115,22 @@ public class SelectFicheActivity extends Activity implements OnClickListener {
 				buttonOpenSchets.setVisibility(View.INVISIBLE);
 			}
 
-			// TODO - Robrecht zou je onderstaande code altijd uitvoeren of enkel als loadFotoActivity = true
-			NodeList nodes = root.getElementsByTagName("FotoCategorie");
-			for (int i = 0; i < nodes.getLength(); i++) {
-				Node node = nodes.item(i);
-				// extra controle-inbouw of er reeds een zelfde categorie aanwezig - zoniet komt fotocategorie dubbel voor in
-				// Spinner-takePicture
-				PhotoCategory photoCategorie = new PhotoCategory(((Element) node).getAttribute("Name"), ((Element) node).getAttribute("Suffix"));
+			if (project.isLoadPhotoActivity()) {
+				NodeList nodes = root.getElementsByTagName("FotoCategorie");
+				for (int i = 0; i < nodes.getLength(); i++) {
+					Node node = nodes.item(i);
+					// extra controle-inbouw of er reeds een zelfde categorie aanwezig - zoniet komt fotocategorie dubbel voor in
+					// Spinner-takePicture
+					PhotoCategory photoCategorie = new PhotoCategory(((Element) node).getAttribute("Name"),
+							((Element) node).getAttribute("Suffix"));
 
-				if (!project.getPhotoCategories().contains(photoCategorie)) {
-					project.getPhotoCategories().add(photoCategorie);
+					if (!project.getPhotoCategories().contains(photoCategorie)) {
+						project.getPhotoCategories().add(photoCategorie);
+					}
 				}
+				project.setPhotoHeight(Integer.parseInt(root.getAttribute("PhotoHeight")));
+				project.setPhotoWidth(Integer.parseInt(root.getAttribute("PhotoWidth")));
+				
 			}
 
 		} catch (Exception e) {

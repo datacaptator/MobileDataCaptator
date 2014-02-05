@@ -12,6 +12,7 @@ public class Project {
 	private boolean LoadPhotoActivity;
 	private boolean LoadSchetsActivity;
 	private List<PhotoCategory> photoCategories = new ArrayList<PhotoCategory>();
+	private int photoHeight, photoWidth;
 
 	public String getName() {
 		return name;
@@ -69,6 +70,22 @@ public class Project {
 
 	public void setLoadSchetsActivity(boolean loadSchetsActivity) {
 		LoadSchetsActivity = loadSchetsActivity;
+	}
+
+	public int getPhotoHeight() {
+		return photoHeight;
+	}
+
+	public void setPhotoHeight(int photoHeight) {
+		this.photoHeight = photoHeight;
+	}
+
+	public int getPhotoWidth() {
+		return photoWidth;
+	}
+
+	public void setPhotoWidth(int photoWidth) {
+		this.photoWidth = photoWidth;
 	}
 
 	@Override
