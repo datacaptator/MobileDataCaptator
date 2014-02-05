@@ -112,7 +112,7 @@ public class TakePhotoActivity extends Activity implements OnClickListener, OnIt
 				@Override
 				public void onItemClick(AdapterView<?> arg0, View arg1, int indexListItem, long arg3) {
 					textSelectedPhoto = (String) listViewPhotos.getItemAtPosition(indexListItem);
-					MdcUtil.showToastShort(project.getDataLocation() + textSelectedPhoto + ".jpg", getApplicationContext());
+					
 				}
 			});
 
@@ -283,33 +283,30 @@ public class TakePhotoActivity extends Activity implements OnClickListener, OnIt
 	public void onClick(View v) {
 		switch (v.getId()) {
 		case R.id.buttonDeletePhoto:
-
-			AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
-			alertDialogBuilder.setTitle(getString(R.string.delete_photo_));
+			if (!textSelectedPhoto.equals("") || textSelectedPhoto.isEmpty()) {
+				AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
+				alertDialogBuilder.setTitle(getString(R.string.delete_photo_));
+				alertDialogBuilder.setMessage(String.format(getString(R.string.click_yes_to_delete_photo), textSelectedPhoto)).setCancelable(false)
+						.setPositiveButton(getString(R.string.yes), new DialogInterface.OnClickListener() {
+							public void onClick(DialogInterface dialog, int id) {
+								try {
+									unitOfWork.getDao().delete(project.getDataLocation() + textSelectedPhoto + ".jpg");
+									loadFotoNames();
+								} catch (Exception e) {
+									// TODO Auto-generated catch block
+									e.printStackTrace();
+								}
+							}
+						}).setNegativeButton(getString(R.string.no), new DialogInterface.OnClickListener() {
+							public void onClick(DialogInterface dialog, int id) {
+								dialog.cancel();
+							}
+						});
+				AlertDialog alertDialog = alertDialogBuilder.create();
+				alertDialog.show();
+				
+			}
 			
-			alertDialogBuilder.setMessage(String.format(getString(R.string.click_yes_to_delete_photo), textSelectedPhoto)).setCancelable(false).setPositiveButton(getString(R.string.yes), new DialogInterface.OnClickListener() {
-				public void onClick(DialogInterface dialog, int id) {
-					// if yes is clicked, close
-					// current activity
-					try {
-						unitOfWork.getDao().delete(project.getDataLocation() + textSelectedPhoto + ".jpg");
-						loadFotoNames();
-					} catch (Exception e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
-				}
-			}).setNegativeButton(getString(R.string.no), new DialogInterface.OnClickListener() {
-				public void onClick(DialogInterface dialog, int id) {
-					// if no is clicked, just close
-					// the dialog box and do nothing
-					dialog.cancel();
-				}
-			});
-
-			AlertDialog alertDialog = alertDialogBuilder.create();
-
-			alertDialog.show();
 
 			break;
 
