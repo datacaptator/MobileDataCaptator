@@ -24,7 +24,6 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
-import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.AdapterView.OnItemLongClickListener;
@@ -77,6 +76,8 @@ public class TakePhotoActivity extends Activity implements OnClickListener, OnIt
 
 		listViewPhotos.setOnItemClickListener(this);
 		listViewPhotos.setOnItemLongClickListener(this);
+		
+		
 		buttonFreeSuffix.setOnClickListener(photoCategoryListener);
 		buttonDisplayPhoto.setOnClickListener(this);
 		buttonDeletePhoto.setOnClickListener(this);
@@ -90,10 +91,7 @@ public class TakePhotoActivity extends Activity implements OnClickListener, OnIt
 		}
 
 		loadFotoNames();
-
-		InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-		imm.hideSoftInputFromWindow(editTextFreeSuffix.getWindowToken(), 0);
-
+	
 		buttonFreeSuffix.requestFocus();
 
 	}
@@ -121,21 +119,18 @@ public class TakePhotoActivity extends Activity implements OnClickListener, OnIt
 	}
 
 	private void addPhotoCategoriesToLayout(PhotoCategory photoCategorie, int index) {
-
-		// Android provides a service 'getSystemService(Context.LAYOUT_INFLATER_SERVICE)' that enables you
-		// to inflate a layout
+		// Android provides a service 'getSystemService(Context.LAYOUT_INFLATER_SERVICE)' to inflate a layout
 		LayoutInflater inflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 		View newPhotoCategoryView = inflater.inflate(R.layout.new_table_row_photo_category, null);
 
-		// Get a reference to the newTagButton on the new_tag_view.xml and set
+		// Get a reference to the buttonNewPhotoCategory on the new_table_row_photo_category.xml and set
 		// its text + register its onClickListener
 		Button buttonNewPhotoCategory = (Button) newPhotoCategoryView.findViewById(R.id.buttonNewPhotoCategory);
 		buttonNewPhotoCategory.setText(photoCategorie.getName());
 		buttonNewPhotoCategory.setTag(photoCategorie.getSuffix());
 		buttonNewPhotoCategory.setOnClickListener(photoCategoryListener);
 
-		// Adds programmatically the new_tag_view.xml to the queryTableLayout at
-		// the specified index)
+		// Adds programmatically the new_tag_view.xml to the tableLayoutPhotoCategory at  the specified index)
 		tableLayoutPhotoCategory.addView(newPhotoCategoryView, index);
 	}
 
@@ -166,9 +161,7 @@ public class TakePhotoActivity extends Activity implements OnClickListener, OnIt
 	}
 
 	private void startCamera(String photoNameToSave) {
-
 		File storageDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES);
-
 		File image;
 		try {
 			image = File.createTempFile(photoNameToSave, /* prefix */
