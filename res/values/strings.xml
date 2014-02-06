@@ -43,7 +43,8 @@
     <string name="button_delete_photo">Verwijder</string>
     <string name="delete_photo_">Foto Verwijderen?</string>
     <string name="click_yes_to_delete_photo">Klik Ja om Foto %1$s te Verwijderen</string>
-
+	<string name="enter_suffix">Vul een Suffix in!</string>
+    
     <!-- DisplayPhotoActivity -->
     <string name="display_photo">Getoonde Foto</string>
     
