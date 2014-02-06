@@ -3,10 +3,10 @@ package be.mobiledatacaptator.adapters;
 import java.util.ArrayList;
 import java.util.List;
 
-import be.mobiledatacaptator.activities.FicheActivity.TabFragment;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
+import be.mobiledatacaptator.fragments.ITitleFragment;
 
 public class FichePagerAdapter extends FragmentPagerAdapter {
 
@@ -31,10 +31,25 @@ public class FichePagerAdapter extends FragmentPagerAdapter {
 		fragments.add(fragment);
 		notifyDataSetChanged();
 	}
-	
-	@Override
-    public CharSequence getPageTitle(int position) {
-        return ((TabFragment)fragments.get(position)).getTab().getName();
-    } 
 
+	public void addItemBeforeLast(Fragment fragment) {
+		int aantal = fragments.size();
+		if (aantal < 1) {
+			fragments.add(fragment);
+		} else {
+			fragments.add(aantal - 1, fragment);
+		}
+		notifyDataSetChanged();
+	}
+
+	@Override
+	public CharSequence getPageTitle(int position) {
+		return ((ITitleFragment) fragments.get(position)).getTitle();
+	}
+
+	@Override
+	public int getItemPosition(Object object) {
+
+		return POSITION_NONE;
+	}
 }

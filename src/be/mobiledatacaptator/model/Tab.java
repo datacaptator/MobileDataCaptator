@@ -5,12 +5,12 @@ import java.util.List;
 
 public class Tab {
 
-	private String name;
+	protected String name;
 	private List<DataField> dataFields;
-	
-	public Tab(String name){
-		this.name=name;
-		dataFields= new ArrayList<DataField>();
+
+	public Tab(String name) {
+		this.name = name;
+		dataFields = new ArrayList<DataField>();
 	}
 
 	public String getName() {
@@ -28,6 +28,5 @@ public class Tab {
 	public void setDataFields(List<DataField> dataFields) {
 		this.dataFields = dataFields;
 	}
-	
-	
+
 }
