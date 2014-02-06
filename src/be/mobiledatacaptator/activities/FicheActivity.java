@@ -69,18 +69,24 @@ public class FicheActivity extends FragmentActivity {
 	}
 
 	@Override
-	protected void onStop() {
+	protected void onPause() {
+		super.onPause();
+		// TEST
+
 		String data = "";
 
-		for (Group g : unitOfWork.getActiveFiche().getGroups()) {
-			for (Tab t : g.getTabs()) {
-				for (DataField d : t.getDataFields()) {
-					data += d.getName() +": "  + d.getUiField().getValue() + "\r\n";
+		try {
+			for (Group g : unitOfWork.getActiveFiche().getGroups()) {
+				for (Tab t : g.getTabs()) {
+					for (DataField d : t.getDataFields()) {
+						data += d.getName() + ": " + d.getUiField().getValue() + "\r\n";
+					}
 				}
 			}
+			Toast.makeText(this, data, Toast.LENGTH_LONG).show();
+		} catch (Exception e) {
+			MdcUtil.showToastLong(e.getMessage(), this);
 		}
-		Toast.makeText(this, data, Toast.LENGTH_LONG).show();
-		super.onStop();
 	}
 
 	private void LoadTemplate() {
@@ -126,14 +132,14 @@ public class FicheActivity extends FragmentActivity {
 								dataField.setType(VeldType.DOUBLE);
 						}
 
-						NodeList temp = ((Element) fieldNode).getElementsByTagName("Choice");
+						NodeList temp = ((Element) fieldNode).getElementsByTagName("Choices");
 						if (temp.getLength() > 0) {
-							NodeList keuzes = ((Element) temp.item(0)).getElementsByTagName("W");
+							NodeList keuzes = ((Element) temp.item(0)).getElementsByTagName("Choice");
 							for (int l = 0; l < keuzes.getLength(); l++) {
-								Node keuzeNode = keuzes.item(l);
+								Element keuzeNode = (Element) keuzes.item(l);
 								dataField.getChoiceItems().add(
-										new ChoiceItem(Integer.parseInt(keuzeNode.getAttributes().getNamedItem("idn")
-												.getNodeValue()), keuzeNode.getTextContent()));
+										new ChoiceItem(Integer.parseInt(keuzeNode.getAttribute("Idn")), keuzeNode
+												.getAttribute("Text")));
 							}
 						}
 						dataField.setUiField(new UIField(this, dataField));
@@ -145,7 +151,7 @@ public class FicheActivity extends FragmentActivity {
 			}
 
 		} catch (Exception e) {
-			toonBoodschap(e.getMessage());
+			MdcUtil.showToastLong(e.getMessage(), this);
 		}
 
 	}
@@ -204,14 +210,6 @@ public class FicheActivity extends FragmentActivity {
 		} while (!(isUnique));
 
 		return i;
-	}
-
-	private void toonBoodschap(String boodschap) {
-
-		if (boodschap == null || boodschap.equals("")) {
-			boodschap = "Niet nader omschreven fout";
-		}
-		Toast.makeText(getApplicationContext(), boodschap, Toast.LENGTH_SHORT).show();
 	}
 
 	public static class TabFragment extends Fragment {
