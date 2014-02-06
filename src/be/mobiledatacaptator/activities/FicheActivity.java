@@ -1,23 +1,10 @@
 package be.mobiledatacaptator.activities;
 
-import android.R.color;
-import android.content.Context;
-import android.os.Bundle;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentActivity;
-import android.support.v4.view.PagerTitleStrip;
-import android.support.v4.view.ViewPager;
-import android.view.Gravity;
-import android.view.LayoutInflater;
-import android.view.MenuItem;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.ScrollView;
-import android.widget.TabHost;
-import android.widget.TabHost.TabContentFactory;
-import android.widget.TabHost.TabSpec;
-import android.widget.TableLayout;
-import android.widget.Toast;
+import java.io.ByteArrayInputStream;
+import java.util.Locale;
+
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -25,17 +12,29 @@ import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
-import java.io.ByteArrayInputStream;
-
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-
+import android.R.color;
+import android.annotation.SuppressLint;
+import android.content.Context;
+import android.os.Bundle;
+import android.support.v4.app.FragmentActivity;
+import android.support.v4.view.PagerTitleStrip;
+import android.support.v4.view.ViewPager;
+import android.view.Gravity;
+import android.view.MenuItem;
+import android.view.View;
+import android.widget.TabHost;
+import android.widget.TabHost.TabContentFactory;
+import android.widget.TabHost.TabSpec;
+import android.widget.Toast;
 import be.mobiledatacaptator.R;
 import be.mobiledatacaptator.adapters.FichePagerAdapter;
+import be.mobiledatacaptator.fragments.AddTabFragment;
+import be.mobiledatacaptator.fragments.TabFragment;
 import be.mobiledatacaptator.model.ChoiceItem;
 import be.mobiledatacaptator.model.DataField;
 import be.mobiledatacaptator.model.Group;
 import be.mobiledatacaptator.model.Tab;
+import be.mobiledatacaptator.model.TabTemplate;
 import be.mobiledatacaptator.model.UIField;
 import be.mobiledatacaptator.model.UnitOfWork;
 import be.mobiledatacaptator.model.VeldType;
@@ -89,6 +88,7 @@ public class FicheActivity extends FragmentActivity {
 		}
 	}
 
+	@SuppressLint("DefaultLocale")
 	private void LoadTemplate() {
 		try {
 			String xml = unitOfWork.getDao().getFilecontent(unitOfWork.getActiveProject().getTemplate());
@@ -97,14 +97,23 @@ public class FicheActivity extends FragmentActivity {
 			Document dom = db.parse(new ByteArrayInputStream(xml.getBytes()));
 
 			Element root = dom.getDocumentElement();
+
+			// Groepen toevoegen
 			NodeList groups = root.getElementsByTagName("Group");
 			for (int i = 0; i < groups.getLength(); i++) {
-				Node groupNode = groups.item(i);
-				Group group = new Group(groupNode.getAttributes().getNamedItem("Name").getNodeValue());
-				NodeList tabs = ((Element) groupNode).getElementsByTagName("Tab");
+				Element groupNode = (Element) groups.item(i);
+				Group group = new Group(groupNode.getAttribute("Name"));
+				if (groupNode.hasAttribute("Expandable")
+						&& groupNode.getAttribute("Expandable").toLowerCase(Locale.getDefault()).equals("true"))
+					group.setExpandable(true);
+
+				// Tabs toevoegen
+				NodeList tabs = groupNode.getElementsByTagName("Tab");
 				for (int j = 0; j < tabs.getLength(); j++) {
 					Node tabNode = tabs.item(j);
 					Tab tab = new Tab(tabNode.getAttributes().getNamedItem("Name").getNodeValue());
+
+					// Velden toevoegen
 					NodeList fields = ((Element) tabNode).getElementsByTagName("Field");
 					for (int k = 0; k < fields.getLength(); k++) {
 						Node fieldNode = fields.item(k);
@@ -147,6 +156,58 @@ public class FicheActivity extends FragmentActivity {
 					}
 					group.getTabs().add(tab);
 				}
+
+				// TabTemplate toevoegen
+				NodeList tabTemplates = groupNode.getElementsByTagName("TabTemplate");
+				if (tabTemplates.getLength() > 0) {
+					Node tabTemplateNode = tabTemplates.item(0);
+					TabTemplate tabTemplate = new TabTemplate(tabTemplateNode.getAttributes().getNamedItem("Name")
+							.getNodeValue());
+
+					// Velden toevoegen
+					NodeList fields = ((Element) tabTemplateNode).getElementsByTagName("Field");
+					for (int k = 0; k < fields.getLength(); k++) {
+						Node fieldNode = fields.item(k);
+						NamedNodeMap attr = fieldNode.getAttributes();
+						DataField dataField = new DataField();
+						if (attr.getNamedItem("Name") != null)
+							dataField.setName(attr.getNamedItem("Name").getNodeValue());
+						if (attr.getNamedItem("Label") != null)
+							dataField.setLabel(attr.getNamedItem("Label").getNodeValue());
+						if (attr.getNamedItem("DefaultValue") != null)
+							dataField.setDefaultValue(attr.getNamedItem("DefaultValue").getNodeValue());
+						if (attr.getNamedItem("Required") != null)
+							if (attr.getNamedItem("Required").getNodeValue().equals("Y"))
+								dataField.setRequired(true);
+
+						if (attr.getNamedItem("Type") != null) {
+							String strType = attr.getNamedItem("Type").getNodeValue();
+							if (strType.equals("Text"))
+								dataField.setType(VeldType.TEXT);
+							if (strType.equals("Choice"))
+								dataField.setType(VeldType.CHOICE);
+							if (strType.equals("Int"))
+								dataField.setType(VeldType.INT);
+							if (strType.equals("Double"))
+								dataField.setType(VeldType.DOUBLE);
+						}
+
+						NodeList temp = ((Element) fieldNode).getElementsByTagName("Choices");
+						if (temp.getLength() > 0) {
+							NodeList keuzes = ((Element) temp.item(0)).getElementsByTagName("Choice");
+							for (int l = 0; l < keuzes.getLength(); l++) {
+								Element keuzeNode = (Element) keuzes.item(l);
+								dataField.getChoiceItems().add(
+										new ChoiceItem(Integer.parseInt(keuzeNode.getAttribute("Idn")), keuzeNode
+												.getAttribute("Text")));
+							}
+						}
+						dataField.setUiField(new UIField(this, dataField));
+						tabTemplate.getDataFields().add(dataField);
+					}
+					group.setTabTemplate(tabTemplate);
+				}
+
 				unitOfWork.getActiveFiche().getGroups().add(group);
 			}
 
@@ -192,6 +253,13 @@ public class FicheActivity extends FragmentActivity {
 						fichePagerAdapter.addItem(fragment);
 					}
 
+					if (group.isExpandable()) {
+						AddTabFragment addTabFragment = new AddTabFragment();
+						addTabFragment.setFichePagerAdapter(fichePagerAdapter);
+						addTabFragment.setGroup(group);
+						fichePagerAdapter.addItem(addTabFragment);
+					}
+
 					return viewPager;
 				}
 			});
@@ -212,34 +280,5 @@ public class FicheActivity extends FragmentActivity {
 		return i;
 	}
 
-	public static class TabFragment extends Fragment {
-
-		private Tab tab;
-
-		@Override
-		public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-
-			ScrollView scrollView = new ScrollView(getActivity());
-			TableLayout tableLayout = new TableLayout(getActivity());
-			if (tab != null) {
-				for (DataField dataField : tab.getDataFields()) {
-					tableLayout.addView(dataField.getUiField());
-				}
-			}
-			tableLayout.setColumnStretchable(1, true);
-			scrollView.addView(tableLayout);
-			return scrollView;
-
-		}
-
-		public Tab getTab() {
-			return tab;
-		}
-
-		public void setTab(Tab tab) {
-			this.tab = tab;
-		}
-
-	}
-
+	
 }

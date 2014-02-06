@@ -31,6 +31,9 @@
     <string name="add_foto">een foto toevoegen?</string>
     <string name="LoadFiches_error">Fout bij laden fiches </string>
 
+    <!-- FicheActivity -->
+    <string name="AddNew">Nieuwe Tab</string>
+
     <!-- TakePhotoActivity -->
     <string name="enter_photo_name">Geef Foto-naam in</string>
     <string name="button_take_photo">Neem Foto</string>
@@ -46,7 +49,5 @@
 
     <!-- DisplayPhotoActivity -->
     <string name="display_photo">Getoonde Foto</string>
-    
-    
 
 </resources>
