@@ -1,5 +1,14 @@
 package be.mobiledatacaptator.activities;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
@@ -11,6 +20,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -24,16 +34,6 @@ import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TableLayout;
 import android.widget.TableRow;
-
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
 import be.mobiledatacaptator.R;
 import be.mobiledatacaptator.model.PhotoCategory;
 import be.mobiledatacaptator.model.Project;
@@ -112,7 +112,7 @@ public class TakePhotoActivity extends Activity implements OnClickListener, OnIt
 				@Override
 				public void onItemClick(AdapterView<?> arg0, View arg1, int indexListItem, long arg3) {
 					textSelectedPhoto = (String) listViewPhotos.getItemAtPosition(indexListItem);
-					
+
 				}
 			});
 
@@ -191,11 +191,19 @@ public class TakePhotoActivity extends Activity implements OnClickListener, OnIt
 								".jpg", /* suffix */
 								storageDir /* directory */
 						);
+
 						tempFileName = image.getAbsolutePath();
 
 						startCameraIntent = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
 						startCameraIntent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(image));
-						startActivityForResult(startCameraIntent, TAKE_PICTURE);
+
+						try {
+							startActivityForResult(startCameraIntent, TAKE_PICTURE);
+						} catch (Exception e) {
+							// TODO Auto-generated catch block
+							Log.e("startActivityForResult", e.getLocalizedMessage());
+						}
+
 					} else {
 						MdcUtil.showToastShort("Vul een suffix in!", getApplicationContext());
 					}
@@ -213,10 +221,12 @@ public class TakePhotoActivity extends Activity implements OnClickListener, OnIt
 							".jpg", /* suffix */
 							storageDir /* directory */
 					);
+
 					tempFileName = image.getAbsolutePath();
 
 					startCameraIntent = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
 					startCameraIntent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(image));
+
 					startActivityForResult(startCameraIntent, TAKE_PICTURE);
 
 				}
@@ -232,9 +242,13 @@ public class TakePhotoActivity extends Activity implements OnClickListener, OnIt
 
 		if (requestCode == TAKE_PICTURE) {
 			if (resultCode == RESULT_OK) {
+				Log.e("TOT HIER OK", "resultcode == RESULT_OK");
 				savePhoto();
+			} else {
+				Log.e("TOT HIER OK", "else resultcode != RESULT_OK");
 			}
 		} else {
+			Log.e("TOT HIER OK", "else requestCode != TAKE_PICTURE");
 			super.onActivityResult(requestCode, resultCode, data);
 		}
 	}
@@ -253,7 +267,6 @@ public class TakePhotoActivity extends Activity implements OnClickListener, OnIt
 			if (origHeight > destHeight || origWidth > destWidth) {
 				bitmap = Bitmap.createScaledBitmap(bitmap, destWidth, origHeight / (origWidth / destWidth), false);
 			}
-
 			// Wegschrijven
 			FileOutputStream fos = unitOfWork.getDao().getWriteStreamForNewFile(project.getDataLocation() + photoNameToSave + ".jpg");
 			bitmap.compress(Bitmap.CompressFormat.JPEG, 80, fos);
@@ -264,8 +277,11 @@ public class TakePhotoActivity extends Activity implements OnClickListener, OnIt
 			File f = new File(tempFileName);
 			f.delete();
 
+			loadFotoNames();
+
 		} catch (Exception e) {
-			MdcUtil.showToastShort(e.getMessage(), this);
+			// TODO
+			Log.e("FOUT: savePhoto", e.getLocalizedMessage());
 		}
 	}
 
@@ -294,6 +310,7 @@ public class TakePhotoActivity extends Activity implements OnClickListener, OnIt
 									loadFotoNames();
 								} catch (Exception e) {
 									// TODO Auto-generated catch block
+
 									e.printStackTrace();
 								}
 							}
@@ -304,9 +321,8 @@ public class TakePhotoActivity extends Activity implements OnClickListener, OnIt
 						});
 				AlertDialog alertDialog = alertDialogBuilder.create();
 				alertDialog.show();
-				
+
 			}
-			
 
 			break;
 

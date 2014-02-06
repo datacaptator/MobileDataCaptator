@@ -52,8 +52,6 @@ public class SelectProjectActivity extends Activity {
 		setTitle(getString(R.string.select_project));
 		
 		setContentView(R.layout.activity_select_project);
-
-		
 		
 		listViewProjects = (ListView) findViewById(R.id.listViewProjects);
 		buttonOpenProject = (Button) findViewById(R.id.buttonOpenProject);

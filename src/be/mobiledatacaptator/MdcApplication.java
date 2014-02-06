@@ -10,7 +10,7 @@ public class MdcApplication extends Application {
 		super.onCreate();
 
 		// De 'unitOfWork' hier eerst initialiseren, dan blijft hij zeker
-		// bestaan zolang de app draaid.
+		// bestaan zolang de app draait.
 		UnitOfWork.getInstance();
 	}
 

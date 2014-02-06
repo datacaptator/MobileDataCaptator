@@ -70,9 +70,6 @@ public class FicheActivity extends FragmentActivity {
 
 	@Override
 	protected void onStop() {
-		
-		//TEST
-		
 		String data = "";
 
 		for (Group g : unitOfWork.getActiveFiche().getGroups()) {
