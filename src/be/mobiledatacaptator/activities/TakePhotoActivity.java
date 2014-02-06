@@ -34,6 +34,7 @@ import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TableLayout;
 import android.widget.TableRow;
+import be.mobiledatacaptator.DisplayPhotoActivity;
 import be.mobiledatacaptator.R;
 import be.mobiledatacaptator.model.PhotoCategory;
 import be.mobiledatacaptator.model.Project;
@@ -52,7 +53,7 @@ public class TakePhotoActivity extends Activity implements OnClickListener, OnIt
 	private List<String> listFotoNames;
 	private List<String> listThisFicheFotoNames;
 	private TableLayout tableLayoutPhotoCategory;
-	private Button buttonVrijeSuffix, buttonOpenPhoto, buttonDeletePhoto;
+	private Button buttonVrijeSuffix, buttonDisplayPhoto, buttonDeletePhoto;
 	private EditText editTextVrijeSuffix;
 	private String textSelectedPhoto;
 
@@ -72,12 +73,12 @@ public class TakePhotoActivity extends Activity implements OnClickListener, OnIt
 		buttonVrijeSuffix = (Button) findViewById(R.id.buttonVrijeSuffix);
 		buttonVrijeSuffix.setOnClickListener(photoCategoryListener);
 
-		buttonOpenPhoto = (Button) findViewById(R.id.buttonOpenPhoto);
+		buttonDisplayPhoto = (Button) findViewById(R.id.buttonDisplayPhoto);
 		buttonDeletePhoto = (Button) findViewById(R.id.buttonDeletePhoto);
 
 		editTextVrijeSuffix = (EditText) findViewById(R.id.editTextVrijeSuffix);
 
-		buttonOpenPhoto.setOnClickListener(this);
+		buttonDisplayPhoto.setOnClickListener(this);
 		buttonDeletePhoto.setOnClickListener(this);
 
 		setTitle(MdcUtil.setActivityTitle(unitOfWork, getApplicationContext()));
@@ -323,7 +324,25 @@ public class TakePhotoActivity extends Activity implements OnClickListener, OnIt
 				alertDialog.show();
 
 			}
-
+			break;
+		
+		case R.id.buttonDisplayPhoto:
+			//MdcUtil.showToastShort("op Open geklikt", getApplicationContext());
+			
+			try {
+				if (textSelectedPhoto != null	&& ! textSelectedPhoto.isEmpty()) {
+					final Intent displayPhotoIntent = new Intent(this, DisplayPhotoActivity.class);
+					displayPhotoIntent.putExtra("photoToDisplay", textSelectedPhoto);
+					startActivity(displayPhotoIntent);
+				}
+				else
+				{
+					MdcUtil.showToastShort("U dient eerst een foto te selecteren!", getApplicationContext());
+				}
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				Log.e("fout", e.getLocalizedMessage());
+			}
 			break;
 
 		default:

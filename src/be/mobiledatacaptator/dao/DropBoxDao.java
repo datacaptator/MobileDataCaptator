@@ -7,6 +7,7 @@ import com.dropbox.sync.android.DbxFileSystem;
 import com.dropbox.sync.android.DbxPath;
 import com.dropbox.sync.android.DbxPath.InvalidPathException;
 
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -61,6 +62,13 @@ public class DropBoxDao implements IMdcDao {
 	@Override
 	public void delete(String path) throws Exception {
 		dbxFileSystem.delete(new DbxPath(path));
+	}
+
+	@Override
+	public FileInputStream getReadStreamFromFile(String path) throws Exception {
+		FileInputStream fileInputStream;
+		fileInputStream = dbxFileSystem.open(new DbxPath(path)).getReadStream();
+		return fileInputStream;	
 	}
 
 }
