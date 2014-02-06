@@ -37,16 +37,15 @@
     <!-- TakePhotoActivity -->
     <string name="enter_photo_name">Geef Foto-naam in</string>
     <string name="button_take_photo">Neem Foto</string>
-    <string name="auto">Auto</string>
-    <string name="manual">Man.</string>
     <string name="name_photo_required">Geef een Foto-naam in aub!</string>
-    <string name="vrije_suffix">Vrije suffix</string>
-    <string name="button_vrije_suffix">Vrije suffix</string>
+    <string name="free_suffix">Vrije suffix</string>
+    <string name="button_free_suffix">Vrije suffix</string>
     <string name="button_display_photo">Open</string>
     <string name="button_delete_photo">Verwijder</string>
     <string name="delete_photo_">Foto Verwijderen?</string>
     <string name="click_yes_to_delete_photo">Klik Ja om Foto %1$s te Verwijderen</string>
 	<string name="enter_suffix">Vul een Suffix in!</string>
+	<string name="select_photo_first">Selecteer eerst een Foto!</string>
     
     <!-- DisplayPhotoActivity -->
     <string name="display_photo">Getoonde Foto</string>
