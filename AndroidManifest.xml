@@ -51,6 +51,8 @@
             android:name="be.mobiledatacaptator.activities.TakePhotoActivity"
             android:screenOrientation="portrait" >
         </activity>
+        <activity android:name="be.mobiledatacaptator.activities.DisplayPhotoActivity" >
+        </activity>
         <!-- Nodige Dropbox instellingen:______________________________________________________________________ -->
         <activity android:name="com.dropbox.sync.android.DbxAuthActivity" />
         <activity
@@ -72,8 +74,6 @@
             android:exported="false"
             android:label="Dropbox Sync" />
         <!-- ____________________________________________________________________________________________________ -->
-        <activity android:name="be.mobiledatacaptator.DisplayPhotoActivity" >
-        </activity>
     </application>
 
 </manifest>

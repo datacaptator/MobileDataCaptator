@@ -46,6 +46,7 @@
     <string name="click_yes_to_delete_photo">Klik Ja om Foto %1$s te Verwijderen</string>
 	<string name="enter_suffix">Vul een Suffix in!</string>
 	<string name="select_photo_first">Selecteer eerst een Foto!</string>
+	<string name="errorSavePhoto">Fout bij wegschrijven naar dropbox.</string>
     
     <!-- DisplayPhotoActivity -->
     <string name="display_photo">Getoonde Foto</string>

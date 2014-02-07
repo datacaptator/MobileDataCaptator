@@ -33,14 +33,14 @@ import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TableLayout;
 import android.widget.TableRow;
-import be.mobiledatacaptator.DisplayPhotoActivity;
 import be.mobiledatacaptator.R;
 import be.mobiledatacaptator.model.PhotoCategory;
 import be.mobiledatacaptator.model.Project;
 import be.mobiledatacaptator.model.UnitOfWork;
 import be.mobiledatacaptator.utilities.MdcUtil;
 
-public class TakePhotoActivity extends Activity implements OnClickListener, OnItemLongClickListener, OnItemClickListener {
+public class TakePhotoActivity extends Activity implements OnClickListener, OnItemLongClickListener,
+		OnItemClickListener {
 
 	final static int TAKE_PICTURE = 0;
 	private Project project;
@@ -76,8 +76,7 @@ public class TakePhotoActivity extends Activity implements OnClickListener, OnIt
 
 		listViewPhotos.setOnItemClickListener(this);
 		listViewPhotos.setOnItemLongClickListener(this);
-		
-		
+
 		buttonFreeSuffix.setOnClickListener(photoCategoryListener);
 		buttonDisplayPhoto.setOnClickListener(this);
 		buttonDeletePhoto.setOnClickListener(this);
@@ -91,14 +90,15 @@ public class TakePhotoActivity extends Activity implements OnClickListener, OnIt
 		}
 
 		loadFotoNames();
-	
+
 		buttonFreeSuffix.requestFocus();
 
 	}
 
 	private void loadFotoNames() {
 		try {
-			listFotoNames = unitOfWork.getDao().getAllFilesFromPathWithExtension(project.getDataLocation(), ".jpg", false);
+			listFotoNames = unitOfWork.getDao().getAllFilesFromPathWithExtension(project.getDataLocation(), ".jpg",
+					false);
 
 			listThisFicheFotoNames = new ArrayList<String>();
 
@@ -108,7 +108,8 @@ public class TakePhotoActivity extends Activity implements OnClickListener, OnIt
 				}
 			}
 
-			ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_activated_1, listThisFicheFotoNames);
+			ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,
+					android.R.layout.simple_list_item_activated_1, listThisFicheFotoNames);
 			listViewPhotos.setAdapter(adapter);
 			listViewPhotos.setItemsCanFocus(true);
 			listViewPhotos.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
@@ -119,18 +120,22 @@ public class TakePhotoActivity extends Activity implements OnClickListener, OnIt
 	}
 
 	private void addPhotoCategoriesToLayout(PhotoCategory photoCategorie, int index) {
-		// Android provides a service 'getSystemService(Context.LAYOUT_INFLATER_SERVICE)' to inflate a layout
+		// Android provides a service
+		// 'getSystemService(Context.LAYOUT_INFLATER_SERVICE)' to inflate a
+		// layout
 		LayoutInflater inflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 		View newPhotoCategoryView = inflater.inflate(R.layout.new_table_row_photo_category, null);
 
-		// Get a reference to the buttonNewPhotoCategory on the new_table_row_photo_category.xml and set
+		// Get a reference to the buttonNewPhotoCategory on the
+		// new_table_row_photo_category.xml and set
 		// its text + register its onClickListener
 		Button buttonNewPhotoCategory = (Button) newPhotoCategoryView.findViewById(R.id.buttonNewPhotoCategory);
 		buttonNewPhotoCategory.setText(photoCategorie.getName());
 		buttonNewPhotoCategory.setTag(photoCategorie.getSuffix());
 		buttonNewPhotoCategory.setOnClickListener(photoCategoryListener);
 
-		// Adds programmatically the new_tag_view.xml to the tableLayoutPhotoCategory at  the specified index)
+		// Adds programmatically the new_tag_view.xml to the
+		// tableLayoutPhotoCategory at the specified index)
 		tableLayoutPhotoCategory.addView(newPhotoCategoryView, index);
 	}
 
@@ -187,7 +192,8 @@ public class TakePhotoActivity extends Activity implements OnClickListener, OnIt
 
 	}
 
-	// Annonymous Inner Class that implements Interface OnClickListener to respond to the click event
+	// Annonymous Inner Class that implements Interface OnClickListener to
+	// respond to the click event
 	public OnClickListener photoCategoryListener = new OnClickListener() {
 
 		@Override
@@ -242,6 +248,8 @@ public class TakePhotoActivity extends Activity implements OnClickListener, OnIt
 
 	private void savePhoto() {
 		try {
+
+			File tempFile = new File(tempFileName);
 			Bitmap bitmap = BitmapFactory.decodeFile(tempFileName);
 
 			// Groote aanpassen
@@ -251,18 +259,40 @@ public class TakePhotoActivity extends Activity implements OnClickListener, OnIt
 			int destWidth = project.getPhotoWidth();
 			int destHeight = project.getPhotoHeight();
 
-			if (origHeight > destHeight || origWidth > destWidth) {
-				bitmap = Bitmap.createScaledBitmap(bitmap, destWidth, origHeight / (origWidth / destWidth), false);
+			// Hoogte en breedte aanpassen naar gelang portrait of landscape
+			if (origHeight > origWidth) {
+				if (destWidth > destHeight) {
+					int temp = destWidth;
+					destWidth = destHeight;
+					destHeight = temp;
+				}
+			} else {
+				if (destWidth < destHeight) {
+					int temp = destWidth;
+					destWidth = destHeight;
+					destHeight = temp;
+				}
 			}
+
+			if (origHeight > destHeight || origWidth > destWidth) {
+				if ((origWidth / destWidth) > (origHeight / destHeight)) {
+					bitmap = Bitmap.createScaledBitmap(bitmap, destWidth, origHeight / (origWidth / destWidth), false);
+				} else {
+					bitmap = Bitmap
+							.createScaledBitmap(bitmap, origWidth / (origHeight / destHeight), destHeight, false);
+				}
+			}
+
 			// Wegschrijven
-			FileOutputStream fos = unitOfWork.getDao().getWriteStreamForNewFile(project.getDataLocation() + photoNameToSave + ".jpg");
-			bitmap.compress(Bitmap.CompressFormat.JPEG, 80, fos);
-			fos.flush();
-			fos.close();
+			try {
+				bitmap.compress(Bitmap.CompressFormat.JPEG, 80, new FileOutputStream(tempFile));
+				unitOfWork.getDao().saveFile(project.getDataLocation() + photoNameToSave + ".jpg", tempFile);
+			} catch (Exception e) {
+				MdcUtil.showToastShort(getString(R.string.errorSavePhoto), this);
+			}
 
 			// Tijdelijke file verwijderen
-			File f = new File(tempFileName);
-			f.delete();
+			tempFile.delete();
 
 			loadFotoNames();
 
@@ -306,8 +336,8 @@ public class TakePhotoActivity extends Activity implements OnClickListener, OnIt
 	private void deleteSelectedPhoto(String selectedPhotoName) {
 		AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
 		alertDialogBuilder.setTitle(getString(R.string.delete_photo_));
-		alertDialogBuilder.setMessage(String.format(getString(R.string.click_yes_to_delete_photo), textSelectedPhoto)).setCancelable(false)
-				.setPositiveButton(getString(R.string.yes), new DialogInterface.OnClickListener() {
+		alertDialogBuilder.setMessage(String.format(getString(R.string.click_yes_to_delete_photo), textSelectedPhoto))
+				.setCancelable(false).setPositiveButton(getString(R.string.yes), new DialogInterface.OnClickListener() {
 					public void onClick(DialogInterface dialog, int id) {
 						try {
 							unitOfWork.getDao().delete(project.getDataLocation() + textSelectedPhoto + ".jpg");

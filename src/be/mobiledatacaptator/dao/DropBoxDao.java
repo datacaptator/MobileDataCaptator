@@ -1,17 +1,20 @@
 package be.mobiledatacaptator.dao;
 
+import java.io.BufferedInputStream;
+import java.io.File;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+
 import com.dropbox.sync.android.DbxException;
 import com.dropbox.sync.android.DbxFile;
 import com.dropbox.sync.android.DbxFileInfo;
 import com.dropbox.sync.android.DbxFileSystem;
 import com.dropbox.sync.android.DbxPath;
 import com.dropbox.sync.android.DbxPath.InvalidPathException;
-
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 
 public class DropBoxDao implements IMdcDao {
 
@@ -30,8 +33,8 @@ public class DropBoxDao implements IMdcDao {
 	}
 
 	@Override
-	public List<String> getAllFilesFromPathWithExtension(String path, String extension, Boolean returnExtension) throws InvalidPathException,
-			DbxException {
+	public List<String> getAllFilesFromPathWithExtension(String path, String extension, Boolean returnExtension)
+			throws InvalidPathException, DbxException {
 
 		List<String> folderContent = new ArrayList<String>();
 		List<DbxFileInfo> fileInfoList = dbxFileSystem.listFolder(new DbxPath(path));
@@ -53,22 +56,25 @@ public class DropBoxDao implements IMdcDao {
 	}
 
 	@Override
-	public FileOutputStream getWriteStreamForNewFile(String path) throws IOException {
-		DbxFile dbxFile = dbxFileSystem.create(new DbxPath(path));
-		return dbxFile.getWriteStream();
-
-	}
-
-	@Override
 	public void delete(String path) throws Exception {
 		dbxFileSystem.delete(new DbxPath(path));
 	}
 
 	@Override
-	public FileInputStream getReadStreamFromFile(String path) throws Exception {
-		FileInputStream fileInputStream;
-		fileInputStream = dbxFileSystem.open(new DbxPath(path)).getReadStream();
-		return fileInputStream;	
+	public void saveFile(String path, File file) throws Exception {
+		DbxFile f = dbxFileSystem.create(new DbxPath(path));
+		f.writeFromExistingFile(file, false);
+		f.close();
+	}
+
+	@Override
+	public Bitmap getBitmapFromFile(String path) throws Exception {
+		DbxFile f = dbxFileSystem.open(new DbxPath(path));
+		BufferedInputStream bFis = new BufferedInputStream(f.getReadStream());
+		Bitmap bitMap = BitmapFactory.decodeStream(bFis);
+		bFis.close();
+		f.close();
+		return bitMap;
 	}
 
 }
