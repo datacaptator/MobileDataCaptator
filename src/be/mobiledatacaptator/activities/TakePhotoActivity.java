@@ -274,13 +274,20 @@ public class TakePhotoActivity extends Activity implements OnClickListener, OnIt
 				}
 			}
 
-			if (origHeight > destHeight || origWidth > destWidth) {
-				if ((origWidth / destWidth) > (origHeight / destHeight)) {
-					bitmap = Bitmap.createScaledBitmap(bitmap, destWidth, origHeight / (origWidth / destWidth), false);
-				} else {
+			if (origHeight > destHeight) {
+				if (origWidth > destWidth) {
+					if ((origWidth / destWidth) > (origHeight / destHeight)) {
+						bitmap = Bitmap.createScaledBitmap(bitmap, destWidth, origHeight / (origWidth / destWidth),
+								false);
+					} else {
+						bitmap = Bitmap.createScaledBitmap(bitmap, origWidth / (origHeight / destHeight), destHeight,
+								false);
+					}
+				} else
 					bitmap = Bitmap
 							.createScaledBitmap(bitmap, origWidth / (origHeight / destHeight), destHeight, false);
-				}
+			} else if (origWidth > destWidth) {
+				bitmap = Bitmap.createScaledBitmap(bitmap, destWidth, origHeight / (origWidth / destWidth), false);
 			}
 
 			// Wegschrijven

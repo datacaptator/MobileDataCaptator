@@ -1,6 +1,5 @@
 package be.mobiledatacaptator.dao;
 
-import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -8,10 +7,13 @@ import java.util.List;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.util.Log;
 
 import com.dropbox.sync.android.DbxException;
 import com.dropbox.sync.android.DbxFile;
 import com.dropbox.sync.android.DbxFileInfo;
+import com.dropbox.sync.android.DbxFileStatus;
+import com.dropbox.sync.android.DbxFileStatus.PendingOperation;
 import com.dropbox.sync.android.DbxFileSystem;
 import com.dropbox.sync.android.DbxPath;
 import com.dropbox.sync.android.DbxPath.InvalidPathException;
@@ -70,9 +72,20 @@ public class DropBoxDao implements IMdcDao {
 	@Override
 	public Bitmap getBitmapFromFile(String path) throws Exception {
 		DbxFile f = dbxFileSystem.open(new DbxPath(path));
-		BufferedInputStream bFis = new BufferedInputStream(f.getReadStream());
-		Bitmap bitMap = BitmapFactory.decodeStream(bFis);
-		bFis.close();
+
+		//Dit zou het probmeem met het (soms) niet weergeven van bitmaps moeten oplossen.
+		//MAAR WERKT NIET!
+		//dbx weet dat er een nieuwe versie van een file is, maar geeft deze niet weer.
+		//Bug? App opnieuw installeren helpt wel...
+		DbxFileStatus status = f.getNewerStatus();
+		if (status != null && status.isCached) {
+			f.update();
+			while (f.getNewerStatus().pending == PendingOperation.DOWNLOAD) {
+				Log.d("", "Waiting for " + path + " to be downloaded");
+			}
+		}
+
+		Bitmap bitMap = BitmapFactory.decodeStream(f.getReadStream());
 		f.close();
 		return bitMap;
 	}
