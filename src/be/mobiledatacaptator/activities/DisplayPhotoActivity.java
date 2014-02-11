@@ -29,6 +29,9 @@ public class DisplayPhotoActivity extends Activity {
 		project = unitOfWork.getActiveProject();
 
 		photoToDisplay = getIntent().getExtras().get("photoToDisplay").toString();
+		
+		setTitle(getString(R.string.photo) + " " + photoToDisplay);
+		
 		try {
 			bitMap = unitOfWork.getDao().getBitmapFromFile(project.getDataLocation() + photoToDisplay + ".jpg");
 			imageViewDisplayPhoto.setImageBitmap(bitMap);

@@ -50,5 +50,6 @@
     
     <!-- DisplayPhotoActivity -->
     <string name="display_photo">Getoonde Foto</string>
+    <string name="photo">Foto: </string>
 
 </resources>
