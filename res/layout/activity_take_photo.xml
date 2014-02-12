@@ -19,8 +19,6 @@
                 android:id="@+id/listViewPhotos"
                 android:layout_width="170dp"
                 android:layout_height="wrap_content" >
-
-                <requestFocus />
             </ListView>
         </LinearLayout>
 

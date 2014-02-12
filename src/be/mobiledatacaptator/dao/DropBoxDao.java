@@ -73,11 +73,15 @@ public class DropBoxDao implements IMdcDao {
 	public Bitmap getBitmapFromFile(String path) throws Exception {
 		DbxFile f = dbxFileSystem.open(new DbxPath(path));
 
-		//Dit zou het probmeem met het (soms) niet weergeven van bitmaps moeten oplossen.
-		//MAAR WERKT NIET!
-		//dbx weet dat er een nieuwe versie van een file is, maar geeft deze niet weer.
-		//Bug? App opnieuw installeren helpt wel...
+		// Dit zou het probmeem met het (soms) niet weergeven van bitmaps moeten
+		// oplossen.
+		// MAAR WERKT NIET!
+		// dbx weet dat er een nieuwe versie van een file is, maar geeft deze
+		// niet weer.
+		// Bug? App opnieuw installeren helpt wel...
+
 		DbxFileStatus status = f.getNewerStatus();
+
 		if (status != null && status.isCached) {
 			f.update();
 			while (f.getNewerStatus().pending == PendingOperation.DOWNLOAD) {
