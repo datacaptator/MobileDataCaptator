@@ -30,12 +30,12 @@ public class AddTabFragment extends Fragment implements ITitleFragment {
 
 			@Override
 			public void onClick(View v) {
-				Tab tab = group.getTabTemplate().getNewTab();
-				group.getTabs().add(tab);
-				TabFragment fragment = new TabFragment();
-				fragment.setTab(tab);
-				//fichePagerAdapter.addItemBeforeLast(fragment);
-				fichePagerAdapter.addItem(fragment);
+//				Tab tab = group.getTabTemplate().getNewTab();
+//				group.getTabs().add(tab);
+//				TabFragment fragment = new TabFragment();
+//				fragment.setTab(tab);
+//				//fichePagerAdapter.addItemBeforeLast(fragment);
+//				fichePagerAdapter.addItem(fragment);
 			}
 		});
 
