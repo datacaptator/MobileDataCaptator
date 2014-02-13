@@ -1,8 +1,5 @@
 package be.mobiledatacaptator.model;
 
 public enum VeldType {
-	TEXT,
-	INT,
-	DOUBLE,
-	CHOICE
+	TEXT, INT, DOUBLE, CHOICE
 }

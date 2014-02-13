@@ -1,11 +1,10 @@
 package be.mobiledatacaptator.model;
 
 public class PhotoCategory {
-	
+
 	private String name;
 	private String suffix;
-	
-		
+
 	public PhotoCategory(String name, String suffix) {
 		this.name = name;
 		this.suffix = suffix;
@@ -26,7 +25,6 @@ public class PhotoCategory {
 	public void setSuffix(String suffix) {
 		this.suffix = suffix;
 	}
-
 
 	@Override
 	public int hashCode() {
@@ -63,10 +61,5 @@ public class PhotoCategory {
 	public String toString() {
 		return getName();
 	}
-	
-	
-	
-	
-	
 
 }

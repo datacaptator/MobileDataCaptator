@@ -2,7 +2,9 @@ package be.mobiledatacaptator.model;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
+import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 
@@ -14,8 +16,8 @@ import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.TableRow;
 import android.widget.TextView;
+import be.mobiledatacaptator.R;
 
-@SuppressLint("DefaultLocale")
 public class DataField extends TableRow {
 
 	private String name;
@@ -36,11 +38,29 @@ public class DataField extends TableRow {
 		xmlTemplate = xml;
 		loadTemplate();
 	}
-	
-	public DataField(Context context){
+
+	public DataField(Context context) {
 		super(context);
 	}
 
+	public void appendXml(Document doc, Element root) {
+		Element element = doc.createElement(name);
+		root.appendChild(element);
+
+		if (type == VeldType.CHOICE) {
+			if (spinnerChoice.getSelectedItem() != null) {
+				element.appendChild(doc.createTextNode(spinnerChoice.getSelectedItem().toString()));
+				element.setAttribute(getContext().getString(R.string.IdnForXmlAttr),
+						String.valueOf(((ChoiceItem) spinnerChoice.getSelectedItem()).getId()));
+			}
+		} else {
+			if (editTextValue.getText() != null) {
+				element.appendChild(doc.createTextNode(editTextValue.getText().toString()));
+			}
+		}
+	}
+
+	@SuppressLint("DefaultLocale")
 	private void loadTemplate() {
 		// Velden invullen aan hand van xml element.
 		if (xmlTemplate.hasAttribute("Name"))
@@ -50,10 +70,10 @@ public class DataField extends TableRow {
 		if (xmlTemplate.hasAttribute("DefaultValue"))
 			defaultValue = xmlTemplate.getAttribute("DefaultValue");
 		if (xmlTemplate.hasAttribute("Required"))
-			if (xmlTemplate.getAttribute("Required").toLowerCase().equals("y"))
+			if (xmlTemplate.getAttribute("Required").toLowerCase(Locale.getDefault()).equals("y"))
 				required = true;
 		if (xmlTemplate.hasAttribute("Type")) {
-			String strType = xmlTemplate.getAttribute("Type").toLowerCase();
+			String strType = xmlTemplate.getAttribute("Type").toLowerCase(Locale.getDefault());
 			if (strType.equals("text"))
 				type = VeldType.TEXT;
 			if (strType.equals("choice"))

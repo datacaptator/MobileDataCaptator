@@ -19,6 +19,8 @@ public interface IMdcDao {
 
 	public void saveFile(String path, File file) throws Exception;
 
+	public void saveStringToFile(String path, String string) throws Exception;
+
 	public Bitmap getBitmapFromFile(String path) throws Exception;
-	
+
 }

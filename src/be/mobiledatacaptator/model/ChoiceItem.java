@@ -30,7 +30,5 @@ public class ChoiceItem {
 	public String toString() {
 		return text;
 	}
-	
-	
 
 }

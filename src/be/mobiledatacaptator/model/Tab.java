@@ -3,6 +3,7 @@ package be.mobiledatacaptator.model;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 
@@ -41,18 +42,6 @@ public class Tab extends Fragment implements ITitleFragment {
 		return scrollView;
 	}
 
-	private void loadTemplate() {
-		if (xmlTemplate != null) {
-			if (xmlTemplate.hasAttribute("Name"))
-				name = xmlTemplate.getAttribute("Name");
-			NodeList fields = xmlTemplate.getElementsByTagName("Field");
-			for (int k = 0; k < fields.getLength(); k++) {
-				Element fieldEle = (Element) fields.item(k);
-				dataFields.add(new DataField(context, fieldEle));
-			}
-		}
-	}
-
 	public Element getXmlTemplate() {
 		return xmlTemplate;
 	}
@@ -69,6 +58,27 @@ public class Tab extends Fragment implements ITitleFragment {
 	@Override
 	public String getTitle() {
 		return name;
+	}
+
+	public void appendXml(Document doc, Element root) {
+		Element element = doc.createElement(name);
+		root.appendChild(element);
+
+		for (DataField df : dataFields) {
+			df.appendXml(doc, element);
+		}
+	}
+
+	private void loadTemplate() {
+		if (xmlTemplate != null) {
+			if (xmlTemplate.hasAttribute("Name"))
+				name = xmlTemplate.getAttribute("Name");
+			NodeList fields = xmlTemplate.getElementsByTagName("Field");
+			for (int k = 0; k < fields.getLength(); k++) {
+				Element fieldEle = (Element) fields.item(k);
+				dataFields.add(new DataField(context, fieldEle));
+			}
+		}
 	}
 
 }

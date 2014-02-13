@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
+import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 
@@ -116,4 +117,12 @@ public class Group extends ViewPager {
 		setCurrentItem(tabs.size());
 	}
 
+	public void appendXml(Document doc, Element root) {
+		Element element = doc.createElement(name);
+		root.appendChild(element);
+		for (Tab tab : tabs) {
+			tab.appendXml(doc, element);
+			;
+		}
+	}
 }

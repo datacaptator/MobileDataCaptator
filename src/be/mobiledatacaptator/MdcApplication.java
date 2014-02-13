@@ -1,7 +1,7 @@
 package be.mobiledatacaptator;
 
-import be.mobiledatacaptator.model.UnitOfWork;
 import android.app.Application;
+import be.mobiledatacaptator.model.UnitOfWork;
 
 public class MdcApplication extends Application {
 

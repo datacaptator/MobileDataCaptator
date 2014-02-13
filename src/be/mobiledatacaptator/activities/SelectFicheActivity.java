@@ -71,12 +71,17 @@ public class SelectFicheActivity extends Activity implements OnClickListener {
 		buttonOpenFiche.setOnClickListener(this);
 		buttonOpenFoto.setOnClickListener(this);
 		buttonOpenSchets.setOnClickListener(this);
+	}
 
+	@Override
+	protected void onStart() {
+		super.onStart();
+
+		// Dit hier geplaatst, zodat de lijsten geupdated worden bij het
+		// her-openen van de activity.
 		loadProjectData();
 		loadDataFiches();
-
 		listViewFiches.requestFocus();
-	
 	}
 
 	@Override
@@ -119,7 +124,8 @@ public class SelectFicheActivity extends Activity implements OnClickListener {
 				NodeList nodes = root.getElementsByTagName("FotoCategorie");
 				for (int i = 0; i < nodes.getLength(); i++) {
 					Node node = nodes.item(i);
-					// extra controle-inbouw of er reeds een zelfde categorie aanwezig - zoniet komt fotocategorie dubbel voor in
+					// extra controle-inbouw of er reeds een zelfde categorie
+					// aanwezig - zoniet komt fotocategorie dubbel voor in
 					// Spinner-takePicture
 					PhotoCategory photoCategorie = new PhotoCategory(((Element) node).getAttribute("Name"),
 							((Element) node).getAttribute("Suffix"));
@@ -130,7 +136,7 @@ public class SelectFicheActivity extends Activity implements OnClickListener {
 				}
 				project.setPhotoHeight(Integer.parseInt(root.getAttribute("PhotoHeight")));
 				project.setPhotoWidth(Integer.parseInt(root.getAttribute("PhotoWidth")));
-				
+
 			}
 
 		} catch (Exception e) {
@@ -140,24 +146,27 @@ public class SelectFicheActivity extends Activity implements OnClickListener {
 
 	private void loadDataFiches() {
 		try {
-			List<String> listDataFicheNamen = unitOfWork.getDao().getAllFilesFromPathWithExtension(project.getDataLocation(), ".xml", false);
+			List<String> listDataFicheNamen = unitOfWork.getDao().getAllFilesFromPathWithExtension(
+					project.getDataLocation(), ".xml", false);
 
 			Collections.sort(listDataFicheNamen, Collections.reverseOrder());
-			
-			ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_activated_1, listDataFicheNamen);
-			//ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_single_choice, listDataFicheNamen);
+
+			ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,
+					android.R.layout.simple_list_item_activated_1, listDataFicheNamen);
+			// ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,
+			// android.R.layout.simple_list_item_single_choice,
+			// listDataFicheNamen);
 			listViewFiches.setAdapter(adapter);
 			listViewFiches.setItemsCanFocus(true);
 			listViewFiches.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
-			
+
 			listViewFiches.setOnItemClickListener(new OnItemClickListener() {
 				@Override
 				public void onItemClick(AdapterView<?> arg0, View arg1, int indexListItem, long arg3) {
 					String textListItem = (String) listViewFiches.getItemAtPosition(indexListItem);
 					editTextFicheName.setText(textListItem.substring(project.getFilePrefix().length()));
 					setTitle(MdcUtil.setActivityTitle(textListItem, unitOfWork, getApplicationContext()));
-					
-					
+
 				}
 			});
 
@@ -217,7 +226,8 @@ public class SelectFicheActivity extends Activity implements OnClickListener {
 				editTextFicheName.setText(result + "1");
 			}
 
-			setTitle(MdcUtil.setActivityTitle(editTextFicheName.getText().toString(), unitOfWork, getApplicationContext()));
+			setTitle(MdcUtil.setActivityTitle(editTextFicheName.getText().toString(), unitOfWork,
+					getApplicationContext()));
 		}
 	}
 
@@ -244,7 +254,8 @@ public class SelectFicheActivity extends Activity implements OnClickListener {
 					AlertDialog.Builder builder = new AlertDialog.Builder(this);
 
 					String ficheName = unitOfWork.getActiveFiche().getName();
-					String builderMessage = getString(R.string.wil_u_fiche) + " " + ficheName + " " + getString(R.string.openen);
+					String builderMessage = getString(R.string.wil_u_fiche) + " " + ficheName + " "
+							+ getString(R.string.openen);
 					builder.setNegativeButton(R.string.no, dialogClickListener).setMessage(builderMessage)
 							.setPositiveButton(R.string.yes, dialogClickListener).show();
 				} else {

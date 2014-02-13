@@ -1,9 +1,15 @@
 package be.mobiledatacaptator.activities;
 
 import java.io.ByteArrayInputStream;
+import java.io.StringWriter;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.transform.OutputKeys;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -16,6 +22,7 @@ import android.view.MenuItem;
 import android.widget.TabHost;
 import be.mobiledatacaptator.R;
 import be.mobiledatacaptator.adapters.FichePagerAdapter;
+import be.mobiledatacaptator.model.Fiche;
 import be.mobiledatacaptator.model.Group;
 import be.mobiledatacaptator.model.UnitOfWork;
 import be.mobiledatacaptator.utilities.MdcUtil;
@@ -50,22 +57,7 @@ public class FicheActivity extends FragmentActivity {
 	@Override
 	protected void onPause() {
 		super.onPause();
-		// TEST
-
-		// String data = "";
-
-		// try {
-		// for (Group g : unitOfWork.getActiveFiche().getGroups()) {
-		// for (Tab t : g.getTabs()) {
-		// for (DataField d : t.getDataFields()) {
-		// data += d.getName() + ": " + d.getUiField().getValue() + "\r\n";
-		// }
-		// }
-		// }
-		// Toast.makeText(this, data, Toast.LENGTH_LONG).show();
-		// } catch (Exception e) {
-		// MdcUtil.showToastLong(e.getMessage(), this);
-		// }
+		saveFiche();
 	}
 
 	@SuppressLint("DefaultLocale")
@@ -104,7 +96,26 @@ public class FicheActivity extends FragmentActivity {
 			group.setId(getUniqueId());
 			tabHost.addTab(group.getTabSpec(tabHost));
 		}
+	}
 
+	private void saveFiche() {
+		try {
+			Fiche fiche = unitOfWork.getActiveFiche();
+			Document doc = DocumentBuilderFactory.newInstance().newDocumentBuilder().newDocument();
+			fiche.appendXml(doc);
+
+			TransformerFactory tf = TransformerFactory.newInstance();
+			Transformer transformer = tf.newTransformer();
+			transformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "yes");
+			transformer.setOutputProperty(OutputKeys.INDENT, "yes");
+			StringWriter writer = new StringWriter();
+			transformer.transform(new DOMSource(doc), new StreamResult(writer));
+			String output = writer.getBuffer().toString();
+			unitOfWork.getDao().saveStringToFile(fiche.getPath(), output);
+
+		} catch (Exception e) {
+			MdcUtil.showToastShort(e.getMessage(), this);
+		}
 	}
 
 	private int getUniqueId() {

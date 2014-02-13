@@ -41,7 +41,8 @@ public class StartDropBoxApi extends Activity {
 
 	private void initDao() {
 		try {
-			((DropBoxDao) UnitOfWork.getInstance().getDao()).setDbxFileSystem(DbxFileSystem.forAccount(dbxAccountManager.getLinkedAccount()));
+			((DropBoxDao) UnitOfWork.getInstance().getDao()).setDbxFileSystem(DbxFileSystem
+					.forAccount(dbxAccountManager.getLinkedAccount()));
 			finish();
 		} catch (Exception e) {
 			MdcUtil.showToastShort(e.getMessage(), getApplicationContext());

@@ -64,8 +64,29 @@ public class DropBoxDao implements IMdcDao {
 
 	@Override
 	public void saveFile(String path, File file) throws Exception {
-		DbxFile f = dbxFileSystem.create(new DbxPath(path));
+		DbxPath dbxPath = new DbxPath(path);
+		DbxFile f;
+
+		if (dbxFileSystem.exists(dbxPath)) {
+			f = dbxFileSystem.open(dbxPath);
+		} else {
+			f = dbxFileSystem.create(new DbxPath(path));
+		}
 		f.writeFromExistingFile(file, false);
+		f.close();
+	}
+
+	@Override
+	public void saveStringToFile(String path, String string) throws Exception {
+		DbxPath dbxPath = new DbxPath(path);
+		DbxFile f;
+
+		if (dbxFileSystem.exists(dbxPath)) {
+			f = dbxFileSystem.open(dbxPath);
+		} else {
+			f = dbxFileSystem.create(new DbxPath(path));
+		}
+		f.writeString(string);
 		f.close();
 	}
 
