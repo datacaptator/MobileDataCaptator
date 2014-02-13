@@ -7,15 +7,18 @@ import java.util.Locale;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 
-import android.R.color;
 import android.content.Context;
+import android.graphics.Color;
 import android.support.v4.view.PagerTitleStrip;
 import android.support.v4.view.ViewPager;
 import android.view.Gravity;
 import android.view.View;
+import android.widget.Button;
+import android.widget.LinearLayout;
 import android.widget.TabHost;
 import android.widget.TabHost.TabContentFactory;
 import android.widget.TabHost.TabSpec;
+import be.mobiledatacaptator.R;
 import be.mobiledatacaptator.adapters.FichePagerAdapter;
 
 public class Group extends ViewPager {
@@ -27,6 +30,7 @@ public class Group extends ViewPager {
 	private FichePagerAdapter fichePagerAdapter;
 
 	private Element xmlTemplate;
+	private Element xmlTabTemplate;
 
 	public Group(Context context, Element xml, FichePagerAdapter adapter) {
 		super(context);
@@ -34,6 +38,10 @@ public class Group extends ViewPager {
 		fichePagerAdapter = adapter;
 		setAdapter(fichePagerAdapter);
 		loadTemplate();
+	}
+
+	public Group(Context context) {
+		super(context);
 	}
 
 	private void loadTemplate() {
@@ -50,12 +58,17 @@ public class Group extends ViewPager {
 			tab.setXmlTemplate((Element) tabsNodes.item(i));
 			tabs.add(tab);
 		}
+
+		// Tabtemplate
+		tabsNodes = xmlTemplate.getElementsByTagName("TabTemplate");
+		if (tabsNodes != null && tabsNodes.getLength() > 0)
+			xmlTabTemplate = (Element) tabsNodes.item(0);
 	}
 
 	public TabSpec getTabSpec(TabHost tabHost) {
 		TabSpec spec = tabHost.newTabSpec(name);
 		spec.setIndicator(name);
-		final ViewPager viewPager = this;
+		final Group group = this;
 		spec.setContent(new TabContentFactory() {
 
 			@Override
@@ -66,23 +79,41 @@ public class Group extends ViewPager {
 				layoutParams.height = ViewPager.LayoutParams.WRAP_CONTENT;
 				layoutParams.width = ViewPager.LayoutParams.MATCH_PARENT;
 				layoutParams.gravity = Gravity.TOP;
-				strip.setBackgroundResource(color.darker_gray);
+				strip.setBackgroundColor(Color.DKGRAY);
 				addView(strip, layoutParams);
 
 				for (Tab tab : tabs) {
 					fichePagerAdapter.addItem(tab);
 				}
 
-				// if (group.isExpandable()) {
-				// AddTabFragment addTabFragment = new AddTabFragment();
-				// addTabFragment.setFichePagerAdapter(fichePagerAdapter);
-				// addTabFragment.setGroup(group);
-				// fichePagerAdapter.addItem(addTabFragment);
-				// }
-				return viewPager;
+				if (expandable) {
+					LinearLayout layout = new LinearLayout(getContext());
+					layout.setOrientation(LinearLayout.VERTICAL);
+					Button button = new Button(getContext());
+					button.setText(R.string.AddNew);
+					layout.addView(button);
+					layout.addView(group);
+					button.setOnClickListener(new OnClickListener() {
+						@Override
+						public void onClick(View v) {
+							group.addTabFromTemplate();
+						}
+					});
+					return layout;
+				}
+				return group;
 			}
 		});
 		return spec;
+	}
+
+	public void addTabFromTemplate() {
+		Tab tab = new Tab();
+		tab.setContext(getContext());
+		tab.setXmlTemplate(xmlTabTemplate);
+		tabs.add(tab);
+		fichePagerAdapter.addItem(tab);
+		setCurrentItem(tabs.size());
 	}
 
 }

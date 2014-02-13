@@ -36,6 +36,10 @@ public class DataField extends TableRow {
 		xmlTemplate = xml;
 		loadTemplate();
 	}
+	
+	public DataField(Context context){
+		super(context);
+	}
 
 	private void loadTemplate() {
 		// Velden invullen aan hand van xml element.

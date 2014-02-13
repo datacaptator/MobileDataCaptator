@@ -32,16 +32,6 @@ public class FichePagerAdapter extends FragmentPagerAdapter {
 		notifyDataSetChanged();
 	}
 
-	public void addItemBeforeLast(Fragment fragment) {
-		int aantal = fragments.size();
-		if (aantal < 1) {
-			fragments.add(fragment);
-		} else {
-			fragments.add(aantal - 1, fragment);
-		}
-		notifyDataSetChanged();
-	}
-
 	@Override
 	public CharSequence getPageTitle(int position) {
 		return ((ITitleFragment) fragments.get(position)).getTitle();
@@ -49,7 +39,6 @@ public class FichePagerAdapter extends FragmentPagerAdapter {
 
 	@Override
 	public int getItemPosition(Object object) {
-
 		return POSITION_NONE;
 	}
 }

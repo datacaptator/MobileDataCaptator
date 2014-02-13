@@ -9,24 +9,14 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 
-import android.R.color;
 import android.annotation.SuppressLint;
-import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
-import android.support.v4.view.PagerTitleStrip;
-import android.support.v4.view.ViewPager;
-import android.view.Gravity;
 import android.view.MenuItem;
-import android.view.View;
 import android.widget.TabHost;
-import android.widget.TabHost.TabContentFactory;
-import android.widget.TabHost.TabSpec;
 import be.mobiledatacaptator.R;
 import be.mobiledatacaptator.adapters.FichePagerAdapter;
-import be.mobiledatacaptator.fragments.AddTabFragment;
 import be.mobiledatacaptator.model.Group;
-import be.mobiledatacaptator.model.Tab;
 import be.mobiledatacaptator.model.UnitOfWork;
 import be.mobiledatacaptator.utilities.MdcUtil;
 
@@ -105,45 +95,13 @@ public class FicheActivity extends FragmentActivity {
 	private void toonFiche() {
 
 		setContentView(R.layout.activity_fiche);
-		final Context context = this;
+		// final Context context = this;
 
 		TabHost tabHost = (TabHost) findViewById(R.id.tabHost_Fiche);
 		tabHost.setup();
 
 		for (Group group : unitOfWork.getActiveFiche().getGroups()) {
 			group.setId(getUniqueId());
-//			TabSpec spec = tabHost.newTabSpec(group.getName());
-//			spec.setIndicator(group.getName());
-//			spec.setContent(new TabContentFactory() {
-//
-//				@Override
-//				public View createTabContent(String tag) {
-//					group.setId(getUniqueId());
-//					FichePagerAdapter fichePagerAdapter = new FichePagerAdapter(getSupportFragmentManager());
-//					group.setAdapter(fichePagerAdapter);
-//
-//					PagerTitleStrip strip = new PagerTitleStrip(context);
-//					ViewPager.LayoutParams layoutParams = new ViewPager.LayoutParams();
-//					layoutParams.height = ViewPager.LayoutParams.WRAP_CONTENT;
-//					layoutParams.width = ViewPager.LayoutParams.MATCH_PARENT;
-//					layoutParams.gravity = Gravity.TOP;
-//					strip.setBackgroundResource(color.darker_gray);
-//					group.addView(strip, layoutParams);
-//
-//					for (Tab tab : group.getTabs()) {
-//						fichePagerAdapter.addItem(tab);
-//					}
-//
-//					if (group.isExpandable()) {
-//						AddTabFragment addTabFragment = new AddTabFragment();
-//						addTabFragment.setFichePagerAdapter(fichePagerAdapter);
-//						addTabFragment.setGroup(group);
-//						fichePagerAdapter.addItem(addTabFragment);
-//					}
-//
-//					return group;
-//				}
-//			});
 			tabHost.addTab(group.getTabSpec(tabHost));
 		}
 

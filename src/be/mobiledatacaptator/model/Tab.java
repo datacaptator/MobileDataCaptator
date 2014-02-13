@@ -6,7 +6,6 @@ import java.util.List;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 
-import be.mobiledatacaptator.fragments.ITitleFragment;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -15,6 +14,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ScrollView;
 import android.widget.TableLayout;
+import be.mobiledatacaptator.fragments.ITitleFragment;
 
 public class Tab extends Fragment implements ITitleFragment {
 
