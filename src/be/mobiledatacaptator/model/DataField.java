@@ -131,4 +131,23 @@ public class DataField extends TableRow {
 		}
 	}
 
+	public void setValue(String value) {
+
+		if (type == VeldType.CHOICE) {
+			for (int i = 0; i < choiceItems.size(); i++) {
+				if (choiceItems.get(i).getText().equals(value)) {
+					spinnerChoice.setSelection(i);
+					break;
+				}
+			}
+		} else {
+
+			editTextValue.setText(value);
+		}
+	}
+
+	public String getName() {
+		return name;
+	}
+
 }
