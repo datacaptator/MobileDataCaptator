@@ -22,8 +22,10 @@ import android.view.MenuItem;
 import android.widget.TabHost;
 import be.mobiledatacaptator.R;
 import be.mobiledatacaptator.adapters.FichePagerAdapter;
+import be.mobiledatacaptator.model.DataField;
 import be.mobiledatacaptator.model.Fiche;
 import be.mobiledatacaptator.model.Group;
+import be.mobiledatacaptator.model.Tab;
 import be.mobiledatacaptator.model.UnitOfWork;
 import be.mobiledatacaptator.utilities.MdcUtil;
 
@@ -58,6 +60,7 @@ public class FicheActivity extends FragmentActivity {
 	@Override
 	protected void onPause() {
 		super.onPause();
+		toonValidatieFouten();
 		saveFiche();
 	}
 
@@ -132,6 +135,24 @@ public class FicheActivity extends FragmentActivity {
 		} catch (Exception e) {
 			MdcUtil.showToastShort(e.getMessage(), this);
 		}
+	}
+
+	private void toonValidatieFouten() {
+		StringBuilder builder = new StringBuilder();
+		for (Group group : unitOfWork.getActiveFiche().getGroups()) {
+			for (Tab tab : group.getTabs()) {
+				for (DataField dataField : tab.getDataFields()) {
+					StringBuilder sb2 = new StringBuilder();
+					if (!(dataField.isValide(sb2))) {
+						if (builder.length() > 0)
+							builder.append("\n");
+						builder.append(dataField.getLabel() + ": " + sb2.toString());
+					}
+				}
+			}
+		}
+		if (builder.length() > 0)
+			MdcUtil.showToastLong(builder.toString(), this);
 	}
 
 	private int getUniqueId() {

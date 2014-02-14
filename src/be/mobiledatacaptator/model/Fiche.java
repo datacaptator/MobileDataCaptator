@@ -33,7 +33,7 @@ public class Fiche {
 			childNode = nextChild;
 		}
 	}
-	
+
 	public String getName() {
 		return name;
 	}

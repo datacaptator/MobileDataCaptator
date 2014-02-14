@@ -153,5 +153,9 @@ public class Group extends ViewPager {
 	public String getName() {
 		return name;
 	}
-	
+
+	public List<Tab> getTabs() {
+		return tabs;
+	}
+
 }

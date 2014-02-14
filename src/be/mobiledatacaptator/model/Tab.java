@@ -99,5 +99,8 @@ public class Tab extends Fragment implements ITitleFragment {
 		return name;
 	}
 
-	
+	public List<DataField> getDataFields() {
+		return dataFields;
+	}
+
 }
