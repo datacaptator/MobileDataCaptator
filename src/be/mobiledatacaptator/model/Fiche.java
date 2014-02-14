@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+import org.w3c.dom.Node;
 
 public class Fiche {
 
@@ -20,6 +21,19 @@ public class Fiche {
 		}
 	}
 
+	public void loadExistingData(Element element) {
+		for (Node childNode = element.getFirstChild(); childNode != null;) {
+			Node nextChild = childNode.getNextSibling();
+			String s = childNode.getNodeName();
+			for (Group group : groups) {
+				if (group.getName().equals(s)) {
+					group.loadExistingData((Element) childNode);
+				}
+			}
+			childNode = nextChild;
+		}
+	}
+	
 	public String getName() {
 		return name;
 	}

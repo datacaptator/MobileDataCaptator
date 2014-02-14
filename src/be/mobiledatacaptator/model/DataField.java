@@ -107,15 +107,8 @@ public class DataField extends TableRow {
 					android.R.layout.simple_spinner_dropdown_item, choiceItems);
 			spinnerChoice.setAdapter(adapter);
 
-			if (defaultValue != null) {
-				for (int i = 0; i < choiceItems.size(); i++) {
-					if (choiceItems.get(i).getText().equals(defaultValue)) {
-						spinnerChoice.setSelection(i);
-						break;
-					}
-				}
-			}
 			addView(spinnerChoice);
+			
 		} else {
 
 			// Anders textveld plaatsen
@@ -125,10 +118,10 @@ public class DataField extends TableRow {
 			if (type == VeldType.INT)
 				editTextValue.setKeyListener(new DigitsKeyListener(true, false));
 
-			if (defaultValue != null)
-				editTextValue.setText(defaultValue);
 			addView(editTextValue);
 		}
+		if (defaultValue != null)
+			setValue(defaultValue);
 	}
 
 	public void setValue(String value) {

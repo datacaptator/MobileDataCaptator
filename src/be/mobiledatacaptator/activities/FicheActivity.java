@@ -40,6 +40,7 @@ public class FicheActivity extends FragmentActivity {
 		setTitle(MdcUtil.setActivityTitle(unitOfWork, getApplicationContext()));
 
 		LoadTemplate();
+		loadExistingData();
 		toonFiche();
 	}
 
@@ -82,6 +83,21 @@ public class FicheActivity extends FragmentActivity {
 			MdcUtil.showToastLong(e.getMessage(), this);
 		}
 
+	}
+
+	private void loadExistingData() {
+		try {
+			Fiche fiche = UnitOfWork.getInstance().getActiveFiche();
+			if (unitOfWork.getDao().existsFile(fiche.getPath())) {
+				String xml = unitOfWork.getDao().getFilecontent(fiche.getPath());
+				DocumentBuilder db = DocumentBuilderFactory.newInstance().newDocumentBuilder();
+				Document dom = db.parse(new ByteArrayInputStream(xml.getBytes()));
+				Element root = dom.getDocumentElement();
+				fiche.loadExistingData(root);
+			}
+		} catch (Exception e) {
+			MdcUtil.showToastShort(e.getMessage(), this);
+		}
 	}
 
 	private void toonFiche() {

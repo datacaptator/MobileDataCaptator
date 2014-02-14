@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 import android.content.Context;
@@ -81,4 +82,22 @@ public class Tab extends Fragment implements ITitleFragment {
 		}
 	}
 
+	public void loadExistingData(Element element) {
+		for (Node childNode = element.getFirstChild(); childNode != null;) {
+			Node nextChild = childNode.getNextSibling();
+			String s = childNode.getNodeName();
+			for (DataField dataField : dataFields) {
+				if (dataField.getName().equals(s)) {
+					dataField.setValue(childNode.getTextContent());
+				}
+			}
+			childNode = nextChild;
+		}
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	
 }

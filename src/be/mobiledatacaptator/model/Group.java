@@ -6,6 +6,7 @@ import java.util.Locale;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 import android.content.Context;
@@ -32,6 +33,7 @@ public class Group extends ViewPager {
 
 	private Element xmlTemplate;
 	private Element xmlTabTemplate;
+	private String templateName;
 
 	public Group(Context context, Element xml, FichePagerAdapter adapter) {
 		super(context);
@@ -62,8 +64,10 @@ public class Group extends ViewPager {
 
 		// Tabtemplate
 		tabsNodes = xmlTemplate.getElementsByTagName("TabTemplate");
-		if (tabsNodes != null && tabsNodes.getLength() > 0)
+		if (tabsNodes != null && tabsNodes.getLength() > 0) {
 			xmlTabTemplate = (Element) tabsNodes.item(0);
+			templateName = xmlTabTemplate.getAttribute("Name");
+		}
 	}
 
 	public TabSpec getTabSpec(TabHost tabHost) {
@@ -108,7 +112,7 @@ public class Group extends ViewPager {
 		return spec;
 	}
 
-	public void addTabFromTemplate() {
+	private void addTabFromTemplate() {
 		Tab tab = new Tab();
 		tab.setContext(getContext());
 		tab.setXmlTemplate(xmlTabTemplate);
@@ -122,7 +126,32 @@ public class Group extends ViewPager {
 		root.appendChild(element);
 		for (Tab tab : tabs) {
 			tab.appendXml(doc, element);
-			;
 		}
 	}
+
+	public void loadExistingData(Element element) {
+		for (Node childNode = element.getFirstChild(); childNode != null;) {
+			Node nextChild = childNode.getNextSibling();
+			String s = childNode.getNodeName();
+			if (expandable && templateName.equals(s)) {
+				Tab tab = new Tab();
+				tab.setContext(getContext());
+				tab.setXmlTemplate(xmlTabTemplate);
+				tab.loadExistingData((Element) childNode);
+				tabs.add(tab);
+			} else {
+				for (Tab tab : tabs) {
+					if (tab.getName().equals(s)) {
+						tab.loadExistingData((Element) childNode);
+					}
+				}
+			}
+			childNode = nextChild;
+		}
+	}
+
+	public String getName() {
+		return name;
+	}
+	
 }
