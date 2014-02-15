@@ -1,0 +1,68 @@
+<TableLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:stretchColumns="*" >
+
+    <TableRow
+        android:id="@+id/tableRow0"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent" >
+
+        <TextView android:text="test" />
+    </TableRow> 
+    
+    
+
+    <TableRow
+        android:id="@+id/tableRow1"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:layout_weight="1"
+        android:stretchColumns="*" >
+
+        <be.mobiledatacaptator.drawing_views.DrawingView
+            xmlns:android="http://schemas.android.com/apk/res/android"
+            android:id="@+id/drawingView"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent" 
+            android:layout_span="2"/>
+        
+    </TableRow>
+
+    <TableRow
+        android:id="@+id/tableRow2"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent" >
+
+        <Button
+            android:id="@+id/buttonDrawCircle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/button_circle" />
+
+        <Button
+            android:id="@+id/buttonDrawLine"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/button_line" />
+    </TableRow>
+
+      <TableRow
+        android:id="@+id/tableRow3"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent" >
+
+        <Button
+            android:id="@+id/buttonDrawRectangle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/button_rectangle" />
+
+        <Button
+            android:id="@+id/buttonDrawSquare"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/button_square" />
+    </TableRow>
+    
+</TableLayout>

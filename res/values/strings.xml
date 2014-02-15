@@ -55,5 +55,12 @@
     <!-- DisplayPhotoActivity -->
     <string name="display_photo">Getoonde Foto</string>
     <string name="photo">Foto: </string>
+    
+    <!-- DrawingActivity -->
+    <string name="button_circle">Cirkel</string>
+    <string name="button_line">Lijn</string>
+    <string name="button_rectangle">Rechthoek</string>
+	<string name="button_square">Vierkant</string>
+    
 
 </resources>
