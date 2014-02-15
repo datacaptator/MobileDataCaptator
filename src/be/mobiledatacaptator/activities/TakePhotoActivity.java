@@ -24,6 +24,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.AdapterView.OnItemLongClickListener;
@@ -39,8 +40,7 @@ import be.mobiledatacaptator.model.Project;
 import be.mobiledatacaptator.model.UnitOfWork;
 import be.mobiledatacaptator.utilities.MdcUtil;
 
-public class TakePhotoActivity extends Activity implements OnClickListener, OnItemLongClickListener,
-		OnItemClickListener {
+public class TakePhotoActivity extends Activity implements OnClickListener, OnItemLongClickListener, OnItemClickListener {
 
 	final static int TAKE_PICTURE = 0;
 	private Project project;
@@ -89,16 +89,16 @@ public class TakePhotoActivity extends Activity implements OnClickListener, OnIt
 			index++;
 		}
 
-		loadFotoNames();
+		loadPhotoNames();
 
-		buttonFreeSuffix.requestFocus();
+		// hide the keyboard
+		getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
 
 	}
 
-	private void loadFotoNames() {
+	private void loadPhotoNames() {
 		try {
-			listFotoNames = unitOfWork.getDao().getAllFilesFromPathWithExtension(project.getDataLocation(), ".jpg",
-					false);
+			listFotoNames = unitOfWork.getDao().getAllFilesFromPathWithExtension(project.getDataLocation(), ".jpg", false);
 
 			listThisFicheFotoNames = new ArrayList<String>();
 
@@ -108,8 +108,7 @@ public class TakePhotoActivity extends Activity implements OnClickListener, OnIt
 				}
 			}
 
-			ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,
-					android.R.layout.simple_list_item_activated_1, listThisFicheFotoNames);
+			ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_activated_1, listThisFicheFotoNames);
 			listViewPhotos.setAdapter(adapter);
 			listViewPhotos.setItemsCanFocus(true);
 			listViewPhotos.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
@@ -120,22 +119,19 @@ public class TakePhotoActivity extends Activity implements OnClickListener, OnIt
 	}
 
 	private void addPhotoCategoriesToLayout(PhotoCategory photoCategorie, int index) {
-		// Android provides a service
-		// 'getSystemService(Context.LAYOUT_INFLATER_SERVICE)' to inflate a
+		// Android provides a service getSystemService(Context.LAYOUT_INFLATER_SERVICE)' to inflate a
 		// layout
 		LayoutInflater inflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 		View newPhotoCategoryView = inflater.inflate(R.layout.new_table_row_photo_category, null);
 
-		// Get a reference to the buttonNewPhotoCategory on the
-		// new_table_row_photo_category.xml and set
+		// Get a reference to the buttonNewPhotoCategory on the new_table_row_photo_category.xml and set
 		// its text + register its onClickListener
 		Button buttonNewPhotoCategory = (Button) newPhotoCategoryView.findViewById(R.id.buttonNewPhotoCategory);
 		buttonNewPhotoCategory.setText(photoCategorie.getName());
 		buttonNewPhotoCategory.setTag(photoCategorie.getSuffix());
 		buttonNewPhotoCategory.setOnClickListener(photoCategoryListener);
 
-		// Adds programmatically the new_tag_view.xml to the
-		// tableLayoutPhotoCategory at the specified index)
+		// Adds programmatically the new_tag_view.xml to the tableLayoutPhotoCategory at the specified index)
 		tableLayoutPhotoCategory.addView(newPhotoCategoryView, index);
 	}
 
@@ -277,15 +273,12 @@ public class TakePhotoActivity extends Activity implements OnClickListener, OnIt
 			if (origHeight > destHeight) {
 				if (origWidth > destWidth) {
 					if ((origWidth / destWidth) > (origHeight / destHeight)) {
-						bitmap = Bitmap.createScaledBitmap(bitmap, destWidth, origHeight / (origWidth / destWidth),
-								false);
+						bitmap = Bitmap.createScaledBitmap(bitmap, destWidth, origHeight / (origWidth / destWidth), false);
 					} else {
-						bitmap = Bitmap.createScaledBitmap(bitmap, origWidth / (origHeight / destHeight), destHeight,
-								false);
+						bitmap = Bitmap.createScaledBitmap(bitmap, origWidth / (origHeight / destHeight), destHeight, false);
 					}
 				} else
-					bitmap = Bitmap
-							.createScaledBitmap(bitmap, origWidth / (origHeight / destHeight), destHeight, false);
+					bitmap = Bitmap.createScaledBitmap(bitmap, origWidth / (origHeight / destHeight), destHeight, false);
 			} else if (origWidth > destWidth) {
 				bitmap = Bitmap.createScaledBitmap(bitmap, destWidth, origHeight / (origWidth / destWidth), false);
 			}
@@ -301,7 +294,7 @@ public class TakePhotoActivity extends Activity implements OnClickListener, OnIt
 			// Tijdelijke file verwijderen
 			tempFile.delete();
 
-			loadFotoNames();
+			loadPhotoNames();
 
 		} catch (Exception e) {
 			// TODO
@@ -343,13 +336,13 @@ public class TakePhotoActivity extends Activity implements OnClickListener, OnIt
 	private void deleteSelectedPhoto(String selectedPhotoName) {
 		AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
 		alertDialogBuilder.setTitle(getString(R.string.delete_photo_));
-		alertDialogBuilder.setMessage(String.format(getString(R.string.click_yes_to_delete_photo), textSelectedPhoto))
-				.setCancelable(false).setPositiveButton(getString(R.string.yes), new DialogInterface.OnClickListener() {
+		alertDialogBuilder.setMessage(String.format(getString(R.string.click_yes_to_delete_photo), textSelectedPhoto)).setCancelable(false)
+				.setPositiveButton(getString(R.string.yes), new DialogInterface.OnClickListener() {
 					public void onClick(DialogInterface dialog, int id) {
 						try {
 							unitOfWork.getDao().delete(project.getDataLocation() + textSelectedPhoto + ".jpg");
 							textSelectedPhoto = null;
-							loadFotoNames();
+							loadPhotoNames();
 						} catch (Exception e) {
 							// TODO Auto-generated catch block
 							Log.e("ERROR DELETING PHOTO - ", e.getLocalizedMessage());
