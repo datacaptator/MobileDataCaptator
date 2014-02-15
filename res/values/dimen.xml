@@ -3,8 +3,8 @@
 
     <dimen name="title_size">25sp</dimen>
     <dimen name="buttonOpenFiche">120dp</dimen>
-    <dimen name="buttonOpenFoto">120dp</dimen>
-    <dimen name="buttonOpenSchets">120dp</dimen>
+    <dimen name="buttonOpenPhoto">120dp</dimen>
+    <dimen name="buttonOpenDrawing">120dp</dimen>
     <dimen name="buttonAddNumber">120dp</dimen>
     
     <dimen name="buttonNewPhotoCategory">120dp</dimen>

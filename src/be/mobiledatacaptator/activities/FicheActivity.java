@@ -18,6 +18,7 @@ import org.w3c.dom.NodeList;
 import android.annotation.SuppressLint;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
+import android.util.Log;
 import android.view.MenuItem;
 import android.widget.TabHost;
 import be.mobiledatacaptator.R;
@@ -92,6 +93,10 @@ public class FicheActivity extends FragmentActivity {
 		try {
 			Fiche fiche = UnitOfWork.getInstance().getActiveFiche();
 			if (unitOfWork.getDao().existsFile(fiche.getPath())) {
+				//TODO -  mag weg
+				
+				Log.e("Path", fiche.getPath());
+				
 				String xml = unitOfWork.getDao().getFilecontent(fiche.getPath());
 				DocumentBuilder db = DocumentBuilderFactory.newInstance().newDocumentBuilder();
 				Document dom = db.parse(new ByteArrayInputStream(xml.getBytes()));

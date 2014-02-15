@@ -58,19 +58,19 @@
         android:layout_height="wrap_content" >
 
         <Button
-            android:id="@+id/buttonOpenFoto"
-            android:layout_width="@dimen/buttonOpenFoto"
+            android:id="@+id/buttonOpenPhoto"
+            android:layout_width="@dimen/buttonOpenPhoto"
             android:layout_height="wrap_content"
             android:layout_marginTop="5dp"
-            android:text="@string/button_open_foto"
+            android:text="@string/button_open_photo"
             android:textColor="@color/button_white" />
 
         <Button
-            android:id="@+id/buttonOpenSchets"
-            android:layout_width="@dimen/buttonOpenSchets"
+            android:id="@+id/buttonOpenDrawing"
+            android:layout_width="@dimen/buttonOpenDrawing"
             android:layout_height="wrap_content"
             android:layout_marginTop="5dp"
-            android:text="@string/button_open_schets"
+            android:text="@string/button_open_drawing"
             android:textColor="@color/button_white" />
     </TableRow>
 

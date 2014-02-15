@@ -47,14 +47,14 @@ public class TakePhotoActivity extends Activity implements OnClickListener, OnIt
 	private UnitOfWork unitOfWork;
 	private ListView listViewPhotos;
 	private Intent startCameraIntent;
-	private String prefixFichePhotoName, photoNameToSave, tempFileName;
+	private String prefixFichePhotoName, photoNameToSave, tempFileName, textSelectedPhoto;
 
 	private List<String> listFotoNames;
 	private List<String> listThisFicheFotoNames;
 	private TableLayout tableLayoutPhotoCategory;
 	private Button buttonFreeSuffix, buttonDisplayPhoto, buttonDeletePhoto;
 	private EditText editTextFreeSuffix;
-	private String textSelectedPhoto;
+	
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -64,8 +64,8 @@ public class TakePhotoActivity extends Activity implements OnClickListener, OnIt
 		unitOfWork = UnitOfWork.getInstance();
 		project = unitOfWork.getActiveProject();
 
-		// format fotoName = PUT3014
-		prefixFichePhotoName = getIntent().getExtras().getString("fotoName");
+		// format prefixFichePhotoName = PUT3014
+		prefixFichePhotoName = getIntent().getExtras().getString("prefixFichePhotoName");
 
 		listViewPhotos = (ListView) findViewById(R.id.listViewPhotos);
 		tableLayoutPhotoCategory = (TableLayout) findViewById(R.id.tableLayoutPhotoCategory);

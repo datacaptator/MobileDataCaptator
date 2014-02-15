@@ -51,6 +51,12 @@
             android:name="be.mobiledatacaptator.activities.TakePhotoActivity"
             android:screenOrientation="portrait" >
         </activity>
+        
+        <activity
+            android:name="be.mobiledatacaptator.activities.DrawingActivity"
+            android:screenOrientation="portrait" >
+        </activity>
+        
         <activity android:name="be.mobiledatacaptator.activities.DisplayPhotoActivity" >
         </activity>
         <!-- Nodige Dropbox instellingen:______________________________________________________________________ -->

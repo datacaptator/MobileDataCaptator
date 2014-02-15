@@ -18,8 +18,8 @@
     <string name="select_fiche">Selecteer een Fiche</string>
     <string name="selected_fiche">Gekozen Fiche:</string>
     <string name="button_open_fiche">Open Fiche</string>
-    <string name="button_open_foto">Open Foto</string>
-    <string name="button_open_schets">Open Schets</string>
+    <string name="button_open_photo">Open Foto</string>
+    <string name="button_open_drawing">Open Schets</string>
     <string name="select_fiche_first">Selecteeer eerst een Fiche!</string>
     <string name="yes">Ja</string>
     <string name="no">Nee</string>
@@ -28,7 +28,7 @@
     <string name="wil_u_fiche">Wil u fiche</string>
     <string name="openen">openen?</string>
     <string name="wil_u_aan_fiche">Wil u aan fiche</string>
-    <string name="add_foto">een foto toevoegen?</string>
+    <string name="add_photo">een foto toevoegen?</string>
     <string name="LoadFiches_error">Fout bij laden fiches </string>
 
     <!-- FicheActivity -->

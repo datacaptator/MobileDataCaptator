@@ -28,7 +28,6 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
-import android.widget.Toast;
 import be.mobiledatacaptator.R;
 import be.mobiledatacaptator.model.Fiche;
 import be.mobiledatacaptator.model.PhotoCategory;
@@ -44,8 +43,8 @@ public class SelectFicheActivity extends Activity implements OnClickListener {
 	private String ficheName = "";
 	Button buttonAddNumber;
 	Button buttonOpenFiche;
-	Button buttonOpenFoto;
-	Button buttonOpenSchets;
+	Button buttonOpenPhoto;
+	Button buttonOpenDrawing;
 	EditText editTextFicheName;
 
 	@Override
@@ -63,14 +62,14 @@ public class SelectFicheActivity extends Activity implements OnClickListener {
 
 		buttonAddNumber = (Button) findViewById(R.id.buttonAddNumber);
 		buttonOpenFiche = (Button) findViewById(R.id.buttonOpenFiche);
-		buttonOpenFoto = (Button) findViewById(R.id.buttonOpenFoto);
-		buttonOpenSchets = (Button) findViewById(R.id.buttonOpenSchets);
+		buttonOpenPhoto = (Button) findViewById(R.id.buttonOpenPhoto);
+		buttonOpenDrawing = (Button) findViewById(R.id.buttonOpenDrawing);
 		editTextFicheName = (EditText) findViewById(R.id.editTextFicheName);
 
 		buttonAddNumber.setOnClickListener(this);
 		buttonOpenFiche.setOnClickListener(this);
-		buttonOpenFoto.setOnClickListener(this);
-		buttonOpenSchets.setOnClickListener(this);
+		buttonOpenPhoto.setOnClickListener(this);
+		buttonOpenDrawing.setOnClickListener(this);
 	}
 
 	@Override
@@ -109,26 +108,25 @@ public class SelectFicheActivity extends Activity implements OnClickListener {
 			project.setFilePrefix(root.getAttribute("FilePrefix"));
 
 			project.setLoadPhotoActivity(true);
-			if (!(root.getAttribute("LoadFotoActivity").equals("true"))) {
+			if (!(root.getAttribute("LoadPhotoActivity").equals("true"))) {
 				project.setLoadPhotoActivity(false);
-				buttonOpenFoto.setVisibility(View.INVISIBLE);
+				buttonOpenPhoto.setVisibility(View.INVISIBLE);
 			}
 
 			project.setLoadSchetsActivity(true);
 			if (!(root.getAttribute("LoadSchetsActivity").equals("true"))) {
 				project.setLoadSchetsActivity(false);
-				buttonOpenSchets.setVisibility(View.INVISIBLE);
+				buttonOpenDrawing.setVisibility(View.INVISIBLE);
 			}
 
 			if (project.isLoadPhotoActivity()) {
-				NodeList nodes = root.getElementsByTagName("FotoCategorie");
+				NodeList nodes = root.getElementsByTagName("PhotoCategorie");
 				for (int i = 0; i < nodes.getLength(); i++) {
 					Node node = nodes.item(i);
 					// extra controle-inbouw of er reeds een zelfde categorie
 					// aanwezig - zoniet komt fotocategorie dubbel voor in
 					// Spinner-takePicture
-					PhotoCategory photoCategorie = new PhotoCategory(((Element) node).getAttribute("Name"),
-							((Element) node).getAttribute("Suffix"));
+					PhotoCategory photoCategorie = new PhotoCategory(((Element) node).getAttribute("Name"), ((Element) node).getAttribute("Suffix"));
 
 					if (!project.getPhotoCategories().contains(photoCategorie)) {
 						project.getPhotoCategories().add(photoCategorie);
@@ -146,13 +144,11 @@ public class SelectFicheActivity extends Activity implements OnClickListener {
 
 	private void loadDataFiches() {
 		try {
-			List<String> listDataFicheNamen = unitOfWork.getDao().getAllFilesFromPathWithExtension(
-					project.getDataLocation(), ".xml", false);
+			List<String> listDataFicheNames = unitOfWork.getDao().getAllFilesFromPathWithExtension(project.getDataLocation(), ".xml", false);
 
-			Collections.sort(listDataFicheNamen, Collections.reverseOrder());
+			Collections.sort(listDataFicheNames, Collections.reverseOrder());
 
-			ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,
-					android.R.layout.simple_list_item_activated_1, listDataFicheNamen);
+			ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_activated_1, listDataFicheNames);
 			listViewFiches.setAdapter(adapter);
 			listViewFiches.setItemsCanFocus(true);
 			listViewFiches.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
@@ -194,12 +190,12 @@ public class SelectFicheActivity extends Activity implements OnClickListener {
 			openFiche();
 			break;
 
-		case R.id.buttonOpenFoto:
-			openFoto();
+		case R.id.buttonOpenPhoto:
+			openPhoto();
 			break;
 
-		case R.id.buttonOpenSchets:
-			Toast.makeText(getApplicationContext(), "OpenSchets pressed", Toast.LENGTH_SHORT).show();
+		case R.id.buttonOpenDrawing:
+			openDrawing();
 			break;
 
 		default:
@@ -223,8 +219,7 @@ public class SelectFicheActivity extends Activity implements OnClickListener {
 				editTextFicheName.setText(result + "1");
 			}
 
-			setTitle(MdcUtil.setActivityTitle(editTextFicheName.getText().toString(), unitOfWork,
-					getApplicationContext()));
+			setTitle(MdcUtil.setActivityTitle(editTextFicheName.getText().toString(), unitOfWork, getApplicationContext()));
 		}
 	}
 
@@ -251,8 +246,7 @@ public class SelectFicheActivity extends Activity implements OnClickListener {
 					AlertDialog.Builder builder = new AlertDialog.Builder(this);
 
 					String ficheName = unitOfWork.getActiveFiche().getName();
-					String builderMessage = getString(R.string.wil_u_fiche) + " " + ficheName + " "
-							+ getString(R.string.openen);
+					String builderMessage = getString(R.string.wil_u_fiche) + " " + ficheName + " " + getString(R.string.openen);
 					builder.setNegativeButton(R.string.no, dialogClickListener).setMessage(builderMessage)
 							.setPositiveButton(R.string.yes, dialogClickListener).show();
 				} else {
@@ -268,13 +262,28 @@ public class SelectFicheActivity extends Activity implements OnClickListener {
 		}
 	}
 
-	private void openFoto() {
+	private void openPhoto() {
 		try {
 			if (UnitOfWork.getInstance().getActiveFiche() != null) {
-
 				final Intent takePictureIntent = new Intent(this, TakePhotoActivity.class);
-				takePictureIntent.putExtra("fotoName", project.getFilePrefix() + ficheName);
+				takePictureIntent.putExtra("prefixFichePhotoName", project.getFilePrefix() + ficheName);
 				startActivity(takePictureIntent);
+
+			} else {
+				MdcUtil.showToastShort(getString(R.string.select_fiche_first), getApplicationContext());
+			}
+
+		} catch (Exception e) {
+			MdcUtil.showToastShort(e.getLocalizedMessage(), getApplicationContext());
+		}
+	}
+
+	private void openDrawing() {
+		try {
+			if (UnitOfWork.getInstance().getActiveFiche() != null) {
+				final Intent drawingIntent = new Intent(this, DrawingActivity.class);
+				drawingIntent.putExtra("prefixFicheDrawingName", project.getFilePrefix() + ficheName);
+				startActivity(drawingIntent);
 
 			} else {
 				MdcUtil.showToastShort(getString(R.string.select_fiche_first), getApplicationContext());
