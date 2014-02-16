@@ -1,7 +1,10 @@
 package be.mobiledatacaptator.activities;
 
+import java.io.ByteArrayInputStream;
 import java.io.StringWriter;
+import java.util.ArrayList;
 
+import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.transform.OutputKeys;
 import javax.xml.transform.Transformer;
@@ -10,6 +13,9 @@ import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
 import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 
 import be.mobiledatacaptator.R;
 import be.mobiledatacaptator.drawing_model.MdcCircle;
@@ -62,7 +68,49 @@ public class DrawingActivity extends Activity implements OnClickListener {
 			// if drawing exist - loadDrawing
 			if (unitOfWork.getDao().existsFile(dataLocationDrawing)) {
 				loadExistingDrawing();
-				Log.e("FileExists", dataLocationDrawing);
+				
+				//ArrayList<Project> projects = new ArrayList<Project>();
+
+				String xml = unitOfWork.getDao().getFilecontent(dataLocationDrawing);
+				DocumentBuilder db = DocumentBuilderFactory.newInstance().newDocumentBuilder();
+				Document dom = db.parse(new ByteArrayInputStream(xml.getBytes()));
+				Element root = dom.getDocumentElement();
+				NodeList elements = root.getElementsByTagName("Element");
+				for (int i = 0; i < elements.getLength(); i++) {
+					Node elementNode = elements.item(i);
+					
+					if (elementNode.getNodeType() == Node.ELEMENT_NODE) {
+						Element eElement = (Element)elementNode;
+					
+						Log.e("XML", elementNode.getAttributes().getNamedItem("Type").getNodeValue());
+						Log.e("Layer", eElement.getElementsByTagName("Layer").item(0).getTextContent());
+						Log.e("Layer", eElement.getElementsByTagName("Straal").item(0).getTextContent());
+						Log.e("Layer", eElement.getElementsByTagName("Centrum").item(0).getTextContent());
+						Log.e("Layer", eElement.getElementsByTagName("Layer").item(0).getTextContent());
+						
+						
+						
+					}
+					
+					
+					
+					
+					
+					
+					
+					
+//					myProject.setName(projectNode.getAttributes().getNamedItem("Name").getNodeValue());
+//					myProject.setTemplate(projectNode.getAttributes().getNamedItem("Template").getNodeValue());
+//
+//					projects.add(myProject);
+				}
+			
+			
+
+				
+				
+				
+				
 			}
 				
 		} catch (Exception e) {
@@ -75,13 +123,13 @@ public class DrawingActivity extends Activity implements OnClickListener {
 	@Override
 	protected void onPause() {
 		super.onPause();
-		saveDrawing();
+		//TODO
+		//saveDrawing();
 	}
 	
 	private void saveDrawing() {
-		// TODO Auto-generated method stub
+		// TODO schrijft tekening weg - nog uit te werken
 		try {
-			
 			
 			
 			unitOfWork.getDao().saveStringToFile(dataLocationDrawing, "test");

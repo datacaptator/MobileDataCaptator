@@ -108,7 +108,7 @@ public class SelectFicheActivity extends Activity implements OnClickListener {
 			project.setFilePrefix(root.getAttribute("FilePrefix"));
 
 			project.setLoadPhotoActivity(true);
-			if (!(root.getAttribute("LoadPhotoActivity").equals("true"))) {
+			if (!(root.getAttribute("LoadFotoActivity").equals("true"))) {
 				project.setLoadPhotoActivity(false);
 				buttonOpenPhoto.setVisibility(View.INVISIBLE);
 			}
