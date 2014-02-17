@@ -21,6 +21,7 @@ import be.mobiledatacaptator.fragments.ITitleFragment;
 public class Tab extends Fragment implements ITitleFragment {
 
 	protected String name;
+	private Group group;
 	private List<DataField> dataFields = new ArrayList<DataField>();
 	private Context context;
 
@@ -77,7 +78,7 @@ public class Tab extends Fragment implements ITitleFragment {
 			NodeList fields = xmlTemplate.getElementsByTagName("Field");
 			for (int k = 0; k < fields.getLength(); k++) {
 				Element fieldEle = (Element) fields.item(k);
-				dataFields.add(new DataField(context, fieldEle));
+				dataFields.add(new DataField(context, fieldEle, this));
 			}
 		}
 	}
@@ -99,8 +100,20 @@ public class Tab extends Fragment implements ITitleFragment {
 		return name;
 	}
 
+	public void setName(String name) {
+		this.name = name;
+	}
+
 	public List<DataField> getDataFields() {
 		return dataFields;
+	}
+
+	public Group getGroup() {
+		return group;
+	}
+
+	public void setGroup(Group group) {
+		this.group = group;
 	}
 
 }

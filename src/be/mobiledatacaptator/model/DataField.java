@@ -24,13 +24,21 @@ public class DataField extends TableRow implements TextWatcher {
 
 	private String name;
 	private String label;
+	private Tab tab;
 	private Boolean required = false;
 	private final double nullValue = -9999;
 	private double min = nullValue;
 	private double max = nullValue;
 	private VeldType type;
 	private String defaultValue;
+	private String link;
 	private List<ChoiceItem> choiceItems = new ArrayList<ChoiceItem>();
+
+	private Boolean activateLink = false; // Deze wordt pas true na het inlezen
+											// van de
+	// template en bestaande data. Dit om te
+	// voorkomen dat bestaande data aangepast
+	// wordt.
 
 	private TextView textViewLabel;
 	private EditText editTextValue;
@@ -38,10 +46,12 @@ public class DataField extends TableRow implements TextWatcher {
 
 	private Element xmlTemplate;
 
-	public DataField(Context context, Element xml) {
+	public DataField(Context context, Element xml, Tab tab) {
 		super(context);
 		xmlTemplate = xml;
+		this.tab = tab;
 		loadTemplate();
+		activateLink = true;
 	}
 
 	public DataField(Context context) {
@@ -74,6 +84,8 @@ public class DataField extends TableRow implements TextWatcher {
 			label = xmlTemplate.getAttribute("Label");
 		if (xmlTemplate.hasAttribute("DefaultValue"))
 			defaultValue = xmlTemplate.getAttribute("DefaultValue");
+		if (xmlTemplate.hasAttribute("Link"))
+			link = xmlTemplate.getAttribute("Link");
 		if (xmlTemplate.hasAttribute("Required"))
 			if (xmlTemplate.getAttribute("Required").toLowerCase(Locale.getDefault()).equals("y"))
 				required = true;
@@ -140,7 +152,7 @@ public class DataField extends TableRow implements TextWatcher {
 	}
 
 	public void setValue(String value) {
-
+		activateLink = false;
 		if (type == VeldType.CHOICE) {
 			for (int i = 0; i < choiceItems.size(); i++) {
 				if (choiceItems.get(i).getText().equals(value)) {
@@ -151,6 +163,7 @@ public class DataField extends TableRow implements TextWatcher {
 		} else {
 			editTextValue.setText(value);
 		}
+		activateLink = true;
 	}
 
 	private String getValue() {
@@ -175,25 +188,65 @@ public class DataField extends TableRow implements TextWatcher {
 			return false;
 		}
 
-		Double d = 0.0;
-		try {
-			d = Double.parseDouble(value);
-		} catch (NumberFormatException e) {
-		}
+		if (!(value == null || value.equals(""))) {
+			Double d = 0.0;
+			try {
+				d = Double.parseDouble(value);
+			} catch (NumberFormatException e) {
+			}
 
-		// Min
-		if (min != nullValue && (d < min)) {
-			errMsg.append(getContext().getString(R.string.ValTeLaag));
-			return false;
-		}
+			// Min
+			if (min != nullValue && (d < min)) {
+				errMsg.append(getContext().getString(R.string.ValTeLaag));
+				return false;
+			}
 
-		// Max
-		if (max != nullValue && (d > max)) {
-			errMsg.append(getContext().getString(R.string.ValTeHoog));
-			return false;
+			// Max
+			if (max != nullValue && (d > max)) {
+				errMsg.append(getContext().getString(R.string.ValTeHoog));
+				return false;
+			}
 		}
-
 		return true;
+	}
+
+	private void executeLink() {
+		if (!(link == null || link.equals(""))) {
+			String[] linkArr = link.split(";");
+			String toFieldName;
+			String toValue;
+			double d1, d2;
+			for (int i = 0; i < linkArr.length; i++) {
+				if (linkArr[i].equals("FIELD")) {
+					i++;
+					toFieldName = linkArr[i];
+					i++;
+					if (linkArr[i].equals("DELETE")) {
+						getDatafieldByName(toFieldName).setValue(null);
+					} else if (linkArr[i].equals("SET")) {
+						while (!(linkArr[i].equals("END"))) {
+							i++;
+							DataField df = getDatafieldByName(linkArr[i]);
+							d1 = Integer.parseInt(df != null ? df.getValue() : linkArr[i]);
+							i++;
+							df = getDatafieldByName(linkArr[i]);
+							d2 = Integer.parseInt(df != null ? df.getValue() : linkArr[i]);
+							i++;
+							//Vanaf hier verder. Operator uitlezen
+						}
+					}
+				}
+			}
+
+		}
+	}
+
+	private DataField getDatafieldByName(String name) {
+		for (DataField dataField : tab.getDataFields()) {
+			if (dataField.getName().equals(name))
+				return dataField;
+		}
+		return null;
 	}
 
 	public String getName() {
@@ -211,6 +264,8 @@ public class DataField extends TableRow implements TextWatcher {
 		StringBuilder errMsg = new StringBuilder();
 		if (!(isValide(errMsg)))
 			editTextValue.setError(errMsg.toString());
+		if (activateLink)
+			executeLink();
 	}
 
 	// -----------------------------------------------------------------------------------------------------

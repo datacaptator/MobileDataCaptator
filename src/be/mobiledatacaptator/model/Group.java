@@ -116,6 +116,7 @@ public class Group extends ViewPager {
 		Tab tab = new Tab();
 		tab.setContext(getContext());
 		tab.setXmlTemplate(xmlTabTemplate);
+		tab.setGroup(this);
 		tabs.add(tab);
 		fichePagerAdapter.addItem(tab);
 		setCurrentItem(tabs.size());
@@ -132,17 +133,20 @@ public class Group extends ViewPager {
 	public void loadExistingData(Element element) {
 		for (Node childNode = element.getFirstChild(); childNode != null;) {
 			Node nextChild = childNode.getNextSibling();
-			String s = childNode.getNodeName();
-			if (expandable && templateName.equals(s)) {
-				Tab tab = new Tab();
-				tab.setContext(getContext());
-				tab.setXmlTemplate(xmlTabTemplate);
-				tab.loadExistingData((Element) childNode);
-				tabs.add(tab);
-			} else {
-				for (Tab tab : tabs) {
-					if (tab.getName().equals(s)) {
-						tab.loadExistingData((Element) childNode);
+			if (childNode.getNodeType() == Node.ELEMENT_NODE) {
+				String s = childNode.getNodeName();
+				if (expandable && templateName.equals(s)) {
+					Tab tab = new Tab();
+					tab.setGroup(this);
+					tab.setContext(getContext());
+					tab.setXmlTemplate(xmlTabTemplate);
+					tab.loadExistingData((Element) childNode);
+					tabs.add(tab);
+				} else {
+					for (Tab tab : tabs) {
+						if (tab.getName().equals(s)) {
+							tab.loadExistingData((Element) childNode);
+						}
 					}
 				}
 			}
