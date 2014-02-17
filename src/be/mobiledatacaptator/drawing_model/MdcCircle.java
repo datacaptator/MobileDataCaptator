@@ -13,6 +13,14 @@ public class MdcCircle extends MdcShape{
 		setPoint(new Point(100,100));
 		setRadius(40);
 	}
+	
+	public MdcCircle(int radius, int x, int y, MdcLayer layer)
+	{
+		setPoint(new Point(x,y));
+		setRadius(radius);
+		setLayer(layer);
+	}
+	
 
 	public Point getPoint() {
 		return point;

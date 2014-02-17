@@ -101,6 +101,12 @@ public class DrawingView extends View {
 		return true;
 	}
 
+
+	public void addShapeToList(MdcShape shape)
+	{
+		listShapes.add(shape);
+	}
+	
 	private void motionEventChecker(MotionEvent event) {
 		float eventX = event.getX();
 		float eventY = event.getY();
