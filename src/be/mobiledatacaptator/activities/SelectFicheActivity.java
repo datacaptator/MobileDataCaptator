@@ -120,7 +120,7 @@ public class SelectFicheActivity extends Activity implements OnClickListener {
 			}
 
 			if (project.isLoadPhotoActivity()) {
-				NodeList nodes = root.getElementsByTagName("PhotoCategorie");
+				NodeList nodes = root.getElementsByTagName("FotoCategorie");
 				for (int i = 0; i < nodes.getLength(); i++) {
 					Node node = nodes.item(i);
 					// extra controle-inbouw of er reeds een zelfde categorie
