@@ -18,7 +18,6 @@ import org.xml.sax.SAXException;
 import android.app.Activity;
 import android.graphics.Point;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
@@ -125,14 +124,10 @@ public class DrawingActivity extends Activity implements OnClickListener {
 						Point endPoint = null;
 						List<MdcLine> lines = new ArrayList<MdcLine>(); 
 
-						Log.e("aantal punten", String.valueOf(punten.getLength()));
-
 						for (int pnt = 0; pnt < punten.getLength(); pnt++) {
 							Node puntNode = punten.item(pnt);
 
 							Element ePunt = (Element) puntNode;
-
-							Log.e("COUNTER", String.valueOf(pnt));
 
 							if (pnt % 2 == 0) {
 								
