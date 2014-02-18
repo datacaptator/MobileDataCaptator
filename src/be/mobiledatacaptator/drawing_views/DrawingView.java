@@ -28,7 +28,7 @@ public class DrawingView extends View {
 	public DrawingView(Context context, AttributeSet attrs) {
 		super(context, attrs);
 		paint.setAntiAlias(true);
-		paint.setStrokeWidth(6f);
+		paint.setStrokeWidth(2);
 		paint.setColor(Color.BLACK);
 		paint.setStyle(Paint.Style.STROKE);
 		paint.setStrokeJoin(Paint.Join.ROUND);
@@ -39,11 +39,11 @@ public class DrawingView extends View {
 	protected void onDraw(Canvas canvas) {
 		try {
 			for (MdcShape shape : listShapes) {
-				shape.drawShape(canvas, paint);
+				shape.draw(canvas, paint);
 			}
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
-			Log.e("vreemd", e.getLocalizedMessage());
+			Log.e("onDraw DrawingView", e.getLocalizedMessage());
 		}
 
 	}

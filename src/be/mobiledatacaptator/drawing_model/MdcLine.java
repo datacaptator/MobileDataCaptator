@@ -7,17 +7,7 @@ import android.util.Log;
 public class MdcLine extends MdcShape {
 	private Point startPoint;
 	private Point endPoint;
-	@Override
-	public void drawShape(Canvas canvas, Paint paint) {
-		try {
-			canvas.drawLine(getStartPoint().x, getStartPoint().y, getEndPoint().x, getEndPoint().y, paint);
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			Log.e("why", e.getLocalizedMessage());
-		}
-	}
-	
-	
+		
 	public MdcLine(){};
 	
 	public MdcLine(Point startPoint, Point endPoint)
@@ -43,21 +33,26 @@ public class MdcLine extends MdcShape {
 	}
 
 	@Override
-	public String toString() {
-		return "MdcLine";
+	public void draw(Canvas canvas, Paint paint) {
+		try {
+			canvas.drawLine(getStartPoint().x, getStartPoint().y, getEndPoint().x, getEndPoint().y, paint);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			Log.e("why", e.getLocalizedMessage());
+		}
 	}
 
-
-	/* (non-Javadoc)
-	 * @see com.example.mydrawingapp.shapes.MdcShape#area()
-	 */
 	@Override
 	public double area() {
 		// TODO Auto-generated method stub
 		return 0;
 	}
 
-	
+	@Override
+	public String toString() {
+		return "MdcLine";
+	}
+
 	
 	
 	

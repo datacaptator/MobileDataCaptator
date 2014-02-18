@@ -9,7 +9,7 @@ public abstract class MdcShape {
 	
 	public abstract double area();
 
-	public abstract void drawShape(Canvas canvas, Paint paint);
+	public abstract void draw(Canvas canvas, Paint paint);
 
 	public abstract String toString();
 

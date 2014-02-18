@@ -53,7 +53,7 @@ public class MdcRectangle extends MdcShape {
 	}
 
 	@Override
-	public void drawShape(Canvas canvas, Paint paint) {
+	public void draw(Canvas canvas, Paint paint) {
 		canvas.drawRect(getLeft(), getTop(), getRight(), getBottom(), paint);
 	}
 
