@@ -80,7 +80,7 @@ public class FicheActivity extends FragmentActivity {
 			for (int i = 0; i < groups.getLength(); i++) {
 				Element groupEle = (Element) groups.item(i);
 				unitOfWork.getActiveFiche().getGroups()
-						.add(new Group(this, groupEle, new FichePagerAdapter(getSupportFragmentManager())));
+						.add(new Group(this, groupEle, new FichePagerAdapter(getSupportFragmentManager()),unitOfWork.getActiveFiche()));
 			}
 
 		} catch (Exception e) {

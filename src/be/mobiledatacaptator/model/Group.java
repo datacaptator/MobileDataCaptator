@@ -28,17 +28,18 @@ public class Group extends ViewPager {
 	private String name;
 	private boolean expandable;
 	private List<Tab> tabs = new ArrayList<Tab>();
+	private Fiche fiche;
 
 	private FichePagerAdapter fichePagerAdapter;
 
 	private Element xmlTemplate;
 	private Element xmlTabTemplate;
-	private String templateName;
 
-	public Group(Context context, Element xml, FichePagerAdapter adapter) {
+	public Group(Context context, Element xml, FichePagerAdapter adapter, Fiche fiche) {
 		super(context);
 		xmlTemplate = xml;
 		fichePagerAdapter = adapter;
+		this.fiche = fiche;
 		setAdapter(fichePagerAdapter);
 		loadTemplate();
 	}
@@ -66,7 +67,6 @@ public class Group extends ViewPager {
 		tabsNodes = xmlTemplate.getElementsByTagName("TabTemplate");
 		if (tabsNodes != null && tabsNodes.getLength() > 0) {
 			xmlTabTemplate = (Element) tabsNodes.item(0);
-			templateName = xmlTabTemplate.getAttribute("Name");
 		}
 	}
 
@@ -135,11 +135,12 @@ public class Group extends ViewPager {
 			Node nextChild = childNode.getNextSibling();
 			if (childNode.getNodeType() == Node.ELEMENT_NODE) {
 				String s = childNode.getNodeName();
-				if (expandable && templateName.equals(s)) {
+				if (expandable) {
 					Tab tab = new Tab();
 					tab.setGroup(this);
 					tab.setContext(getContext());
 					tab.setXmlTemplate(xmlTabTemplate);
+					tab.setName(s);
 					tab.loadExistingData((Element) childNode);
 					tabs.add(tab);
 				} else {
@@ -154,12 +155,20 @@ public class Group extends ViewPager {
 		}
 	}
 
+	public void notifyDataSetChanged() {
+		fichePagerAdapter.notifyDataSetChanged();
+	}
+
 	public String getName() {
 		return name;
 	}
 
 	public List<Tab> getTabs() {
 		return tabs;
+	}
+
+	public Fiche getFiche() {
+		return fiche;
 	}
 
 }

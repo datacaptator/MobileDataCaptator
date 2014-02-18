@@ -1,5 +1,6 @@
 package be.mobiledatacaptator.model;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
@@ -13,14 +14,18 @@ import android.content.Context;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.text.method.DigitsKeyListener;
+import android.view.View;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.TableRow;
 import android.widget.TextView;
 import be.mobiledatacaptator.R;
+import be.mobiledatacaptator.utilities.MdcUtil;
 
-public class DataField extends TableRow implements TextWatcher {
+public class DataField extends TableRow implements TextWatcher, OnItemSelectedListener {
 
 	private String name;
 	private String label;
@@ -129,7 +134,7 @@ public class DataField extends TableRow implements TextWatcher {
 			ArrayAdapter<ChoiceItem> adapter = new ArrayAdapter<ChoiceItem>(getContext(),
 					android.R.layout.simple_spinner_dropdown_item, choiceItems);
 			spinnerChoice.setAdapter(adapter);
-
+			spinnerChoice.setOnItemSelectedListener(this);
 			addView(spinnerChoice);
 
 		} else {
@@ -211,40 +216,99 @@ public class DataField extends TableRow implements TextWatcher {
 	}
 
 	private void executeLink() {
-		if (!(link == null || link.equals(""))) {
-			String[] linkArr = link.split(";");
-			String toFieldName;
-			String toValue;
-			double d1, d2;
-			for (int i = 0; i < linkArr.length; i++) {
-				if (linkArr[i].equals("FIELD")) {
-					i++;
-					toFieldName = linkArr[i];
-					i++;
-					if (linkArr[i].equals("DELETE")) {
-						getDatafieldByName(toFieldName).setValue(null);
-					} else if (linkArr[i].equals("SET")) {
-						while (!(linkArr[i].equals("END"))) {
+		try {
+			if (!(link == null || link.equals(""))) {
+				String[] linkArr = link.split(";");
+				String toFieldName;
+				for (int i = 0; i < linkArr.length; i++) {
+					if (linkArr[i].equals("FIELD")) {
+						i++;
+						toFieldName = linkArr[i];
+						i++;
+						if (linkArr[i].equals("DELETE")) {
+							getDatafieldByName(toFieldName).setValue(null);
+						} else if (linkArr[i].equals("SET")) {
+							BigDecimal d1, d2;
 							i++;
-							DataField df = getDatafieldByName(linkArr[i]);
-							d1 = Integer.parseInt(df != null ? df.getValue() : linkArr[i]);
+							try {
+								if (linkArr[i].equals("THIS")) {
+									d1 = new BigDecimal(getValue());
+								} else {
+									DataField df = getDatafieldByName(linkArr[i]);
+									d1 = new BigDecimal(df != null ? df.getValue() : linkArr[i]);
+								}
+							} catch (NumberFormatException e) {
+								d1 = new BigDecimal(0);
+							}
 							i++;
-							df = getDatafieldByName(linkArr[i]);
-							d2 = Integer.parseInt(df != null ? df.getValue() : linkArr[i]);
-							i++;
-							//Vanaf hier verder. Operator uitlezen
+							while (!(linkArr[i].equals("END"))) {
+								try {
+									if (linkArr[i].equals("THIS")) {
+										d2 = new BigDecimal(getValue());
+									} else {
+										DataField df = getDatafieldByName(linkArr[i]);
+										d2 = new BigDecimal(df != null ? df.getValue() : linkArr[i]);
+									}
+								} catch (NumberFormatException e) {
+									d2 = new BigDecimal(0);
+								}
+								i++;
+								if (linkArr[i].equals("+")) {
+									d1 = d1.add(d2);
+								} else if (linkArr[i].equals("-")) {
+									d1 = d1.subtract(d2);
+								} else if (linkArr[i].equals("*")) {
+									d1 = d1.multiply(d2);
+								} else if (linkArr[i].equals("/")) {
+									d1 = d1.divide(d2);
+								} else {
+									throw new Error();
+								}
+								i++;
+							}
+							getDatafieldByName(toFieldName).setValue(d1.toString());
 						}
+					} else if (linkArr[i].equals("TABTITLE")) { // Vorm:
+																// "TABTITLE;prefix;suffix"
+						tab.setName(linkArr[++i] + getValue() + linkArr[++i]);
+						tab.getGroup().notifyDataSetChanged();
 					}
 				}
 			}
-
+		} catch (Exception e) {
+			MdcUtil.showToastLong(getContext().getString(R.string.LinkFout), getContext());
 		}
 	}
 
 	private DataField getDatafieldByName(String name) {
-		for (DataField dataField : tab.getDataFields()) {
-			if (dataField.getName().equals(name))
-				return dataField;
+		String[] adress = name.split("\\.");
+		if (adress.length == 1) {
+			for (DataField dataField : tab.getDataFields()) {
+				if (dataField.getName().equals(adress[0]))
+					return dataField;
+			}
+		} else if (adress.length == 2) {
+			for (Tab t : tab.getGroup().getTabs()) {
+				if (t.getName().equals(adress[0])) {
+					for (DataField dataField : t.getDataFields()) {
+						if (dataField.getName().equals(adress[1]))
+							return dataField;
+					}
+				}
+			}
+		} else {
+			for (Group g : tab.getGroup().getFiche().getGroups()) {
+				if (g.getName().equals(adress[0])) {
+					for (Tab t : g.getTabs()) {
+						if (t.getName().equals(adress[1])) {
+							for (DataField dataField : t.getDataFields()) {
+								if (dataField.getName().equals(adress[2]))
+									return dataField;
+							}
+						}
+					}
+				}
+			}
 		}
 		return null;
 	}
@@ -268,6 +332,12 @@ public class DataField extends TableRow implements TextWatcher {
 			executeLink();
 	}
 
+	@Override
+	public void onItemSelected(AdapterView<?> arg0, View arg1, int arg2, long arg3) {
+		if (activateLink)
+			executeLink();
+	}
+
 	// -----------------------------------------------------------------------------------------------------
 	@Override
 	public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -275,6 +345,10 @@ public class DataField extends TableRow implements TextWatcher {
 
 	@Override
 	public void onTextChanged(CharSequence s, int start, int before, int count) {
+	}
+
+	@Override
+	public void onNothingSelected(AdapterView<?> arg0) {
 	}
 
 }
