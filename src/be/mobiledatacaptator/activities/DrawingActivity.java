@@ -2,7 +2,6 @@ package be.mobiledatacaptator.activities;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import java.util.List;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -25,7 +24,6 @@ import be.mobiledatacaptator.drawing_model.MdcCircle;
 import be.mobiledatacaptator.drawing_model.MdcLayer;
 import be.mobiledatacaptator.drawing_model.MdcLine;
 import be.mobiledatacaptator.drawing_model.MdcRectangle;
-import be.mobiledatacaptator.drawing_model.MdcShape;
 import be.mobiledatacaptator.drawing_views.DrawingView;
 import be.mobiledatacaptator.model.Project;
 import be.mobiledatacaptator.model.UnitOfWork;
@@ -65,12 +63,12 @@ public class DrawingActivity extends Activity implements OnClickListener {
 		try {
 			// if drawing exist - loadDrawing
 			if (unitOfWork.getDao().existsFile(dataLocationDrawing)) {
-				loadExistingDrawing();
-
+				
 				String xml = unitOfWork.getDao().getFilecontent(dataLocationDrawing);
 
 				readXmlSaxParser(xml);
 				
+				// invoke onDraw method
 				drawingView.invalidate();
 				
 				
@@ -118,25 +116,7 @@ public class DrawingActivity extends Activity implements OnClickListener {
 						
 						
 					}
-			
-					
-					
-					
-
-				
-		
-					
-					
-					
-					
-					
-					
-					
-					
-				
-				
-				
-				
+							
 				}
 			}
 
@@ -175,12 +155,7 @@ public class DrawingActivity extends Activity implements OnClickListener {
 
 	}
 
-	//
-	private void loadExistingDrawing() {
-		// TODO Auto-generated method stub
-
-	}
-
+	
 	@Override
 	public void onClick(View view) {
 
