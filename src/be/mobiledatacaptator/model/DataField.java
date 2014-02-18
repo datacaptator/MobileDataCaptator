@@ -14,6 +14,9 @@ import android.content.Context;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.text.method.DigitsKeyListener;
+import android.view.View;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.Spinner;
@@ -22,7 +25,7 @@ import android.widget.TextView;
 import be.mobiledatacaptator.R;
 import be.mobiledatacaptator.utilities.MdcUtil;
 
-public class DataField extends TableRow implements TextWatcher {
+public class DataField extends TableRow implements TextWatcher, OnItemSelectedListener {
 
 	private String name;
 	private String label;
@@ -131,7 +134,7 @@ public class DataField extends TableRow implements TextWatcher {
 			ArrayAdapter<ChoiceItem> adapter = new ArrayAdapter<ChoiceItem>(getContext(),
 					android.R.layout.simple_spinner_dropdown_item, choiceItems);
 			spinnerChoice.setAdapter(adapter);
-
+			spinnerChoice.setOnItemSelectedListener(this);
 			addView(spinnerChoice);
 
 		} else {
@@ -265,6 +268,10 @@ public class DataField extends TableRow implements TextWatcher {
 							}
 							getDatafieldByName(toFieldName).setValue(d1.toString());
 						}
+					} else if (linkArr[i].equals("TABTITLE")) { // Vorm:
+																// "TABTITLE;prefix;suffix"
+						tab.setName(linkArr[++i] + getValue() + linkArr[++i]);
+						tab.getGroup().notifyDataSetChanged();
 					}
 				}
 			}
@@ -274,9 +281,34 @@ public class DataField extends TableRow implements TextWatcher {
 	}
 
 	private DataField getDatafieldByName(String name) {
-		for (DataField dataField : tab.getDataFields()) {
-			if (dataField.getName().equals(name))
-				return dataField;
+		String[] adress = name.split("\\.");
+		if (adress.length == 1) {
+			for (DataField dataField : tab.getDataFields()) {
+				if (dataField.getName().equals(adress[0]))
+					return dataField;
+			}
+		} else if (adress.length == 2) {
+			for (Tab t : tab.getGroup().getTabs()) {
+				if (t.getName().equals(adress[0])) {
+					for (DataField dataField : t.getDataFields()) {
+						if (dataField.getName().equals(adress[1]))
+							return dataField;
+					}
+				}
+			}
+		} else {
+			for (Group g : tab.getGroup().getFiche().getGroups()) {
+				if (g.getName().equals(adress[0])) {
+					for (Tab t : g.getTabs()) {
+						if (t.getName().equals(adress[1])) {
+							for (DataField dataField : t.getDataFields()) {
+								if (dataField.getName().equals(adress[2]))
+									return dataField;
+							}
+						}
+					}
+				}
+			}
 		}
 		return null;
 	}
@@ -300,6 +332,12 @@ public class DataField extends TableRow implements TextWatcher {
 			executeLink();
 	}
 
+	@Override
+	public void onItemSelected(AdapterView<?> arg0, View arg1, int arg2, long arg3) {
+		if (activateLink)
+			executeLink();
+	}
+
 	// -----------------------------------------------------------------------------------------------------
 	@Override
 	public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -307,6 +345,10 @@ public class DataField extends TableRow implements TextWatcher {
 
 	@Override
 	public void onTextChanged(CharSequence s, int start, int before, int count) {
+	}
+
+	@Override
+	public void onNothingSelected(AdapterView<?> arg0) {
 	}
 
 }
