@@ -184,7 +184,7 @@ public class FicheActivity extends FragmentActivity {
 						public void onClick(DialogInterface arg0, int arg1) {
 							goBack();
 						}
-					}).create().show();
+					}).show();
 		} else
 			super.onBackPressed();
 	}
