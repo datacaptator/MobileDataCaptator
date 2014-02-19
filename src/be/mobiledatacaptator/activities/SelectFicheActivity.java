@@ -1,6 +1,7 @@
 package be.mobiledatacaptator.activities;
 
 import java.io.ByteArrayInputStream;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.regex.Matcher;
@@ -18,8 +19,8 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -31,6 +32,7 @@ import android.widget.EditText;
 import android.widget.ListView;
 import be.mobiledatacaptator.R;
 import be.mobiledatacaptator.model.Fiche;
+import be.mobiledatacaptator.model.LayerCategory;
 import be.mobiledatacaptator.model.PhotoCategory;
 import be.mobiledatacaptator.model.Project;
 import be.mobiledatacaptator.model.UnitOfWork;
@@ -60,11 +62,11 @@ public class SelectFicheActivity extends Activity implements OnClickListener {
 		setTitle(getString(R.string.project) + " " + project.getName());
 
 		listViewFiches = (ListView) findViewById(R.id.listViewFiches);
-		// TODO -> getCount returns 0 als  	loadProjectData()/ loadDataFiches() in onStart() worden uitgevoerd ipv onCreate()
+		// TODO -> getCount returns 0 als loadProjectData()/ loadDataFiches() in onStart() worden uitgevoerd ipv onCreate()
 		// Robrecht ... dit moet nog verder uitgezocht worden ... maar als onderstaande 2 regeltjes niet hier, dan error in Robotium Test
 		loadProjectData();
 		loadDataFiches();
-		
+
 		buttonAddNumber = (Button) findViewById(R.id.buttonAddNumber);
 		buttonOpenFiche = (Button) findViewById(R.id.buttonOpenFiche);
 		buttonOpenPhoto = (Button) findViewById(R.id.buttonOpenPhoto);
@@ -112,63 +114,45 @@ public class SelectFicheActivity extends Activity implements OnClickListener {
 			project.setDataLocation(root.getAttribute("DataLocatie"));
 			project.setFilePrefix(root.getAttribute("FilePrefix"));
 
-			project.setLoadPhotoActivity(true);
-			if (!(root.getAttribute("LoadFotoActivity").equals("true"))) {
-				project.setLoadPhotoActivity(false);
-				buttonOpenPhoto.setVisibility(View.INVISIBLE);
-			}
-
-			project.setLoadSchetsActivity(true);
-			if ((root.getAttribute("LoadSchetsActivity").equals("true"))) {
-				project.setLoadSchetsActivity(true);
-				NodeList layerCategories = root.getElementsByTagName("LayerCategorie");
-				for (int i = 0; i < layerCategories.getLength(); i++) {
-					Node node = layerCategories.item(i);
-					// extra controle-inbouw of er reeds een zelfde categorie
-					// aanwezig - zoniet komt fotocategorie dubbel voor in
-					// Spinner-takePicture
-					//PhotoCategory photoCategorie = new PhotoCategory(((Element) node).getAttribute("Name"), ((Element) node).getAttribute("Suffix"));
-
-					Log.e("", "");
-					
-//					if (!project.getPhotoCategories().contains(photoCategorie)) {
-//						project.getPhotoCategories().add(photoCategorie);
-//					}
-				}
-				
-				
-				
-				
-				
-				Log.e("LoadschetsActivity", "TRUE");
-			}
-			else
-			{
-				project.setLoadSchetsActivity(false);
-				buttonOpenDrawing.setVisibility(View.INVISIBLE);
-			}
-
-			if (project.isLoadPhotoActivity()) {
+			
+			// photo-functionality
+			if ((root.getAttribute("LoadFotoActivity").equals("true"))) {
+				project.setLoadPhotoActivity(true);
 				NodeList nodes = root.getElementsByTagName("FotoCategorie");
+				project.setPhotoCategories(new ArrayList<PhotoCategory>());
 				for (int i = 0; i < nodes.getLength(); i++) {
 					Node node = nodes.item(i);
-					// extra controle-inbouw of er reeds een zelfde categorie
-					// aanwezig - zoniet komt fotocategorie dubbel voor in
-					// Spinner-takePicture
 					PhotoCategory photoCategorie = new PhotoCategory(((Element) node).getAttribute("Name"), ((Element) node).getAttribute("Suffix"));
-
-					if (!project.getPhotoCategories().contains(photoCategorie)) {
-						project.getPhotoCategories().add(photoCategorie);
-					}
+					project.getPhotoCategories().add(photoCategorie);
 				}
 				project.setPhotoHeight(Integer.parseInt(root.getAttribute("PhotoHeight")));
 				project.setPhotoWidth(Integer.parseInt(root.getAttribute("PhotoWidth")));
 
+			} else // no photo-Activity
+			{
+				project.setLoadPhotoActivity(false);
+				buttonOpenPhoto.setVisibility(View.INVISIBLE);
 			}
 			
-			
-			
-			
+			// drawing-functionality 
+			if ((root.getAttribute("LoadSchetsActivity").equals("true"))) {
+				project.setLoadSchetsActivity(true);
+
+				NodeList layerCategories = root.getElementsByTagName("LayerCategorie");
+				project.setLayerCategories(new ArrayList<LayerCategory>());
+				for (int i = 0; i < layerCategories.getLength(); i++) {
+					Node node = layerCategories.item(i);
+					
+					LayerCategory layerCategorie = new LayerCategory(((Element) node).getAttribute("Name"), Color.parseColor(((Element) node).getAttribute("Color")));
+					project.getLayerCategories().add(layerCategorie);
+
+				}
+
+			} else {
+				project.setLoadSchetsActivity(false);
+				buttonOpenDrawing.setVisibility(View.INVISIBLE);
+			}
+
 
 		} catch (Exception e) {
 			MdcUtil.showToastShort(e.getMessage(), this);

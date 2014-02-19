@@ -70,7 +70,7 @@ public class DrawingActivity extends Activity implements OnClickListener {
 			if (unitOfWork.getDao().existsFile(dataLocationDrawing)) {
 
 				String xml = unitOfWork.getDao().getFilecontent(dataLocationDrawing);
-
+				
 				readXmlSaxParser(xml);
 
 				// invoke onDraw method
@@ -84,6 +84,19 @@ public class DrawingActivity extends Activity implements OnClickListener {
 
 	}
 
+	private LayerCategory returnLayer(String layerFromXml){
+		List<LayerCategory> layerCategories = project.getLayerCategories();
+
+		for (LayerCategory layerCategory : layerCategories) {
+			if (layerCategory.getLayer().equalsIgnoreCase(layerFromXml)) {
+				return layerCategory;
+			}
+		}
+		
+		return null;
+	}
+	
+	
 	private void readXmlSaxParser(String xml) {
 
 		Document dom;
@@ -103,7 +116,7 @@ public class DrawingActivity extends Activity implements OnClickListener {
 					String drawingType = elementNode.getAttributes().getNamedItem("Type").getNodeValue();
 
 					if (drawingType.equalsIgnoreCase("Cirkel")) {
-						LayerCategory layer = new LayerCategory(eElement.getElementsByTagName("Layer").item(0).getTextContent());
+						LayerCategory layer = returnLayer((eElement.getElementsByTagName("Layer").item(0).getTextContent()));
 						int radius = Integer.valueOf(eElement.getElementsByTagName("Straal").item(0).getTextContent());
 						int x = Integer.valueOf(eElement.getElementsByTagName("X").item(0).getTextContent());
 						int y = Integer.valueOf(eElement.getElementsByTagName("Y").item(0).getTextContent());
@@ -111,7 +124,7 @@ public class DrawingActivity extends Activity implements OnClickListener {
 						MdcCircle circle = new MdcCircle(radius, x, y, layer);
 						drawingView.addShapeToList(circle);
 					} else if (drawingType.equalsIgnoreCase("Polygoon")) {
-						LayerCategory layer = new LayerCategory(eElement.getElementsByTagName("Layer").item(0).getTextContent());
+						LayerCategory layer = returnLayer((eElement.getElementsByTagName("Layer").item(0).getTextContent()));
 						boolean closedLine = false;
 						closedLine = eElement.getElementsByTagName("Gesloten").item(0).getTextContent().equalsIgnoreCase("ja");
 																	
@@ -151,7 +164,7 @@ public class DrawingActivity extends Activity implements OnClickListener {
 
 					}
 					else if (drawingType.equalsIgnoreCase("Tekst")) {
-						LayerCategory layer = new LayerCategory(eElement.getElementsByTagName("Layer").item(0).getTextContent());
+						LayerCategory layer = returnLayer((eElement.getElementsByTagName("Layer").item(0).getTextContent()));
 						String text = eElement.getElementsByTagName("Tekst").item(0).getTextContent();
 						int x = Integer.valueOf(eElement.getElementsByTagName("X").item(0).getTextContent());
 						int y = Integer.valueOf(eElement.getElementsByTagName("Y").item(0).getTextContent());

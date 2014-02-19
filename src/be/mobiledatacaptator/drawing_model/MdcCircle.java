@@ -47,15 +47,14 @@ public class MdcCircle extends MdcShape {
 	public void draw(Canvas canvas, Paint paint) {
 		try {
 			if (this.getLayer() != null) {
-
-				if (this.getLayer().getLayer().equalsIgnoreCase("Algemeen")) {
-					paint.setColor(Color.BLACK);
-				} else if (this.getLayer().getLayer().equalsIgnoreCase("Drempel")) {
-					paint.setColor(Color.RED);
-				} else if (this.getLayer().getLayer().equalsIgnoreCase("Deksel")) {
-					paint.setColor(Color.GREEN);
-				}
+				paint.setColor(getLayer().getColorValue());
+			
 			}
+			else
+			{
+				paint.setColor(Color.BLACK);
+			}	
+				
 			canvas.drawCircle(getPoint().x, getPoint().y, getRadius(), paint);
 		} catch (Exception e) {
 			// TODO Auto-generated catch block

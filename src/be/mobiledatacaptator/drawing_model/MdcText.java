@@ -2,6 +2,7 @@ package be.mobiledatacaptator.drawing_model;
 
 import be.mobiledatacaptator.model.LayerCategory;
 import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Point;
 
@@ -38,6 +39,16 @@ public class MdcText extends MdcShape {
 	
 	@Override
 	public void draw(Canvas canvas, Paint paint) {
+		
+		if (this.getLayer() != null) {
+			paint.setColor(getLayer().getColorValue());
+		
+		}
+		else
+		{
+			paint.setColor(Color.BLACK);
+		}
+		
 		canvas.drawText(text, getPoint().x, getPoint().y, paint);
 	}
 

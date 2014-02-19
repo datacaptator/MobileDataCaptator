@@ -61,7 +61,14 @@ public class MdcPolyGone extends MdcShape {
 	@Override
 	public void draw(Canvas canvas, Paint paint) {
 
-		paint.setColor(Color.BLACK);
+		if (this.getLayer() != null) {
+			paint.setColor(getLayer().getColorValue());
+		
+		}
+		else
+		{
+			paint.setColor(Color.BLACK);
+		}
 
 		for (MdcLine line : getLines()) {
 			line.draw(canvas, paint);

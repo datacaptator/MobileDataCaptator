@@ -4,9 +4,9 @@ import be.mobiledatacaptator.model.LayerCategory;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 
-public abstract class MdcShape  {
+public abstract class MdcShape {
 
-	private  LayerCategory layer;
+	private LayerCategory layer;
 	
 	public abstract void draw(Canvas canvas, Paint paint);
 
