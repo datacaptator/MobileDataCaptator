@@ -21,7 +21,11 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemSelectedListener;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.Spinner;
 import be.mobiledatacaptator.R;
 import be.mobiledatacaptator.drawing_model.MdcCircle;
 import be.mobiledatacaptator.drawing_model.MdcLine;
@@ -34,10 +38,11 @@ import be.mobiledatacaptator.model.Project;
 import be.mobiledatacaptator.model.UnitOfWork;
 import be.mobiledatacaptator.utilities.MdcUtil;
 
-public class DrawingActivity extends Activity implements OnClickListener {
+public class DrawingActivity extends Activity implements OnClickListener, OnItemSelectedListener {
 	private Project project;
 	private UnitOfWork unitOfWork;
 	private Button buttonDrawCircle, buttonDrawLine, buttonDrawRectangle;
+	private Spinner spinnerLayerCategory;
 	private DrawingView drawingView;
 	private String prefixFicheDrawingName;
 	private String dataLocationDrawing;
@@ -51,6 +56,12 @@ public class DrawingActivity extends Activity implements OnClickListener {
 		project = unitOfWork.getActiveProject();
 
 		drawingView = (DrawingView) findViewById(R.id.drawingView);
+
+		spinnerLayerCategory = (Spinner) findViewById(R.id.spinnerLayerCategory);
+		ArrayAdapter<LayerCategory> adapter = new ArrayAdapter<LayerCategory>(getBaseContext(), android.R.layout.simple_spinner_dropdown_item,
+				project.getLayerCategories());
+		spinnerLayerCategory.setAdapter(adapter);
+		spinnerLayerCategory.setOnItemSelectedListener(this);
 
 		buttonDrawCircle = (Button) findViewById(R.id.buttonDrawCircle);
 		buttonDrawLine = (Button) findViewById(R.id.buttonDrawLine);
@@ -70,7 +81,7 @@ public class DrawingActivity extends Activity implements OnClickListener {
 			if (unitOfWork.getDao().existsFile(dataLocationDrawing)) {
 
 				String xml = unitOfWork.getDao().getFilecontent(dataLocationDrawing);
-				
+
 				readXmlSaxParser(xml);
 
 				// invoke onDraw method
@@ -84,7 +95,7 @@ public class DrawingActivity extends Activity implements OnClickListener {
 
 	}
 
-	private LayerCategory returnLayer(String layerFromXml){
+	private LayerCategory returnLayer(String layerFromXml) {
 		List<LayerCategory> layerCategories = project.getLayerCategories();
 
 		for (LayerCategory layerCategory : layerCategories) {
@@ -92,11 +103,9 @@ public class DrawingActivity extends Activity implements OnClickListener {
 				return layerCategory;
 			}
 		}
-		
 		return null;
 	}
-	
-	
+
 	private void readXmlSaxParser(String xml) {
 
 		Document dom;
@@ -127,13 +136,13 @@ public class DrawingActivity extends Activity implements OnClickListener {
 						LayerCategory layer = returnLayer((eElement.getElementsByTagName("Layer").item(0).getTextContent()));
 						boolean closedLine = false;
 						closedLine = eElement.getElementsByTagName("Gesloten").item(0).getTextContent().equalsIgnoreCase("ja");
-																	
+
 						MdcPolyGone polyGone = new MdcPolyGone(layer, closedLine);
 						MdcLine line = null;
 						NodeList punten = eElement.getElementsByTagName("Punt");
 						Point startPoint = null;
 						Point endPoint = null;
-						List<MdcLine> lines = new ArrayList<MdcLine>(); 
+						List<MdcLine> lines = new ArrayList<MdcLine>();
 
 						for (int pnt = 0; pnt < punten.getLength(); pnt++) {
 							Node puntNode = punten.item(pnt);
@@ -141,10 +150,10 @@ public class DrawingActivity extends Activity implements OnClickListener {
 							Element ePunt = (Element) puntNode;
 
 							if (pnt % 2 == 0) {
-								
+
 								int x = Integer.valueOf(ePunt.getElementsByTagName("X").item(0).getTextContent());
 								int y = Integer.valueOf(ePunt.getElementsByTagName("Y").item(0).getTextContent());
-						
+
 								startPoint = new Point(x, y);
 							} else {
 								int x = Integer.valueOf(ePunt.getElementsByTagName("X").item(0).getTextContent());
@@ -152,7 +161,7 @@ public class DrawingActivity extends Activity implements OnClickListener {
 
 								endPoint = new Point(x, y);
 
-								line = new MdcLine(startPoint, endPoint);
+								line = new MdcLine(layer, startPoint, endPoint);
 								lines.add(line);
 							}
 						}
@@ -162,13 +171,12 @@ public class DrawingActivity extends Activity implements OnClickListener {
 						drawingView.addShapeToList(polyGone);
 						polyGone = null;
 
-					}
-					else if (drawingType.equalsIgnoreCase("Tekst")) {
+					} else if (drawingType.equalsIgnoreCase("Tekst")) {
 						LayerCategory layer = returnLayer((eElement.getElementsByTagName("Layer").item(0).getTextContent()));
 						String text = eElement.getElementsByTagName("Tekst").item(0).getTextContent();
 						int x = Integer.valueOf(eElement.getElementsByTagName("X").item(0).getTextContent());
 						int y = Integer.valueOf(eElement.getElementsByTagName("Y").item(0).getTextContent());
-						
+
 						MdcText mdcText = new MdcText(text, x, y, layer);
 						drawingView.addShapeToList(mdcText);
 					}
@@ -200,7 +208,7 @@ public class DrawingActivity extends Activity implements OnClickListener {
 		// TODO schrijft tekening weg - nog uit te werken
 		try {
 
-			//unitOfWork.getDao().saveStringToFile(dataLocationDrawing, "test");
+			// unitOfWork.getDao().saveStringToFile(dataLocationDrawing, "test");
 
 		} catch (Exception e) {
 			MdcUtil.showToastShort(e.getMessage(), this);
@@ -211,21 +219,40 @@ public class DrawingActivity extends Activity implements OnClickListener {
 	@Override
 	public void onClick(View view) {
 
-		switch (view.getId()) {
-		case R.id.buttonDrawCircle:
-			drawingView.setCurrentMdcShape(new MdcCircle());
-			break;
-		case R.id.buttonDrawLine:
-			drawingView.setCurrentMdcShape(new MdcLine());
-			break;
-		case R.id.buttonDrawRectangle:
-			drawingView.setCurrentMdcShape(new MdcRectangle());
-			break;
+		try {
+			switch (view.getId()) {
+			case R.id.buttonDrawCircle:
+				drawingView.setCurrentMdcShape(new MdcCircle());
+				break;
+			case R.id.buttonDrawLine:
+				drawingView.setCurrentMdcShape(new MdcLine());
+				break;
+			case R.id.buttonDrawRectangle:
+				drawingView.setCurrentMdcShape(new MdcRectangle());
+				break;
 
-		default:
-			break;
+			default:
+				break;
+			}
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			Log.e("ButttonClick", e.getLocalizedMessage());
 		}
 
+	}
+
+	
+	
+	@Override
+	public void onItemSelected(AdapterView<?> arg0, View arg1, int arg2, long arg3) {
+		// TODO  -> layer bepalen door item waarop geklikt
+		
+	}
+
+	@Override
+	public void onNothingSelected(AdapterView<?> arg0) {
+		// TODO Auto-generated method stub
+		
 	}
 
 }

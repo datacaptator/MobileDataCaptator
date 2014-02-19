@@ -5,33 +5,26 @@ import java.util.List;
 
 import android.content.Context;
 import android.graphics.Canvas;
-import android.graphics.Color;
-import android.graphics.Paint;
 import android.graphics.Point;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
-
 import be.mobiledatacaptator.drawing_model.MdcCircle;
 import be.mobiledatacaptator.drawing_model.MdcLine;
 import be.mobiledatacaptator.drawing_model.MdcRectangle;
 import be.mobiledatacaptator.drawing_model.MdcShape;
+import be.mobiledatacaptator.model.LayerCategory;
 
 public class DrawingView extends View {
 
 	private MdcShape currentMdcShape;
-	private Paint paint = new Paint();
 	private List<MdcShape> listShapes = new ArrayList<MdcShape>();
 	private float startPointX, startPointY, endPointX, endPointY;
 
 	public DrawingView(Context context, AttributeSet attrs) {
 		super(context, attrs);
-		paint.setAntiAlias(true);
-		paint.setStrokeWidth(2);
-		paint.setColor(Color.BLACK);
-		paint.setStyle(Paint.Style.STROKE);
-		paint.setStrokeJoin(Paint.Join.ROUND);
+		
 		currentMdcShape = null;
 	}
 
@@ -39,7 +32,7 @@ public class DrawingView extends View {
 	protected void onDraw(Canvas canvas) {
 		try {
 			for (MdcShape shape : listShapes) {
-				shape.draw(canvas, paint);
+				shape.draw(canvas);
 			}
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
@@ -54,6 +47,10 @@ public class DrawingView extends View {
 		float eventX = event.getX();
 		float eventY = event.getY();
 
+		
+		// TODO - layer opvragen uit spinner 
+		LayerCategory layer = null;
+		
 		if (currentMdcShape != null) {
 			if (currentMdcShape instanceof MdcCircle) {
 				MdcCircle myCircle = new MdcCircle();
@@ -73,7 +70,7 @@ public class DrawingView extends View {
 					endPointX = eventX;
 					endPointY = eventY;
 
-					MdcLine myLine = new MdcLine(new Point((int) startPointX, (int) startPointY), new Point((int) endPointX,
+					MdcLine myLine = new MdcLine(layer, new Point((int) startPointX, (int) startPointY), new Point((int) endPointX,
 							(int) endPointY));
 					listShapes.add(myLine);
 					// startPointX = startPointY = endPointX = endPointY = 0;

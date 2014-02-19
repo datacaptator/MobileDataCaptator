@@ -1,11 +1,9 @@
 package be.mobiledatacaptator.drawing_model;
 
-import be.mobiledatacaptator.model.LayerCategory;
 import android.graphics.Canvas;
-import android.graphics.Color;
-import android.graphics.Paint;
 import android.graphics.Point;
 import android.util.Log;
+import be.mobiledatacaptator.model.LayerCategory;
 
 public class MdcCircle extends MdcShape {
 	private Point point;
@@ -44,18 +42,10 @@ public class MdcCircle extends MdcShape {
 	}
 
 	@Override
-	public void draw(Canvas canvas, Paint paint) {
+	public void draw(Canvas canvas) {
 		try {
-			if (this.getLayer() != null) {
-				paint.setColor(getLayer().getColorValue());
-			
-			}
-			else
-			{
-				paint.setColor(Color.BLACK);
-			}	
-				
-			canvas.drawCircle(getPoint().x, getPoint().y, getRadius(), paint);
+		
+			canvas.drawCircle(getPoint().x, getPoint().y, getRadius(), getPaint());
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			Log.e("draw MdcCircle", e.getLocalizedMessage());

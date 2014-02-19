@@ -3,10 +3,8 @@ package be.mobiledatacaptator.drawing_model;
 import java.util.ArrayList;
 import java.util.List;
 
-import be.mobiledatacaptator.model.LayerCategory;
 import android.graphics.Canvas;
-import android.graphics.Color;
-import android.graphics.Paint;
+import be.mobiledatacaptator.model.LayerCategory;
 
 public class MdcPolyGone extends MdcShape {
 
@@ -33,13 +31,13 @@ public class MdcPolyGone extends MdcShape {
 			for (int i = 0; i < lines.size() - 1; i++) {
 				if (lines.get(i).getEndPoint() != lines.get(i + 1).getStartPoint()) {
 
-					MdcLine newLine = new MdcLine(lines.get(i).getEndPoint(), lines.get(i + 1).getStartPoint());
+					MdcLine newLine = new MdcLine( this.getLayer(),lines.get(i).getEndPoint(), lines.get(i + 1).getStartPoint());
 					tmpLines.add(newLine);
 				}
 			}
 
 			if (lines.get(0).getStartPoint() != lines.get(lines.size() - 1).getEndPoint()) {
-				lines.add(new MdcLine(lines.get(0).getStartPoint(), lines.get(lines.size() - 1).getEndPoint()));
+				lines.add(new MdcLine(this.getLayer(), lines.get(0).getStartPoint(), lines.get(lines.size() - 1).getEndPoint()));
 			}
 
 			if (tmpLines.size() > 0) {
@@ -59,19 +57,9 @@ public class MdcPolyGone extends MdcShape {
 
 
 	@Override
-	public void draw(Canvas canvas, Paint paint) {
-
-		if (this.getLayer() != null) {
-			paint.setColor(getLayer().getColorValue());
-		
-		}
-		else
-		{
-			paint.setColor(Color.BLACK);
-		}
-
+	public void draw(Canvas canvas) {
 		for (MdcLine line : getLines()) {
-			line.draw(canvas, paint);
+			line.draw(canvas);
 		}
 
 	}

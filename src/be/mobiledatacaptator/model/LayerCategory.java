@@ -26,6 +26,13 @@ public class LayerCategory {
 	public void setColorValue(int colorValue) {
 		this.colorValue = colorValue;
 	}
+
+	@Override
+	public String toString() {
+		return layer;
+	}
+	
+	
 	
 	
 	

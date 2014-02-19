@@ -1,7 +1,6 @@
 package be.mobiledatacaptator.drawing_model;
 
 import android.graphics.Canvas;
-import android.graphics.Paint;
 
 public class MdcRectangle extends MdcShape {
 
@@ -53,8 +52,8 @@ public class MdcRectangle extends MdcShape {
 	}
 
 	@Override
-	public void draw(Canvas canvas, Paint paint) {
-		canvas.drawRect(getLeft(), getTop(), getRight(), getBottom(), paint);
+	public void draw(Canvas canvas) {
+		canvas.drawRect(getLeft(), getTop(), getRight(), getBottom(), getPaint());
 	}
 
 

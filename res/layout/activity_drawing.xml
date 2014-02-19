@@ -60,11 +60,12 @@
             android:layout_height="wrap_content"
             android:text="@string/button_rectangle" />
 
-        <Button
-            android:id="@+id/buttonDrawSquare"
+        <Spinner
+            android:id="@+id/spinnerLayerCategory"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/button_square" />
+            android:layout_height="wrap_content" />
+
+      
     </TableRow>
     
 </TableLayout>

@@ -1,17 +1,17 @@
 package be.mobiledatacaptator.drawing_model;
 
+import be.mobiledatacaptator.model.LayerCategory;
 import android.graphics.Canvas;
-import android.graphics.Paint;
 import android.graphics.Point;
-import android.util.Log;
 public class MdcLine extends MdcShape {
 	private Point startPoint;
 	private Point endPoint;
 		
 	public MdcLine(){};
 	
-	public MdcLine(Point startPoint, Point endPoint)
+	public MdcLine(LayerCategory layer, Point startPoint, Point endPoint)
 	{
+		setLayer(layer);
 		setStartPoint(startPoint);
 		setEndPoint(endPoint);
 	}
@@ -33,13 +33,9 @@ public class MdcLine extends MdcShape {
 	}
 
 	@Override
-	public void draw(Canvas canvas, Paint paint) {
-		try {
-			canvas.drawLine(getStartPoint().x, getStartPoint().y, getEndPoint().x, getEndPoint().y, paint);
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			Log.e("why", e.getLocalizedMessage());
-		}
+	public void draw(Canvas canvas) {
+			canvas.drawLine(getStartPoint().x, getStartPoint().y, getEndPoint().x, getEndPoint().y, this.getPaint());
+		
 	}
 
 
