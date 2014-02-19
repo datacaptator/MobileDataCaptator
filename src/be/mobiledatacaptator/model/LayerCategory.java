@@ -1,10 +1,10 @@
-package be.mobiledatacaptator.drawing_model;
+package be.mobiledatacaptator.model;
 
-public class MdcLayer {
+public class LayerCategory {
 
 	private String layer;
 	
-	public MdcLayer(String layer) {
+	public LayerCategory(String layer) {
 		setLayer(layer);
 	}
 

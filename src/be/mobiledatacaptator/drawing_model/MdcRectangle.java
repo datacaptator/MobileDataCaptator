@@ -57,10 +57,6 @@ public class MdcRectangle extends MdcShape {
 		canvas.drawRect(getLeft(), getTop(), getRight(), getBottom(), paint);
 	}
 
-	@Override
-	public double area() {
-		return 0;
-	}
 
 	@Override
 	public String toString() {

@@ -19,6 +19,7 @@ import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -59,7 +60,11 @@ public class SelectFicheActivity extends Activity implements OnClickListener {
 		setTitle(getString(R.string.project) + " " + project.getName());
 
 		listViewFiches = (ListView) findViewById(R.id.listViewFiches);
-
+		// TODO -> getCount returns 0 als  	loadProjectData()/ loadDataFiches() in onStart() worden uitgevoerd ipv onCreate()
+		// Robrecht ... dit moet nog verder uitgezocht worden ... maar als onderstaande 2 regeltjes niet hier, dan error in Robotium Test
+		loadProjectData();
+		loadDataFiches();
+		
 		buttonAddNumber = (Button) findViewById(R.id.buttonAddNumber);
 		buttonOpenFiche = (Button) findViewById(R.id.buttonOpenFiche);
 		buttonOpenPhoto = (Button) findViewById(R.id.buttonOpenPhoto);
@@ -114,7 +119,31 @@ public class SelectFicheActivity extends Activity implements OnClickListener {
 			}
 
 			project.setLoadSchetsActivity(true);
-			if (!(root.getAttribute("LoadSchetsActivity").equals("true"))) {
+			if ((root.getAttribute("LoadSchetsActivity").equals("true"))) {
+				project.setLoadSchetsActivity(true);
+				NodeList layerCategories = root.getElementsByTagName("LayerCategorie");
+				for (int i = 0; i < layerCategories.getLength(); i++) {
+					Node node = layerCategories.item(i);
+					// extra controle-inbouw of er reeds een zelfde categorie
+					// aanwezig - zoniet komt fotocategorie dubbel voor in
+					// Spinner-takePicture
+					//PhotoCategory photoCategorie = new PhotoCategory(((Element) node).getAttribute("Name"), ((Element) node).getAttribute("Suffix"));
+
+					Log.e("", "");
+					
+//					if (!project.getPhotoCategories().contains(photoCategorie)) {
+//						project.getPhotoCategories().add(photoCategorie);
+//					}
+				}
+				
+				
+				
+				
+				
+				Log.e("LoadschetsActivity", "TRUE");
+			}
+			else
+			{
 				project.setLoadSchetsActivity(false);
 				buttonOpenDrawing.setVisibility(View.INVISIBLE);
 			}
@@ -136,6 +165,10 @@ public class SelectFicheActivity extends Activity implements OnClickListener {
 				project.setPhotoWidth(Integer.parseInt(root.getAttribute("PhotoWidth")));
 
 			}
+			
+			
+			
+			
 
 		} catch (Exception e) {
 			MdcUtil.showToastShort(e.getMessage(), this);

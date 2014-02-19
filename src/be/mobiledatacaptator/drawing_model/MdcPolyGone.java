@@ -3,6 +3,7 @@ package be.mobiledatacaptator.drawing_model;
 import java.util.ArrayList;
 import java.util.List;
 
+import be.mobiledatacaptator.model.LayerCategory;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
@@ -12,7 +13,7 @@ public class MdcPolyGone extends MdcShape {
 	boolean closedLine;
 	private List<MdcLine> lines;
 
-	public MdcPolyGone(MdcLayer layer, boolean closedLine) {
+	public MdcPolyGone(LayerCategory layer, boolean closedLine) {
 		this.setLayer(layer);
 		setClosedLine(closedLine);
 	}
@@ -56,11 +57,6 @@ public class MdcPolyGone extends MdcShape {
 		this.lines = lines;
 	}
 
-	@Override
-	public double area() {
-		// TODO Auto-generated method stub
-		return 0;
-	}
 
 	@Override
 	public void draw(Canvas canvas, Paint paint) {

@@ -42,11 +42,7 @@ public class MdcLine extends MdcShape {
 		}
 	}
 
-	@Override
-	public double area() {
-		// TODO Auto-generated method stub
-		return 0;
-	}
+
 
 	@Override
 	public String toString() {

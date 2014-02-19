@@ -12,6 +12,7 @@ public class Project {
 	private boolean LoadPhotoActivity;
 	private boolean LoadSchetsActivity;
 	private List<PhotoCategory> photoCategories = new ArrayList<PhotoCategory>();
+	private List<LayerCategory> layerCategories = new ArrayList<LayerCategory>();
 	private int photoHeight, photoWidth;
 
 	public String getName() {
@@ -63,6 +64,16 @@ public class Project {
 	public void setPhotoCategories(List<PhotoCategory> photoCategories) {
 		this.photoCategories = photoCategories;
 	}
+	
+	
+	public List<LayerCategory> getLayerCategories() {
+		return layerCategories;
+	}
+
+	public void setLayerCategories(List<LayerCategory> layerCategories) {
+		this.layerCategories = layerCategories;
+	}
+	
 
 	public boolean isLoadSchetsActivity() {
 		return LoadSchetsActivity;
@@ -92,5 +103,7 @@ public class Project {
 	public String toString() {
 		return getName();
 	}
+
+
 
 }

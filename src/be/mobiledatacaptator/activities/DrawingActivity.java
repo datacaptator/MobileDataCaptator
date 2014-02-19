@@ -18,16 +18,18 @@ import org.xml.sax.SAXException;
 import android.app.Activity;
 import android.graphics.Point;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
 import be.mobiledatacaptator.R;
 import be.mobiledatacaptator.drawing_model.MdcCircle;
-import be.mobiledatacaptator.drawing_model.MdcLayer;
 import be.mobiledatacaptator.drawing_model.MdcLine;
 import be.mobiledatacaptator.drawing_model.MdcPolyGone;
 import be.mobiledatacaptator.drawing_model.MdcRectangle;
+import be.mobiledatacaptator.drawing_model.MdcText;
 import be.mobiledatacaptator.drawing_views.DrawingView;
+import be.mobiledatacaptator.model.LayerCategory;
 import be.mobiledatacaptator.model.Project;
 import be.mobiledatacaptator.model.UnitOfWork;
 import be.mobiledatacaptator.utilities.MdcUtil;
@@ -73,12 +75,11 @@ public class DrawingActivity extends Activity implements OnClickListener {
 
 				// invoke onDraw method
 				drawingView.invalidate();
-
 			}
 
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
-			e.printStackTrace();
+			Log.e("onCreate_DrawingActivity", e.getLocalizedMessage());
 		}
 
 	}
@@ -99,21 +100,18 @@ public class DrawingActivity extends Activity implements OnClickListener {
 				if (elementNode.getNodeType() == Node.ELEMENT_NODE) {
 					Element eElement = (Element) elementNode;
 
-					// Log.e("XML", elementNode.getAttributes().getNamedItem("Type").getNodeValue());
+					String drawingType = elementNode.getAttributes().getNamedItem("Type").getNodeValue();
 
-					String shapeType = elementNode.getAttributes().getNamedItem("Type").getNodeValue();
-
-					if (shapeType.equalsIgnoreCase("Cirkel")) {
-						MdcLayer layer = new MdcLayer(eElement.getElementsByTagName("Layer").item(0).getTextContent());
+					if (drawingType.equalsIgnoreCase("Cirkel")) {
+						LayerCategory layer = new LayerCategory(eElement.getElementsByTagName("Layer").item(0).getTextContent());
 						int radius = Integer.valueOf(eElement.getElementsByTagName("Straal").item(0).getTextContent());
 						int x = Integer.valueOf(eElement.getElementsByTagName("X").item(0).getTextContent());
 						int y = Integer.valueOf(eElement.getElementsByTagName("Y").item(0).getTextContent());
 
 						MdcCircle circle = new MdcCircle(radius, x, y, layer);
 						drawingView.addShapeToList(circle);
-					} else if (shapeType.equalsIgnoreCase("Polygoon")) {
-						MdcLayer layer = new MdcLayer(eElement.getElementsByTagName("Layer").item(0).getTextContent());
-
+					} else if (drawingType.equalsIgnoreCase("Polygoon")) {
+						LayerCategory layer = new LayerCategory(eElement.getElementsByTagName("Layer").item(0).getTextContent());
 						boolean closedLine = false;
 						closedLine = eElement.getElementsByTagName("Gesloten").item(0).getTextContent().equalsIgnoreCase("ja");
 																	
@@ -152,19 +150,28 @@ public class DrawingActivity extends Activity implements OnClickListener {
 						polyGone = null;
 
 					}
+					else if (drawingType.equalsIgnoreCase("Tekst")) {
+						LayerCategory layer = new LayerCategory(eElement.getElementsByTagName("Layer").item(0).getTextContent());
+						String text = eElement.getElementsByTagName("Tekst").item(0).getTextContent();
+						int x = Integer.valueOf(eElement.getElementsByTagName("X").item(0).getTextContent());
+						int y = Integer.valueOf(eElement.getElementsByTagName("Y").item(0).getTextContent());
+						
+						MdcText mdcText = new MdcText(text, x, y, layer);
+						drawingView.addShapeToList(mdcText);
+					}
 
 				}
 			}
 
 		} catch (ParserConfigurationException e) {
 			// TODO Auto-generated catch block
-			e.printStackTrace();
+			Log.e("readXmlSaxParser_ParserConfigurationException", e.getLocalizedMessage());
 		} catch (SAXException e) {
 			// TODO Auto-generated catch block
-			e.printStackTrace();
+			Log.e("readXmlSaxParser_SAXException", e.getLocalizedMessage());
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
-			e.printStackTrace();
+			Log.e("readXmlSaxParser_SAXException", e.getLocalizedMessage());
 		}
 
 	}
