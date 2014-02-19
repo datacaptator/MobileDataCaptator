@@ -16,9 +16,11 @@ import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 
 import android.annotation.SuppressLint;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
+import android.content.DialogInterface.OnClickListener;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
-import android.util.Log;
 import android.view.MenuItem;
 import android.widget.TabHost;
 import be.mobiledatacaptator.R;
@@ -51,17 +53,15 @@ public class FicheActivity extends FragmentActivity {
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
 		case android.R.id.home:
-			finish();
+			onBackPressed();
 			return (true);
 		}
-
 		return (super.onOptionsItemSelected(item));
 	}
 
 	@Override
 	protected void onPause() {
 		super.onPause();
-		toonValidatieFouten();
 		saveFiche();
 	}
 
@@ -79,8 +79,11 @@ public class FicheActivity extends FragmentActivity {
 			NodeList groups = root.getElementsByTagName("Group");
 			for (int i = 0; i < groups.getLength(); i++) {
 				Element groupEle = (Element) groups.item(i);
-				unitOfWork.getActiveFiche().getGroups()
-						.add(new Group(this, groupEle, new FichePagerAdapter(getSupportFragmentManager()),unitOfWork.getActiveFiche()));
+				unitOfWork
+						.getActiveFiche()
+						.getGroups()
+						.add(new Group(this, groupEle, new FichePagerAdapter(getSupportFragmentManager()), unitOfWork
+								.getActiveFiche()));
 			}
 
 		} catch (Exception e) {
@@ -93,10 +96,6 @@ public class FicheActivity extends FragmentActivity {
 		try {
 			Fiche fiche = UnitOfWork.getInstance().getActiveFiche();
 			if (unitOfWork.getDao().existsFile(fiche.getPath())) {
-				//TODO -  mag weg
-				
-				Log.e("Path", fiche.getPath());
-				
 				String xml = unitOfWork.getDao().getFilecontent(fiche.getPath());
 				DocumentBuilder db = DocumentBuilderFactory.newInstance().newDocumentBuilder();
 				Document dom = db.parse(new ByteArrayInputStream(xml.getBytes()));
@@ -142,7 +141,7 @@ public class FicheActivity extends FragmentActivity {
 		}
 	}
 
-	private void toonValidatieFouten() {
+	private StringBuilder toonValidatieFouten() {
 		StringBuilder builder = new StringBuilder();
 		for (Group group : unitOfWork.getActiveFiche().getGroups()) {
 			for (Tab tab : group.getTabs()) {
@@ -156,8 +155,7 @@ public class FicheActivity extends FragmentActivity {
 				}
 			}
 		}
-		if (builder.length() > 0)
-			MdcUtil.showToastLong(builder.toString(), this);
+		return builder;
 	}
 
 	private int getUniqueId() {
@@ -170,6 +168,25 @@ public class FicheActivity extends FragmentActivity {
 		} while (!(isUnique));
 
 		return i;
+	}
+
+	private void goBack() {
+		super.onBackPressed();
+	}
+
+	@Override
+	public void onBackPressed() {
+		StringBuilder builder = toonValidatieFouten();
+		if (builder.length() > 0) {
+			String boodschap = builder.toString();
+			new AlertDialog.Builder(this).setMessage(boodschap).setNegativeButton(R.string.dialogCancel, null)
+					.setPositiveButton(R.string.dialogGaVerder, new OnClickListener() {
+						public void onClick(DialogInterface arg0, int arg1) {
+							goBack();
+						}
+					}).create().show();
+		} else
+			super.onBackPressed();
 	}
 
 }

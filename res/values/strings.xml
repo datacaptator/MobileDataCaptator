@@ -35,6 +35,8 @@
     <string name="AddNew">Nieuwe Tab</string>
     <string name="IdnForXmlAttr">Idn</string>
     <string name="LinkFout">Fout bij uitvoeren link.</string>
+    <string name="dialogGaVerder">Sluiten</string>
+    <string name="dialogCancel">Eerst oplossen</string>
     <string name="ValVerplicht">Verplicht!</string>
     <string name="ValTeLaag">Voldoet niet aan minimum</string>
     <string name="ValTeHoog">Voldoet niet aan maximum</string>

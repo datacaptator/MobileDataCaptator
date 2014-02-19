@@ -15,6 +15,7 @@ import android.text.Editable;
 import android.text.TextWatcher;
 import android.text.method.DigitsKeyListener;
 import android.view.View;
+import android.view.inputmethod.EditorInfo;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.ArrayAdapter;
@@ -141,6 +142,8 @@ public class DataField extends TableRow implements TextWatcher, OnItemSelectedLi
 
 			// Anders textveld plaatsen
 			editTextValue = new EditText(getContext());
+			editTextValue.setSingleLine();
+			editTextValue.setImeOptions(EditorInfo.IME_ACTION_NEXT);
 			if (type == VeldType.DOUBLE)
 				editTextValue.setKeyListener(new DigitsKeyListener(true, true));
 			if (type == VeldType.INT)
