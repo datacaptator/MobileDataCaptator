@@ -25,12 +25,15 @@ import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
+import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.Spinner;
 import be.mobiledatacaptator.R;
+import be.mobiledatacaptator.drawing_model.FigureType;
 import be.mobiledatacaptator.drawing_model.MdcCircle;
 import be.mobiledatacaptator.drawing_model.MdcLine;
 import be.mobiledatacaptator.drawing_model.MdcPolyGone;
-import be.mobiledatacaptator.drawing_model.MdcRectangle;
 import be.mobiledatacaptator.drawing_model.MdcText;
 import be.mobiledatacaptator.drawing_views.DrawingView;
 import be.mobiledatacaptator.model.LayerCategory;
@@ -38,10 +41,12 @@ import be.mobiledatacaptator.model.Project;
 import be.mobiledatacaptator.model.UnitOfWork;
 import be.mobiledatacaptator.utilities.MdcUtil;
 
-public class DrawingActivity extends Activity implements OnClickListener, OnItemSelectedListener {
+public class DrawingActivity extends Activity implements OnClickListener, OnItemSelectedListener, OnCheckedChangeListener {
 	private Project project;
 	private UnitOfWork unitOfWork;
-	private Button buttonDrawCircle, buttonDrawLine, buttonDrawRectangle;
+	private Button buttonDrawCircle, buttonDrawLine, buttonDrawShape, buttonDrawMultiLine;
+	private CheckBox  checkBoxCenter;	
+	
 	private Spinner spinnerLayerCategory;
 	private DrawingView drawingView;
 	private String prefixFicheDrawingName;
@@ -63,13 +68,19 @@ public class DrawingActivity extends Activity implements OnClickListener, OnItem
 		spinnerLayerCategory.setAdapter(adapter);
 		spinnerLayerCategory.setOnItemSelectedListener(this);
 
+		
 		buttonDrawCircle = (Button) findViewById(R.id.buttonDrawCircle);
 		buttonDrawLine = (Button) findViewById(R.id.buttonDrawLine);
-		buttonDrawRectangle = (Button) findViewById(R.id.buttonDrawRectangle);
+		buttonDrawShape = (Button) findViewById(R.id.buttonDrawShape);
+		buttonDrawMultiLine = (Button) findViewById(R.id.buttonDrawMultiLine);
+		checkBoxCenter = (CheckBox) findViewById(R.id.checkBoxCenter);
+				
 		buttonDrawCircle.setOnClickListener(this);
 		buttonDrawLine.setOnClickListener(this);
-		buttonDrawRectangle.setOnClickListener(this);
-
+		buttonDrawShape.setOnClickListener(this);
+		buttonDrawMultiLine.setOnClickListener(this);
+		checkBoxCenter.setOnCheckedChangeListener(this);
+		
 		setTitle(MdcUtil.setActivityTitle(unitOfWork, getApplicationContext()));
 
 		// format prefixFicheDrawingName = PUT3014
@@ -222,15 +233,17 @@ public class DrawingActivity extends Activity implements OnClickListener, OnItem
 		try {
 			switch (view.getId()) {
 			case R.id.buttonDrawCircle:
-				drawingView.setCurrentMdcShape(new MdcCircle());
+				drawingView.setFigureType(FigureType.Circle);
 				break;
 			case R.id.buttonDrawLine:
-				drawingView.setCurrentMdcShape(new MdcLine());
+				drawingView.setFigureType(FigureType.Line);
 				break;
-			case R.id.buttonDrawRectangle:
-				drawingView.setCurrentMdcShape(new MdcRectangle());
+			case R.id.buttonDrawShape:
+				drawingView.setFigureType(FigureType.Shape);
 				break;
-
+			case R.id.buttonDrawMultiLine:
+				drawingView.setFigureType(FigureType.Shape);
+				break;
 			default:
 				break;
 			}
@@ -250,8 +263,13 @@ public class DrawingActivity extends Activity implements OnClickListener, OnItem
 	}
 
 	@Override
-	public void onNothingSelected(AdapterView<?> arg0) {
-		// TODO Auto-generated method stub
+	public void onNothingSelected(AdapterView<?> arg0) {}
+
+	@Override
+	public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+		drawingView.setFromCenter(false);
+		if (isChecked)
+			drawingView.setFromCenter(true);
 		
 	}
 

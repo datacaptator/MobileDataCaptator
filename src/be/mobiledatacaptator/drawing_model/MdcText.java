@@ -4,7 +4,7 @@ import android.graphics.Canvas;
 import android.graphics.Point;
 import be.mobiledatacaptator.model.LayerCategory;
 
-public class MdcText extends MdcShape {
+public class MdcText extends MdcBaseShape {
 
 	private Point point;
 	private String text;
@@ -45,6 +45,22 @@ public class MdcText extends MdcShape {
 	public String toString() {
 		// TODO Auto-generated method stub
 		return null;
+	}
+
+
+
+	@Override
+	public Boolean addPoint(Point p) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+
+
+	@Override
+	public void setStartPoint(Point p) {
+		// TODO Auto-generated method stub
+		
 	}
 
 

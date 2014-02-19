@@ -10,28 +10,32 @@ import android.util.AttributeSet;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
+import be.mobiledatacaptator.drawing_model.FigureType;
 import be.mobiledatacaptator.drawing_model.MdcCircle;
 import be.mobiledatacaptator.drawing_model.MdcLine;
 import be.mobiledatacaptator.drawing_model.MdcRectangle;
-import be.mobiledatacaptator.drawing_model.MdcShape;
+import be.mobiledatacaptator.drawing_model.MdcBaseShape;
 import be.mobiledatacaptator.model.LayerCategory;
 
 public class DrawingView extends View {
 
-	private MdcShape currentMdcShape;
-	private List<MdcShape> listShapes = new ArrayList<MdcShape>();
+	private MdcBaseShape currentMdcShape;
+	private FigureType figureType = FigureType.Line;
+	private List<MdcBaseShape> listFigures = new ArrayList<MdcBaseShape>();
 	private float startPointX, startPointY, endPointX, endPointY;
-
+	boolean startNewFigure = true;
+	private MdcBaseShape activeFigure;
+	private Boolean fromCenter = false;
+	
 	public DrawingView(Context context, AttributeSet attrs) {
 		super(context, attrs);
-		
 		currentMdcShape = null;
 	}
 
 	@Override
 	protected void onDraw(Canvas canvas) {
 		try {
-			for (MdcShape shape : listShapes) {
+			for (MdcBaseShape shape : listFigures) {
 				shape.draw(canvas);
 			}
 		} catch (Exception e) {
@@ -40,103 +44,84 @@ public class DrawingView extends View {
 		}
 
 	}
+	
+	public void setFigureType(FigureType figureType) {
+		this.figureType = figureType;
+		startNewFigure = true;
+	}
 
-	@Override
-	public boolean onTouchEvent(MotionEvent event) {
 
-		float eventX = event.getX();
-		float eventY = event.getY();
+	
+	public boolean onTouch(View view, MotionEvent event) {
 
+		int x = (int) event.getX();
+		int y = (int) event.getY();
+
+		Point p = new Point(x, y);
 		
-		// TODO - layer opvragen uit spinner 
-		LayerCategory layer = null;
-		
-		if (currentMdcShape != null) {
-			if (currentMdcShape instanceof MdcCircle) {
-				MdcCircle myCircle = new MdcCircle();
-				myCircle.setPoint(new Point((int) eventX, (int) eventY));
-				myCircle.setRadius(40);
-
-				listShapes.add(myCircle);
-
-				Log.e("shape", currentMdcShape.toString());
-			} else if (currentMdcShape instanceof MdcLine) {
-				switch (event.getAction()) {
-				case MotionEvent.ACTION_DOWN:
-					startPointX = eventX;
-					startPointY = eventY;
-					break;
-				case MotionEvent.ACTION_UP:
-					endPointX = eventX;
-					endPointY = eventY;
-
-					MdcLine myLine = new MdcLine(layer, new Point((int) startPointX, (int) startPointY), new Point((int) endPointX,
-							(int) endPointY));
-					listShapes.add(myLine);
-					// startPointX = startPointY = endPointX = endPointY = 0;
-					break;
-				default:
-					return false;
-				}
-			} else if (currentMdcShape instanceof MdcRectangle) {
-				motionEventChecker(event);
-
-				Log.e("x-coordinate start", String.valueOf(startPointX));
-				Log.e("y-coordinate start", String.valueOf(startPointY));
-				Log.e("x-coordinate end", String.valueOf(endPointX));
-				Log.e("y-coordinate end", String.valueOf(endPointY));
-
-				MdcRectangle myRectangle = new MdcRectangle((int) startPointX, (int) startPointY, (int) endPointX,
-						(int) endPointY);
-				listShapes.add(myRectangle);
-				// startPointX = startPointY = endPointX = endPointY = 0;
-
+		switch (event.getAction()) {
+		case MotionEvent.ACTION_DOWN:
+			if (startNewFigure) {
+				makeNewFigure();
 			}
-		}
+			activeFigure.setStartPoint(p);
+			if (fromCenter) {
+				p.x = view.getWidth() / 2;
+				p.y = view.getHeight() / 2;
+				activeFigure.setStartPoint(p);
+			}
+			break;
 
-		invalidate();
+		case MotionEvent.ACTION_MOVE:
+			activeFigure.addPoint(p);
+			invalidate();
+			break;
+
+		case MotionEvent.ACTION_UP:
+			startNewFigure = activeFigure.addPoint(p);
+			invalidate();
+			break;
+
+		default:
+			return super.onTouchEvent(event);
+		}
 		return true;
 	}
 
-
-	public void addShapeToList(MdcShape shape)
-	{
-		listShapes.add(shape);
+	public void addShapeToList(MdcBaseShape shape) {
+		listFigures.add(shape);
 	}
+
+
 	
-	private void motionEventChecker(MotionEvent event) {
-		float eventX = event.getX();
-		float eventY = event.getY();
-
-		switch (event.getAction()) {
-		case MotionEvent.ACTION_DOWN:
-			startPointX = eventX;
-			startPointY = eventY;
-
-			Log.e("x-coordinate start", String.valueOf(eventX));
-			Log.e("y-coordinate start", String.valueOf(eventY));
-
+	private void makeNewFigure() {
+		switch (figureType) {
+		case Line:
+			activeFigure = new MdcLine();
 			break;
-		case MotionEvent.ACTION_UP:
-
-			endPointX = eventX;
-			endPointY = eventY;
-
-			Log.e("x-coordinate end", String.valueOf(eventX));
-			Log.e("y-coordinate end", String.valueOf(eventY));
-
+		case Circle:
+			activeFigure = new MdcCircle();
 			break;
+		case Shape:
+			//activeFigure = new MLdcShape();
+			break;
+		case Multiline:
+			//activeFigure = new MdcMultiLine();
+			break;
+
 		default:
 			break;
 		}
+		
+		listFigures.add(activeFigure);
 	}
 
-	public MdcShape getCurrentMdcShape() {
-		return currentMdcShape;
+	public Boolean getFromCenter() {
+		return fromCenter;
 	}
 
-	public void setCurrentMdcShape(MdcShape currentMdcShape) {
-		this.currentMdcShape = currentMdcShape;
+	public void setFromCenter(Boolean fromCenter) {
+		this.fromCenter = fromCenter;
 	}
 
 }

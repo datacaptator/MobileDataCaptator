@@ -1,11 +1,10 @@
 package be.mobiledatacaptator.model;
 
-
 public class LayerCategory {
 
 	private String layer;
 	private int colorValue;
-	
+
 	public LayerCategory(String layer, int colorValue) {
 		setLayer(layer);
 		setColorValue(colorValue);
@@ -19,7 +18,7 @@ public class LayerCategory {
 		this.layer = layer;
 	}
 
-		public int getColorValue() {
+	public int getColorValue() {
 		return colorValue;
 	}
 
@@ -31,9 +30,5 @@ public class LayerCategory {
 	public String toString() {
 		return layer;
 	}
-	
-	
-	
-	
-	
+
 }

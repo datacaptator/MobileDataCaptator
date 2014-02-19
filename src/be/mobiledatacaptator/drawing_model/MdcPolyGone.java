@@ -4,9 +4,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 import android.graphics.Canvas;
+import android.graphics.Point;
 import be.mobiledatacaptator.model.LayerCategory;
 
-public class MdcPolyGone extends MdcShape {
+public class MdcPolyGone extends MdcBaseShape {
 
 	boolean closedLine;
 	private List<MdcLine> lines;
@@ -68,6 +69,18 @@ public class MdcPolyGone extends MdcShape {
 	public String toString() {
 		// TODO Auto-generated method stub
 		return null;
+	}
+
+	@Override
+	public Boolean addPoint(Point p) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public void setStartPoint(Point p) {
+		// TODO Auto-generated method stub
+		
 	}
 
 }

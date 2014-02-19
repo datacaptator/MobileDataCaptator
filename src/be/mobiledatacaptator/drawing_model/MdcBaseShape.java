@@ -4,14 +4,15 @@ import be.mobiledatacaptator.model.LayerCategory;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.graphics.Point;
 
-public abstract class MdcShape {
+public abstract class MdcBaseShape {
 
 	private LayerCategory layer;
 	
 	private Paint paint;
 		
-	public MdcShape()
+	public MdcBaseShape()
 	{
 		paint = new Paint();
 		
@@ -23,9 +24,13 @@ public abstract class MdcShape {
 	}
 	
 	public abstract void draw(Canvas canvas);
-
+	
 	public abstract String toString();
 
+	public abstract Boolean addPoint(Point addPoint);
+	
+	public abstract void setStartPoint(Point startPoint);
+	
 	public LayerCategory getLayer() {
 		return layer;
 	}

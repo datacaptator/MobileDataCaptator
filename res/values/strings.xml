@@ -60,10 +60,12 @@
     <string name="photo">Foto: </string>
     
     <!-- DrawingActivity -->
-    <string name="button_circle">Cirkel</string>
-    <string name="button_line">Lijn</string>
-    <string name="button_rectangle">Rechthoek</string>
-	<string name="button_square">Vierkant</string>
+    <string name="button_draw_circle">Cirkel</string>
+    <string name="button_draw_line">Lijn</string>
+    <string name="button_draw_shape">Shape</string>
+	<string name="button_draw_multi_line">Multilijn</string>
+	<string name="button_undo">Undo</string>
+	<string name="checkbox_center">Center</string>
     
 
 </resources>

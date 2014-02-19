@@ -6,12 +6,13 @@
     <TableRow
         android:id="@+id/tableRow0"
         android:layout_width="fill_parent"
-        android:layout_height="fill_parent" >
+        android:layout_height="fill_parent"
+        android:stretchColumns="*" >
 
-        <TextView android:text="@string/app_name" />
-    </TableRow> 
-    
-    
+        <TextView
+            android:layout_span="2"
+            android:text="@string/app_name" />
+    </TableRow>
 
     <TableRow
         android:id="@+id/tableRow1"
@@ -24,48 +25,65 @@
             xmlns:android="http://schemas.android.com/apk/res/android"
             android:id="@+id/drawingView"
             android:layout_width="fill_parent"
-            android:layout_height="fill_parent" 
-            android:layout_span="2"
-            android:background="@android:color/white"
-            />
-        
+            android:layout_height="fill_parent"
+            android:layout_span="4"
+            android:background="@android:color/white" />
     </TableRow>
 
     <TableRow
         android:id="@+id/tableRow2"
         android:layout_width="fill_parent"
-        android:layout_height="fill_parent" >
+        android:layout_height="fill_parent"
+        android:stretchColumns="*" >
 
         <Button
             android:id="@+id/buttonDrawCircle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/button_circle" />
+            android:text="@string/button_draw_circle" />
 
         <Button
             android:id="@+id/buttonDrawLine"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/button_line" />
-    </TableRow>
-
-      <TableRow
-        android:id="@+id/tableRow3"
-        android:layout_width="fill_parent"
-        android:layout_height="fill_parent" >
+            android:text="@string/button_draw_line" />
 
         <Button
-            android:id="@+id/buttonDrawRectangle"
+            android:id="@+id/buttonDrawShape"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/button_rectangle" />
+            android:text="@string/button_draw_shape" />
+
+        <Button
+            android:id="@+id/buttonDrawMultiLine"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/button_draw_multi_line" />
+    </TableRow>
+
+    <TableRow
+        android:id="@+id/tableRow3"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:stretchColumns="*" >
 
         <Spinner
             android:id="@+id/spinnerLayerCategory"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content"
+            android:layout_span="2" />
 
-      
+        <CheckBox
+            android:id="@+id/checkBoxCenter"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/checkbox_center" />
+
+        <Button
+            android:id="@+id/buttonUndo"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/button_undo" />
     </TableRow>
-    
+
 </TableLayout>

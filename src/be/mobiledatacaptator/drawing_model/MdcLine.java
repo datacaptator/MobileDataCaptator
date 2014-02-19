@@ -3,7 +3,7 @@ package be.mobiledatacaptator.drawing_model;
 import be.mobiledatacaptator.model.LayerCategory;
 import android.graphics.Canvas;
 import android.graphics.Point;
-public class MdcLine extends MdcShape {
+public class MdcLine extends MdcBaseShape {
 	private Point startPoint;
 	private Point endPoint;
 		
@@ -43,6 +43,12 @@ public class MdcLine extends MdcShape {
 	@Override
 	public String toString() {
 		return "MdcLine";
+	}
+
+	@Override
+	public Boolean addPoint(Point p) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 	
