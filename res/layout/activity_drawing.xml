@@ -80,10 +80,10 @@
             android:text="@string/checkbox_center" />
 
         <Button
-            android:id="@+id/buttonUndo"
+            android:id="@+id/buttonDrawUndo"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/button_undo" />
+            android:text="@string/button_draw_undo" />
     </TableRow>
 
 </TableLayout>

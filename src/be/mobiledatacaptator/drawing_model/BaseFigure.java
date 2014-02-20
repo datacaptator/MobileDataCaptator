@@ -1,18 +1,16 @@
 package be.mobiledatacaptator.drawing_model;
 
-import be.mobiledatacaptator.model.LayerCategory;
-import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
-import android.graphics.Point;
+import be.mobiledatacaptator.model.LayerCategory;
 
-public abstract class MdcBaseShape {
+public abstract class BaseFigure implements IDrawable {
 
 	private LayerCategory layer;
 	
 	private Paint paint;
 		
-	public MdcBaseShape()
+	public BaseFigure()
 	{
 		paint = new Paint();
 		
@@ -23,13 +21,7 @@ public abstract class MdcBaseShape {
 		paint.setStrokeJoin(Paint.Join.ROUND);
 	}
 	
-	public abstract void draw(Canvas canvas);
-	
 	public abstract String toString();
-
-	public abstract Boolean addPoint(Point addPoint);
-	
-	public abstract void setStartPoint(Point startPoint);
 	
 	public LayerCategory getLayer() {
 		return layer;

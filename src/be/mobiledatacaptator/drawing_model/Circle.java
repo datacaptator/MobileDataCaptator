@@ -5,16 +5,13 @@ import android.graphics.Point;
 import android.util.Log;
 import be.mobiledatacaptator.model.LayerCategory;
 
-public class MdcCircle extends MdcBaseShape {
+public class Circle extends BaseFigure {
 	private Point point;
 	private float radius;
 
-	public MdcCircle() {
-		setPoint(new Point(100, 100));
-		setRadius(40);
-	}
-
-	public MdcCircle(int radius, int x, int y, LayerCategory layer) {
+	public Circle(){};
+	
+	public Circle(int radius, int x, int y, LayerCategory layer) {
 		setPoint(new Point(x, y));
 		setRadius(radius);
 		setLayer(layer);
@@ -47,7 +44,7 @@ public class MdcCircle extends MdcBaseShape {
 
 	@Override
 	public String toString() {
-		return "MdcCircle";
+		return "Circle";
 	}
 
 	@Override
@@ -67,5 +64,7 @@ public class MdcCircle extends MdcBaseShape {
 		this.point = startPoint;
 		
 	}
+
+
 
 }

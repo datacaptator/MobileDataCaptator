@@ -4,7 +4,7 @@ import android.graphics.Canvas;
 import android.graphics.Point;
 import be.mobiledatacaptator.model.LayerCategory;
 
-public class MdcText extends MdcBaseShape {
+public class MdcText extends BaseFigure {
 
 	private Point point;
 	private String text;

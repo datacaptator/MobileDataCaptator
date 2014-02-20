@@ -7,10 +7,10 @@ import android.graphics.Canvas;
 import android.graphics.Point;
 import be.mobiledatacaptator.model.LayerCategory;
 
-public class MdcPolyGone extends MdcBaseShape {
+public class MdcPolyGone extends BaseFigure {
 
 	boolean closedLine;
-	private List<MdcLine> lines;
+	private List<Line> lines;
 
 	public MdcPolyGone(LayerCategory layer, boolean closedLine) {
 		this.setLayer(layer);
@@ -25,24 +25,24 @@ public class MdcPolyGone extends MdcBaseShape {
 		this.closedLine = closedLine;
 	}
 
-	public List<MdcLine> getLines() {
+	public List<Line> getLines() {
 		if (isClosedLine()) {
-			List<MdcLine> tmpLines = new ArrayList<MdcLine>();
+			List<Line> tmpLines = new ArrayList<Line>();
 
 			for (int i = 0; i < lines.size() - 1; i++) {
 				if (lines.get(i).getEndPoint() != lines.get(i + 1).getStartPoint()) {
 
-					MdcLine newLine = new MdcLine( this.getLayer(),lines.get(i).getEndPoint(), lines.get(i + 1).getStartPoint());
+					Line newLine = new Line( this.getLayer(),lines.get(i).getEndPoint(), lines.get(i + 1).getStartPoint());
 					tmpLines.add(newLine);
 				}
 			}
 
 			if (lines.get(0).getStartPoint() != lines.get(lines.size() - 1).getEndPoint()) {
-				lines.add(new MdcLine(this.getLayer(), lines.get(0).getStartPoint(), lines.get(lines.size() - 1).getEndPoint()));
+				lines.add(new Line(this.getLayer(), lines.get(0).getStartPoint(), lines.get(lines.size() - 1).getEndPoint()));
 			}
 
 			if (tmpLines.size() > 0) {
-				for (MdcLine mdcLine : tmpLines) {
+				for (Line mdcLine : tmpLines) {
 					lines.add(mdcLine);
 				}
 			}
@@ -52,14 +52,14 @@ public class MdcPolyGone extends MdcBaseShape {
 			return lines;
 	}
 
-	public void setLines(List<MdcLine> lines) {
+	public void setLines(List<Line> lines) {
 		this.lines = lines;
 	}
 
 
 	@Override
 	public void draw(Canvas canvas) {
-		for (MdcLine line : getLines()) {
+		for (Line line : getLines()) {
 			line.draw(canvas);
 		}
 

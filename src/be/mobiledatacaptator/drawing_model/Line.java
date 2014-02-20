@@ -3,13 +3,13 @@ package be.mobiledatacaptator.drawing_model;
 import be.mobiledatacaptator.model.LayerCategory;
 import android.graphics.Canvas;
 import android.graphics.Point;
-public class MdcLine extends MdcBaseShape {
+public class Line extends BaseFigure {
 	private Point startPoint;
 	private Point endPoint;
 		
-	public MdcLine(){};
+	public Line(){};
 	
-	public MdcLine(LayerCategory layer, Point startPoint, Point endPoint)
+	public Line(LayerCategory layer, Point startPoint, Point endPoint)
 	{
 		setLayer(layer);
 		setStartPoint(startPoint);
@@ -38,17 +38,15 @@ public class MdcLine extends MdcBaseShape {
 		
 	}
 
-
-
 	@Override
 	public String toString() {
 		return "MdcLine";
 	}
 
 	@Override
-	public Boolean addPoint(Point p) {
-		// TODO Auto-generated method stub
-		return null;
+	public Boolean addPoint(Point point) {
+		this.endPoint = point;
+		return true;
 	}
 
 	
