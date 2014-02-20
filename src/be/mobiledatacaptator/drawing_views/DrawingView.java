@@ -15,10 +15,12 @@ import be.mobiledatacaptator.drawing_model.IDrawable;
 import be.mobiledatacaptator.drawing_model.Circle;
 import be.mobiledatacaptator.drawing_model.Line;
 import be.mobiledatacaptator.drawing_model.BaseFigure;
+import be.mobiledatacaptator.drawing_model.Text;
 import be.mobiledatacaptator.drawing_model.MultiLine;
 import be.mobiledatacaptator.drawing_model.Shape;
 import be.mobiledatacaptator.model.LayerCategory;
 import android.view.View.OnTouchListener;
+
 
 public class DrawingView extends View implements OnTouchListener {
 
@@ -28,28 +30,45 @@ public class DrawingView extends View implements OnTouchListener {
 	boolean startNewFigure = true;
 	private BaseFigure activeFigure;
 	private Boolean fromCenter = false;
+	private String inputText;
 
 	public DrawingView(Context context, AttributeSet attrs) {
 		super(context, attrs);
 		this.setOnTouchListener(this);
-	}
-
-	@Override
-	protected void onDraw(Canvas canvas) {
-		try {
-			for (IDrawable shape : listFigures) {
-				shape.draw(canvas);
-			}
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			Log.e("onDraw DrawingView", e.getLocalizedMessage());
-		}
-
+		
 	}
 
 	public void setFigureType(FigureType figureType) {
 		this.figureType = figureType;
 		startNewFigure = true;
+	}
+
+	public Boolean getFromCenter() {
+		return fromCenter;
+	}
+
+	public void setFromCenter(Boolean fromCenter) {
+		this.fromCenter = fromCenter;
+	}
+
+	public LayerCategory getLayer() {
+		return layer;
+	}
+
+	public void setLayer(LayerCategory layer) {
+		this.layer = layer;
+	}
+
+	@Override
+	protected void onDraw(Canvas canvas) {
+		try {
+			for (IDrawable figure : listFigures) {
+				figure.draw(canvas);
+			}
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			Log.e("onDraw DrawingView", e.getLocalizedMessage());
+		}
 	}
 
 	public boolean onTouch(View view, MotionEvent event) {
@@ -65,7 +84,16 @@ public class DrawingView extends View implements OnTouchListener {
 			}
 			activeFigure.setStartPoint(p);
 			activeFigure.setLayer(getLayer());
-
+			
+			if (activeFigure instanceof Text) {
+			Log.e("tekst", inputText);
+				
+				Text textInput = (Text) activeFigure;
+				textInput.setText(inputText);
+				
+				Log.e("tekst", textInput.toString());
+			}
+			
 			if (fromCenter) {
 				p.x = view.getWidth() / 2;
 				p.y = view.getHeight() / 2;
@@ -79,7 +107,12 @@ public class DrawingView extends View implements OnTouchListener {
 			break;
 
 		case MotionEvent.ACTION_UP:
-			startNewFigure = activeFigure.addPoint(p);
+			try {
+				startNewFigure = activeFigure.addPoint(p);
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				Log.e("Action_UP", e.getLocalizedMessage());
+			}
 			invalidate();
 			break;
 
@@ -107,7 +140,9 @@ public class DrawingView extends View implements OnTouchListener {
 		case Multiline:
 			activeFigure = new MultiLine();
 			break;
-
+		case Text:
+			activeFigure = new Text();
+			break;
 		default:
 			break;
 		}
@@ -115,27 +150,15 @@ public class DrawingView extends View implements OnTouchListener {
 		listFigures.add(activeFigure);
 	}
 
-	public Boolean getFromCenter() {
-		return fromCenter;
-	}
-
-	public void setFromCenter(Boolean fromCenter) {
-		this.fromCenter = fromCenter;
-	}
-
-	public LayerCategory getLayer() {
-		return layer;
-	}
-
-	public void setLayer(LayerCategory layer) {
-		this.layer = layer;
-	}
-	
 	public void undo() {
 		if (!(listFigures.isEmpty())) {
 			listFigures.remove(listFigures.size() - 1);
 			invalidate();
 		}
+	}
+
+	public void setInputText(String inputText) {
+		this.inputText = inputText;
 	}
 
 }

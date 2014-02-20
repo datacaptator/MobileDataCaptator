@@ -66,6 +66,8 @@
 	<string name="button_draw_multi_line">Multilijn</string>
 	<string name="button_draw_undo">Undo</string>
 	<string name="checkbox_center">Center</string>
+	<string name="editTextInputText"></string>
+	<string name="button_draw_Text">Tekst</string>
     
 
 </resources>

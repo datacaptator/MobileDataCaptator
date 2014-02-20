@@ -7,12 +7,12 @@ import android.graphics.Canvas;
 import android.graphics.Point;
 import be.mobiledatacaptator.model.LayerCategory;
 
-public class MdcPolyGone extends BaseFigure {
+public class PolyGone extends BaseFigure {
 
 	boolean closedLine;
 	private List<Line> lines;
 
-	public MdcPolyGone(LayerCategory layer, boolean closedLine) {
+	public PolyGone(LayerCategory layer, boolean closedLine) {
 		this.setLayer(layer);
 		setClosedLine(closedLine);
 	}
@@ -32,7 +32,7 @@ public class MdcPolyGone extends BaseFigure {
 			for (int i = 0; i < lines.size() - 1; i++) {
 				if (lines.get(i).getEndPoint() != lines.get(i + 1).getStartPoint()) {
 
-					Line newLine = new Line( this.getLayer(),lines.get(i).getEndPoint(), lines.get(i + 1).getStartPoint());
+					Line newLine = new Line( this.getLayer(),lines.get(i + 1).getStartPoint(), lines.get(i).getEndPoint() );
 					tmpLines.add(newLine);
 				}
 			}
@@ -62,7 +62,6 @@ public class MdcPolyGone extends BaseFigure {
 		for (Line line : getLines()) {
 			line.draw(canvas);
 		}
-
 	}
 
 	@Override

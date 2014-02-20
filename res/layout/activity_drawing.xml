@@ -4,17 +4,6 @@
     android:stretchColumns="*" >
 
     <TableRow
-        android:id="@+id/tableRow0"
-        android:layout_width="fill_parent"
-        android:layout_height="fill_parent"
-        android:stretchColumns="*" >
-
-        <TextView
-            android:layout_span="2"
-            android:text="@string/app_name" />
-    </TableRow>
-
-    <TableRow
         android:id="@+id/tableRow1"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
@@ -67,11 +56,6 @@
         android:layout_height="fill_parent"
         android:stretchColumns="*" >
 
-        <Spinner
-            android:id="@+id/spinnerLayerCategory"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_span="2" />
 
         <CheckBox
             android:id="@+id/checkBoxCenter"
@@ -79,6 +63,35 @@
             android:layout_height="wrap_content"
             android:text="@string/checkbox_center" />
 
+        <Button
+            android:id="@+id/buttonDrawText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/button_draw_Text" />
+        
+        <EditText 
+            android:id="@+id/editTextInputText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:hint="@string/editTextInputText"
+            android:imeOptions="actionDone"
+            android:layout_span="2"
+            />
+        
+    </TableRow>
+
+    <TableRow
+        android:id="@+id/tableRow4"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:stretchColumns="*" >
+
+        <Spinner
+            android:id="@+id/spinnerLayerCategory"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_span="3" />
+        
         <Button
             android:id="@+id/buttonDrawUndo"
             android:layout_width="wrap_content"
