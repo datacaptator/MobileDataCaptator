@@ -21,6 +21,9 @@ public abstract class BaseFigure implements IDrawable {
 		paint.setStrokeJoin(Paint.Join.ROUND);
 	}
 	
+	
+
+	
 	public abstract String toString();
 	
 	public LayerCategory getLayer() {

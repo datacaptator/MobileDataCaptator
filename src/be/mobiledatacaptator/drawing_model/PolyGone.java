@@ -3,6 +3,8 @@ package be.mobiledatacaptator.drawing_model;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.w3c.dom.Document;
+
 import android.graphics.Canvas;
 import android.graphics.Point;
 import be.mobiledatacaptator.model.LayerCategory;
@@ -78,6 +80,12 @@ public class PolyGone extends BaseFigure {
 
 	@Override
 	public void setStartPoint(Point p) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void appendXml(Document doc) {
 		// TODO Auto-generated method stub
 		
 	}

@@ -1,8 +1,9 @@
 package be.mobiledatacaptator.drawing_model;
 
+import org.w3c.dom.Document;
+
 import android.graphics.Canvas;
 import android.graphics.Point;
-import android.util.Log;
 import be.mobiledatacaptator.model.LayerCategory;
 
 public class Text extends BaseFigure {
@@ -37,8 +38,6 @@ public class Text extends BaseFigure {
 
 	@Override
 	public void draw(Canvas canvas) {
-		Log.e("Drawmethod", "drawmethod");
-		Log.e("Drawmethod", text);
 		canvas.drawText(text, getPoint().x, getPoint().y, getPaint());
 	}
 
@@ -57,6 +56,12 @@ public class Text extends BaseFigure {
 	public void setStartPoint(Point point) {
 		this.point = point;
 
+	}
+
+	@Override
+	public void appendXml(Document doc) {
+		// TODO Auto-generated method stub
+		
 	}
 
 }

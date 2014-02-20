@@ -24,8 +24,9 @@ import android.view.View.OnTouchListener;
 
 public class DrawingView extends View implements OnTouchListener {
 
+
 	private FigureType figureType = FigureType.Line;
-	private List<IDrawable> listFigures = new ArrayList<IDrawable>();
+	private List<IDrawable> iDrawables = new ArrayList<IDrawable>();
 	private LayerCategory layer;
 	boolean startNewFigure = true;
 	private BaseFigure activeFigure;
@@ -62,7 +63,7 @@ public class DrawingView extends View implements OnTouchListener {
 	@Override
 	protected void onDraw(Canvas canvas) {
 		try {
-			for (IDrawable figure : listFigures) {
+			for (IDrawable figure : iDrawables) {
 				figure.draw(canvas);
 			}
 		} catch (Exception e) {
@@ -107,12 +108,8 @@ public class DrawingView extends View implements OnTouchListener {
 			break;
 
 		case MotionEvent.ACTION_UP:
-			try {
 				startNewFigure = activeFigure.addPoint(p);
-			} catch (Exception e) {
-				// TODO Auto-generated catch block
-				Log.e("Action_UP", e.getLocalizedMessage());
-			}
+			
 			invalidate();
 			break;
 
@@ -123,7 +120,7 @@ public class DrawingView extends View implements OnTouchListener {
 	}
 
 	public void addShapeToList(BaseFigure shape) {
-		listFigures.add(shape);
+		iDrawables.add(shape);
 	}
 
 	private void makeNewFigure() {
@@ -147,12 +144,12 @@ public class DrawingView extends View implements OnTouchListener {
 			break;
 		}
 
-		listFigures.add(activeFigure);
+		iDrawables.add(activeFigure);
 	}
 
 	public void undo() {
-		if (!(listFigures.isEmpty())) {
-			listFigures.remove(listFigures.size() - 1);
+		if (!(iDrawables.isEmpty())) {
+			iDrawables.remove(iDrawables.size() - 1);
 			invalidate();
 		}
 	}
@@ -161,4 +158,9 @@ public class DrawingView extends View implements OnTouchListener {
 		this.inputText = inputText;
 	}
 
+	public List<IDrawable> getiDrawables() {
+		return iDrawables;
+	}
+
+	
 }

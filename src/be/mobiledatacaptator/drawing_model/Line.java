@@ -1,5 +1,7 @@
 package be.mobiledatacaptator.drawing_model;
 
+import org.w3c.dom.Document;
+
 import be.mobiledatacaptator.model.LayerCategory;
 import android.graphics.Canvas;
 import android.graphics.Point;
@@ -47,6 +49,12 @@ public class Line extends BaseFigure {
 	public Boolean addPoint(Point point) {
 		this.endPoint = point;
 		return true;
+	}
+
+	@Override
+	public void appendXml(Document doc) {
+		// TODO Auto-generated method stub
+		
 	}
 
 	

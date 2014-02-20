@@ -2,12 +2,18 @@ package be.mobiledatacaptator.activities;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.List;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.OutputKeys;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -33,8 +39,9 @@ import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.EditText;
 import android.widget.Spinner;
 import be.mobiledatacaptator.R;
-import be.mobiledatacaptator.drawing_model.FigureType;
 import be.mobiledatacaptator.drawing_model.Circle;
+import be.mobiledatacaptator.drawing_model.FigureType;
+import be.mobiledatacaptator.drawing_model.IDrawable;
 import be.mobiledatacaptator.drawing_model.Line;
 import be.mobiledatacaptator.drawing_model.PolyGone;
 import be.mobiledatacaptator.drawing_model.Text;
@@ -227,14 +234,30 @@ public class DrawingActivity extends Activity implements OnClickListener, OnItem
 	}
 
 	private void saveDrawing() {
-		// TODO schrijft tekening weg - nog uit te werken
 		try {
-
-			// unitOfWork.getDao().saveStringToFile(dataLocationDrawing, "test");
+			Document doc = DocumentBuilderFactory.newInstance().newDocumentBuilder().newDocument();
+			List<IDrawable> iDrawables = drawingView.getiDrawables();
+			
+			Element rootElement = doc.createElement("ConfiguratieSchets");
+			doc.appendChild(rootElement);
+			for (IDrawable iDrawable : iDrawables) {
+				iDrawable.appendXml(doc);
+				
+			}
+			
+			TransformerFactory tf = TransformerFactory.newInstance();
+			Transformer transformer = tf.newTransformer();
+			transformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "yes");
+			transformer.setOutputProperty(OutputKeys.INDENT, "yes");
+			StringWriter writer = new StringWriter();
+			transformer.transform(new DOMSource(doc), new StreamResult(writer));
+			String output = writer.getBuffer().toString();
+			unitOfWork.getDao().saveStringToFile(dataLocationDrawing, output);
 
 		} catch (Exception e) {
 			MdcUtil.showToastShort(e.getMessage(), this);
 		}
+		
 	}
 
 	@Override

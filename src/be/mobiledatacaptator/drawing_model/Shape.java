@@ -1,5 +1,7 @@
 package be.mobiledatacaptator.drawing_model;
 
+import org.w3c.dom.Document;
+
 import android.graphics.Canvas;
 import android.graphics.Point;
 
@@ -50,5 +52,11 @@ public class Shape extends BaseFigure {
 	@Override
 	public String toString() {
 		return "Shape";
+	}
+
+	@Override
+	public void appendXml(Document doc) {
+		// TODO Auto-generated method stub
+		
 	}
 }
