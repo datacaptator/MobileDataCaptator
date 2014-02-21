@@ -8,7 +8,9 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
+import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -16,13 +18,16 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ScrollView;
 import android.widget.TableLayout;
+import android.widget.TableRow;
 import be.mobiledatacaptator.fragments.ITitleFragment;
+import be.mobiledatacaptator.plugins.PluginMasterDetail;
+import be.mobiledatacaptator.plugins.PluginMasterDetailField;
 
 public class Tab extends Fragment implements ITitleFragment {
 
 	protected String name;
 	private Group group;
-	private List<DataField> dataFields = new ArrayList<DataField>();
+	private List<TableRow> dataFields = new ArrayList<TableRow>();
 	private Context context;
 
 	private Element xmlTemplate;
@@ -66,8 +71,9 @@ public class Tab extends Fragment implements ITitleFragment {
 		Element element = doc.createElement(name);
 		root.appendChild(element);
 
-		for (DataField df : dataFields) {
-			df.appendXml(doc, element);
+		for (TableRow tr : dataFields) {
+			if (tr instanceof DataField)
+				((DataField) tr).appendXml(doc, element);
 		}
 	}
 
@@ -78,7 +84,15 @@ public class Tab extends Fragment implements ITitleFragment {
 			NodeList fields = xmlTemplate.getElementsByTagName("Field");
 			for (int k = 0; k < fields.getLength(); k++) {
 				Element fieldEle = (Element) fields.item(k);
-				dataFields.add(new DataField(context, fieldEle, this));
+				if (fieldEle.hasAttribute("Type") && fieldEle.getAttribute("Type").equalsIgnoreCase("Plugin")) {
+
+					// Link naar een plugin meegeven
+					String pluginName = fieldEle.hasAttribute("Name") ? fieldEle.getAttribute("Name") : "";
+					if (pluginName.equalsIgnoreCase("PluginMasterDetail"))
+						dataFields.add(new PluginMasterDetailField(context, this));
+				} else
+					// 'Normaal' dataveld toevoegen
+					dataFields.add(new DataField(context, fieldEle, this));
 			}
 		}
 	}
@@ -87,11 +101,9 @@ public class Tab extends Fragment implements ITitleFragment {
 		for (Node childNode = element.getFirstChild(); childNode != null;) {
 			Node nextChild = childNode.getNextSibling();
 			String s = childNode.getNodeName();
-			for (DataField dataField : dataFields) {
-				if (dataField.getName().equals(s)) {
-					dataField.setValue(childNode.getTextContent());
-				}
-			}
+			DataField dataField = getDataField(s);
+			if (dataField != null)
+				dataField.setValue(childNode.getTextContent());
 			childNode = nextChild;
 		}
 	}
@@ -105,7 +117,24 @@ public class Tab extends Fragment implements ITitleFragment {
 	}
 
 	public List<DataField> getDataFields() {
-		return dataFields;
+		List<DataField> list = new ArrayList<DataField>();
+		for (TableRow row : dataFields) {
+			if (row instanceof DataField)
+				list.add((DataField) row);
+		}
+		return list;
+	}
+
+	public DataField getDataField(String name) {
+		for (TableRow tr : dataFields) {
+			if (tr instanceof DataField) {
+				DataField dataField = (DataField) tr;
+				if (dataField.getName().equals(name)) {
+					return dataField;
+				}
+			}
+		}
+		return null;
 	}
 
 	public Group getGroup() {
@@ -114,6 +143,27 @@ public class Tab extends Fragment implements ITitleFragment {
 
 	public void setGroup(Group group) {
 		this.group = group;
+	}
+
+	@Override
+	public void onActivityResult(int requestCode, int resultCode, Intent data) {
+		if (resultCode == Activity.RESULT_OK) {
+			if (requestCode == PluginMasterDetail.PLUGIN_MASTER_DETAIL_ACTRESULT) {
+				String masterField = data.getStringExtra("masterField");
+				String masterValue = data.getStringExtra("masterValue");
+				String detailField = data.getStringExtra("detailField");
+				String detailValue = data.getStringExtra("detailValue");
+
+				DataField dataField = getDataField(masterField);
+				if (dataField != null)
+					dataField.setValue(masterValue);
+				dataField = getDataField(detailField);
+				if (dataField != null)
+					dataField.setValue(detailValue);
+
+			}
+		}
+		super.onActivityResult(requestCode, resultCode, data);
 	}
 
 }

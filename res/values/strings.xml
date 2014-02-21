@@ -68,6 +68,11 @@
 	<string name="checkbox_center">Center</string>
 	<string name="editTextInputText"></string>
 	<string name="button_draw_Text">Tekst</string>
+	
+	<!-- Plugins -->
+    <string name="title_activity_plugin_leiding_verbinding">Leiding Verbinding</string>
+    <string name="kiesVerbinding">Kies verbinding</string>
+    <string name="cancel">Cancel</string>
     
 
 </resources>
