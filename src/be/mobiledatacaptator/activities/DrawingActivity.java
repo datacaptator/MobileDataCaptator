@@ -39,8 +39,8 @@ import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.EditText;
 import android.widget.Spinner;
 import be.mobiledatacaptator.R;
-import be.mobiledatacaptator.drawing_model.Circle;
 import be.mobiledatacaptator.drawing_model.FigureType;
+import be.mobiledatacaptator.drawing_model.Circle;
 import be.mobiledatacaptator.drawing_model.IDrawable;
 import be.mobiledatacaptator.drawing_model.Line;
 import be.mobiledatacaptator.drawing_model.PolyGone;
@@ -85,7 +85,6 @@ public class DrawingActivity extends Activity implements OnClickListener, OnItem
 		buttonDrawUndo = (Button) findViewById(R.id.buttonDrawUndo);
 		buttonDrawText = (Button) findViewById(R.id.buttonDrawText);
 		checkBoxCenter = (CheckBox) findViewById(R.id.checkBoxCenter);
-
 		editTextInputText = (EditText) findViewById(R.id.editTextInputText);
 		
 		buttonDrawCircle.setOnClickListener(this);
@@ -94,9 +93,7 @@ public class DrawingActivity extends Activity implements OnClickListener, OnItem
 		buttonDrawMultiLine.setOnClickListener(this);
 		buttonDrawUndo.setOnClickListener(this);
 		buttonDrawText.setOnClickListener(this);
-		
 		checkBoxCenter.setOnCheckedChangeListener(this);
-
 		editTextInputText.addTextChangedListener(this);
 		
 		setTitle(MdcUtil.setActivityTitle(unitOfWork, getApplicationContext()));
