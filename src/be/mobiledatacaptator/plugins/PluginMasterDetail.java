@@ -40,7 +40,7 @@ public class PluginMasterDetail extends Activity {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.activity_plugin_leiding_verbinding);
+		setContentView(R.layout.activity_plugin_master_detail);
 
 		unitOfWork = UnitOfWork.getInstance();
 		listViewPluginMasterDetail = (ListView) findViewById(R.id.listViewPluginMasterDetail);
