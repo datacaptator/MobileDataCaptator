@@ -10,16 +10,18 @@ import android.util.AttributeSet;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.View.OnTouchListener;
+import be.mobiledatacaptator.R;
+import be.mobiledatacaptator.drawing_model.BaseFigure;
+import be.mobiledatacaptator.drawing_model.Circle;
 import be.mobiledatacaptator.drawing_model.FigureType;
 import be.mobiledatacaptator.drawing_model.IDrawable;
-import be.mobiledatacaptator.drawing_model.Circle;
 import be.mobiledatacaptator.drawing_model.Line;
-import be.mobiledatacaptator.drawing_model.BaseFigure;
-import be.mobiledatacaptator.drawing_model.Text;
 import be.mobiledatacaptator.drawing_model.MultiLine;
 import be.mobiledatacaptator.drawing_model.Shape;
+import be.mobiledatacaptator.drawing_model.Text;
 import be.mobiledatacaptator.model.LayerCategory;
-import android.view.View.OnTouchListener;
+import be.mobiledatacaptator.utilities.MdcUtil;
 
 public class DrawingView extends View implements OnTouchListener {
 
@@ -86,7 +88,13 @@ public class DrawingView extends View implements OnTouchListener {
 
 			if (activeFigure instanceof Text) {
 				Text textInput = (Text) activeFigure;
-				textInput.setText(inputText);
+				if (this.inputText != null) {
+					textInput.setText(inputText);
+				}
+				else{
+					textInput.setText("");
+					MdcUtil.showToastShort(R.string.enter_text, getContext());
+				}
 			}
 
 			if (fromCenter) {
@@ -94,16 +102,21 @@ public class DrawingView extends View implements OnTouchListener {
 				p.y = view.getHeight() / 2;
 				activeFigure.setStartPoint(p);
 			}
+
 			break;
 
 		case MotionEvent.ACTION_MOVE:
 			activeFigure.addPoint(p);
+
 			invalidate();
+
 			break;
 
 		case MotionEvent.ACTION_UP:
 			startNewFigure = activeFigure.addPoint(p);
+
 			invalidate();
+
 			break;
 
 		default:

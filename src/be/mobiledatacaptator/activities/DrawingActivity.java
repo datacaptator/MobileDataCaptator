@@ -3,7 +3,6 @@ package be.mobiledatacaptator.activities;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.StringWriter;
-import java.util.ArrayList;
 import java.util.List;
 
 import javax.xml.parsers.DocumentBuilder;
@@ -22,6 +21,7 @@ import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
 import android.app.Activity;
+import android.graphics.Color;
 import android.graphics.Point;
 import android.os.Bundle;
 import android.text.Editable;
@@ -39,11 +39,11 @@ import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.EditText;
 import android.widget.Spinner;
 import be.mobiledatacaptator.R;
-import be.mobiledatacaptator.drawing_model.FigureType;
 import be.mobiledatacaptator.drawing_model.Circle;
+import be.mobiledatacaptator.drawing_model.FigureType;
 import be.mobiledatacaptator.drawing_model.IDrawable;
 import be.mobiledatacaptator.drawing_model.Line;
-import be.mobiledatacaptator.drawing_model.PolyGone;
+import be.mobiledatacaptator.drawing_model.MultiLine;
 import be.mobiledatacaptator.drawing_model.Shape;
 import be.mobiledatacaptator.drawing_model.Text;
 import be.mobiledatacaptator.drawing_views.DrawingView;
@@ -120,6 +120,8 @@ public class DrawingActivity extends Activity implements OnClickListener, OnItem
 			Log.e("onCreate_DrawingActivity", e.getLocalizedMessage());
 		}
 
+		buttonDrawLine.setTextColor(Color.GREEN);
+
 	}
 
 	private LayerCategory returnLayer(String layerFromXml) {
@@ -185,16 +187,14 @@ public class DrawingActivity extends Activity implements OnClickListener, OnItem
 									int y = Integer.valueOf(ePunt.getElementsByTagName("Y").item(0).getTextContent());
 
 									startPoint = new Point(x, y);
-									Log.e("ReadXML start", "("+ String.valueOf(startPoint.x) + ","  +String.valueOf(startPoint.y) +  ")");
-									
+
 									shape.setXMLStartPoint(startPoint);
-									
-								} else if(pnt == 2){
+
+								} else if (pnt == 2) {
 									int x = Integer.valueOf(ePunt.getElementsByTagName("X").item(0).getTextContent());
 									int y = Integer.valueOf(ePunt.getElementsByTagName("Y").item(0).getTextContent());
 
 									endPoint = new Point(x, y);
-									Log.e("ReadXML end", "("+ String.valueOf(endPoint.x) + ","  +String.valueOf(endPoint.y) +  ")");
 									shape.setXMLEndPoint(endPoint);
 
 								}
@@ -203,42 +203,7 @@ public class DrawingActivity extends Activity implements OnClickListener, OnItem
 							drawingView.addShapeToList(shape);
 							shape = null;
 
-							// PolyGone polyGone = new PolyGone(layer, closedLine);
-							// Line line = null;
-							// NodeList punten = eElement.getElementsByTagName("Punt");
-							// Point startPoint = null;
-							// Point endPoint = null;
-							// List<Line> lines = new ArrayList<Line>();
-							// Log.e("closedLine", "tot hier2");
-							// for (int pnt = 0; pnt < punten.getLength(); pnt++) {
-							// Node puntNode = punten.item(pnt);
-							//
-							// Element ePunt = (Element) puntNode;
-							//
-							// if (pnt % 2 == 0) {
-							//
-							// int x = Integer.valueOf(ePunt.getElementsByTagName("X").item(0).getTextContent());
-							// int y = Integer.valueOf(ePunt.getElementsByTagName("Y").item(0).getTextContent());
-							//
-							// startPoint = new Point(x, y);
-							// } else {
-							// int x = Integer.valueOf(ePunt.getElementsByTagName("X").item(0).getTextContent());
-							// int y = Integer.valueOf(ePunt.getElementsByTagName("Y").item(0).getTextContent());
-							//
-							// endPoint = new Point(x, y);
-							//
-							// line = new Line(layer, startPoint, endPoint);
-							// lines.add(line);
-							// }
-							// }
-							//
-							// Log.e("closedLine", "tot hier3");
-							// polyGone.setLines(lines);
-							// lines = null;
-							// drawingView.addShapeToList(polyGone);
-							// polyGone = null;
-
-						} else // noLine
+						} else // Line
 						{
 							NodeList punten = eElement.getElementsByTagName("Punt");
 							Point startPoint = null;
@@ -271,6 +236,28 @@ public class DrawingActivity extends Activity implements OnClickListener, OnItem
 
 						}
 
+					} else if (drawingType.equalsIgnoreCase("MultiLine")) {
+						LayerCategory layer = returnLayer((eElement.getElementsByTagName("Layer").item(0).getTextContent()));
+
+						MultiLine multiLine = new MultiLine();
+						multiLine.setLayer(layer);
+
+						NodeList punten = eElement.getElementsByTagName("Punt");
+
+						for (int pnt = 0; pnt < punten.getLength(); pnt++) {
+							Node puntNode = punten.item(pnt);
+
+							Element ePunt = (Element) puntNode;
+
+							int x = Integer.valueOf(ePunt.getElementsByTagName("X").item(0).getTextContent());
+							int y = Integer.valueOf(ePunt.getElementsByTagName("Y").item(0).getTextContent());
+
+							multiLine.addPoint(new Point(x, y));
+						}
+
+						drawingView.addShapeToList(multiLine);
+						multiLine = null;
+
 					} else if (drawingType.equalsIgnoreCase("Tekst")) {
 						LayerCategory layer = returnLayer((eElement.getElementsByTagName("Layer").item(0).getTextContent()));
 						String text = eElement.getElementsByTagName("Tekst").item(0).getTextContent();
@@ -300,7 +287,6 @@ public class DrawingActivity extends Activity implements OnClickListener, OnItem
 	@Override
 	protected void onPause() {
 		super.onPause();
-		// TODO
 		saveDrawing();
 	}
 
@@ -308,22 +294,25 @@ public class DrawingActivity extends Activity implements OnClickListener, OnItem
 		try {
 			Document doc = DocumentBuilderFactory.newInstance().newDocumentBuilder().newDocument();
 			List<IDrawable> iDrawables = drawingView.getiDrawables();
+			if (iDrawables.size() > 0) {
+				Element rootElement = doc.createElement("ConfiguratieSchets");
+				doc.appendChild(rootElement);
+				for (IDrawable iDrawable : iDrawables) {
+					iDrawable.appendXml(doc);
+				}
 
-			Element rootElement = doc.createElement("ConfiguratieSchets");
-			doc.appendChild(rootElement);
-			for (IDrawable iDrawable : iDrawables) {
-				iDrawable.appendXml(doc);
+				TransformerFactory tf = TransformerFactory.newInstance();
+				Transformer transformer = tf.newTransformer();
+				transformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "yes");
+				transformer.setOutputProperty(OutputKeys.INDENT, "yes");
+				StringWriter writer = new StringWriter();
+				transformer.transform(new DOMSource(doc), new StreamResult(writer));
+				String output = writer.getBuffer().toString();
+				unitOfWork.getDao().saveStringToFile(dataLocationDrawing, output);
 
+			} else {
+				unitOfWork.getDao().delete(dataLocationDrawing);
 			}
-
-			TransformerFactory tf = TransformerFactory.newInstance();
-			Transformer transformer = tf.newTransformer();
-			transformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "yes");
-			transformer.setOutputProperty(OutputKeys.INDENT, "yes");
-			StringWriter writer = new StringWriter();
-			transformer.transform(new DOMSource(doc), new StreamResult(writer));
-			String output = writer.getBuffer().toString();
-			unitOfWork.getDao().saveStringToFile(dataLocationDrawing, output);
 
 		} catch (Exception e) {
 			MdcUtil.showToastShort(e.getMessage(), this);
@@ -338,24 +327,35 @@ public class DrawingActivity extends Activity implements OnClickListener, OnItem
 
 			drawingView.setLayer((LayerCategory) spinnerLayerCategory.getSelectedItem());
 
+			buttonDrawCircle.setTextColor(Color.WHITE);
+			buttonDrawLine.setTextColor(Color.WHITE);
+			buttonDrawShape.setTextColor(Color.WHITE);
+			buttonDrawMultiLine.setTextColor(Color.WHITE);
+			buttonDrawText.setTextColor(Color.WHITE);
+
 			switch (view.getId()) {
 			case R.id.buttonDrawCircle:
 				drawingView.setFigureType(FigureType.Circle);
+				buttonDrawCircle.setTextColor(Color.GREEN);
 				break;
 			case R.id.buttonDrawLine:
 				drawingView.setFigureType(FigureType.Line);
+				buttonDrawLine.setTextColor(Color.GREEN);
 				break;
 			case R.id.buttonDrawShape:
 				drawingView.setFigureType(FigureType.Shape);
+				buttonDrawShape.setTextColor(Color.GREEN);
 				break;
 			case R.id.buttonDrawMultiLine:
 				drawingView.setFigureType(FigureType.Multiline);
+				buttonDrawMultiLine.setTextColor(Color.GREEN);
 				break;
 			case R.id.buttonDrawUndo:
 				drawingView.undo();
 				break;
 			case R.id.buttonDrawText:
 				drawingView.setFigureType(FigureType.Text);
+				buttonDrawText.setTextColor(Color.GREEN);
 				break;
 			default:
 				break;

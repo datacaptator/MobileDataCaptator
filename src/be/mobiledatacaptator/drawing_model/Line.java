@@ -54,24 +54,24 @@ public class Line extends BaseFigure {
 
 	@Override
 	public void appendXml(Document doc) {
-		Element line = doc.createElement("Element");
-		line.setAttribute("Type", "Polygoon");
-		doc.getFirstChild().appendChild(line);
+		Element element = doc.createElement("Element");
+		element.setAttribute("Type", "Polygoon");
+		doc.getFirstChild().appendChild(element);
 		
 		Element layer = doc.createElement("Layer");
 		layer.appendChild(doc.createTextNode(this.getLayer().toString()));
-		line.appendChild(layer);
+		element.appendChild(layer);
 		
 		Element closed = doc.createElement("Gesloten");
 		closed.appendChild(doc.createTextNode("NEEN"));
-		line.appendChild(closed);
+		element.appendChild(closed);
 		
 		Element startPoint = doc.createElement("Punt");
 		Element sX = doc.createElement("X");
 		sX.appendChild(doc.createTextNode(String.valueOf(this.getStartPoint().x)));
 		Element sY = doc.createElement("Y");
 		sY.appendChild(doc.createTextNode(String.valueOf(this.getStartPoint().y)));
-		line.appendChild(startPoint);
+		element.appendChild(startPoint);
 		startPoint.appendChild(sX);
 		startPoint.appendChild(sY);
 		
@@ -80,7 +80,7 @@ public class Line extends BaseFigure {
 		eX.appendChild(doc.createTextNode(String.valueOf(this.getEndPoint().x)));
 		Element eY = doc.createElement("Y");
 		eY.appendChild(doc.createTextNode(String.valueOf(this.getEndPoint().y)));
-		line.appendChild(endPoint);
+		element.appendChild(endPoint);
 		endPoint.appendChild(eX);
 		endPoint.appendChild(eY);
 		

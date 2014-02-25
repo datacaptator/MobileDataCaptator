@@ -71,32 +71,27 @@ public class Circle extends BaseFigure {
 
 	@Override
 	public void appendXml(Document doc) {
-		Element circle = doc.createElement("Element");
-		circle.setAttribute("Type", "Cirkel");
-		doc.getFirstChild().appendChild(circle);
-		
+		Element element = doc.createElement("Element");
+		element.setAttribute("Type", "Cirkel");
+		doc.getFirstChild().appendChild(element);
+
 		Element layer = doc.createElement("Layer");
 		layer.appendChild(doc.createTextNode(this.getLayer().toString()));
-		circle.appendChild(layer);
-		
+		element.appendChild(layer);
+
 		Element straal = doc.createElement("Straal");
-		straal.appendChild(doc.createTextNode(String.valueOf((int)this.getRadius())));
-		circle.appendChild(straal);
-		
+		straal.appendChild(doc.createTextNode(String.valueOf((int) this.getRadius())));
+		element.appendChild(straal);
+
 		Element centrum = doc.createElement("Centrum");
 		Element x = doc.createElement("X");
 		x.appendChild(doc.createTextNode(String.valueOf(this.getPoint().x)));
 		Element y = doc.createElement("Y");
 		y.appendChild(doc.createTextNode(String.valueOf(this.getPoint().y)));
-		circle.appendChild(centrum);
+		element.appendChild(centrum);
 		centrum.appendChild(x);
 		centrum.appendChild(y);
-		
-		
-		
 
 	}
-
-	
 
 }

@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.w3c.dom.Document;
+import org.w3c.dom.Element;
 
 import android.graphics.Canvas;
 import android.graphics.Path;
@@ -34,7 +35,6 @@ public class MultiLine extends BaseFigure {
 		return false;
 	}
 
-
 	@Override
 	public String toString() {
 		return null;
@@ -42,8 +42,27 @@ public class MultiLine extends BaseFigure {
 
 	@Override
 	public void appendXml(Document doc) {
-		// TODO Auto-generated method stub
-		
+		Element element = doc.createElement("Element");
+		element.setAttribute("Type", "MultiLine");
+		doc.getFirstChild().appendChild(element);
+
+		Element layer = doc.createElement("Layer");
+		layer.appendChild(doc.createTextNode(this.getLayer().toString()));
+		element.appendChild(layer);
+	
+		for (int i = 1; i < punten.size(); i++) {
+
+			Element point = doc.createElement("Punt");
+			Element x = doc.createElement("X");
+			x.appendChild(doc.createTextNode(String.valueOf(punten.get(i - 1).x)));
+			Element y = doc.createElement("Y");
+			y.appendChild(doc.createTextNode(String.valueOf(punten.get(i - 1).y)));
+			element.appendChild(point);
+			point.appendChild(x);
+			point.appendChild(y);
+
+		}
+
 	}
 
 }

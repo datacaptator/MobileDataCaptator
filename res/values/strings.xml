@@ -68,6 +68,7 @@
 	<string name="checkbox_center">Center</string>
 	<string name="editTextInputText"></string>
 	<string name="button_draw_Text">Tekst</string>
+	<string name="enter_text">Geef een tekst in aub!</string>
 	
 	<!-- Plugins -->
     <string name="title_activity_plugin_leiding_verbinding">Leiding Verbinding</string>

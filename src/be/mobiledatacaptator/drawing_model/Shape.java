@@ -5,7 +5,6 @@ import org.w3c.dom.Element;
 
 import android.graphics.Canvas;
 import android.graphics.Point;
-import android.util.Log;
 
 public class Shape extends BaseFigure {
 
@@ -59,32 +58,29 @@ public class Shape extends BaseFigure {
 
 	@Override
 	public void appendXml(Document doc) {
-		Element shape = doc.createElement("Element");
-		shape.setAttribute("Type", "Polygoon");
-		doc.getFirstChild().appendChild(shape);
+		Element element = doc.createElement("Element");
+		element.setAttribute("Type", "Polygoon");
+		doc.getFirstChild().appendChild(element);
 
 		Element layer = doc.createElement("Layer");
 		layer.appendChild(doc.createTextNode(this.getLayer().toString()));
-		shape.appendChild(layer);
+		element.appendChild(layer);
 
 		Element closed = doc.createElement("Gesloten");
 		closed.appendChild(doc.createTextNode("JA"));
-		shape.appendChild(closed);
+		element.appendChild(closed);
 
 		String startX = String.valueOf(this.startPoint.x);
 		String startY = String.valueOf(this.startPoint.y);
 		String endX = String.valueOf(this.endPoint.x);
 		String endY = String.valueOf(this.endPoint.y);
 
-		Log.e("appendXML - start", "(" + startX + "," + startY + ")");
-		Log.e("appendXML - end", "(" + endX + "," + endY + ")");
-
 		Element punt1 = doc.createElement("Punt");
 		Element punt1X = doc.createElement("X");
 		punt1X.appendChild(doc.createTextNode(startX));
 		Element punt1Y = doc.createElement("Y");
 		punt1Y.appendChild(doc.createTextNode(startY));
-		shape.appendChild(punt1);
+		element.appendChild(punt1);
 		punt1.appendChild(punt1X);
 		punt1.appendChild(punt1Y);
 
@@ -93,7 +89,7 @@ public class Shape extends BaseFigure {
 		punt2X.appendChild(doc.createTextNode(startX));
 		Element punt2Y = doc.createElement("Y");
 		punt2Y.appendChild(doc.createTextNode(endY));
-		shape.appendChild(punt2);
+		element.appendChild(punt2);
 		punt2.appendChild(punt2X);
 		punt2.appendChild(punt2Y);
 
@@ -102,7 +98,7 @@ public class Shape extends BaseFigure {
 		punt3X.appendChild(doc.createTextNode(endX));
 		Element punt3Y = doc.createElement("Y");
 		punt3Y.appendChild(doc.createTextNode(endY));
-		shape.appendChild(punt3);
+		element.appendChild(punt3);
 		punt3.appendChild(punt3X);
 		punt3.appendChild(punt3Y);
 
@@ -111,7 +107,7 @@ public class Shape extends BaseFigure {
 		punt4X.appendChild(doc.createTextNode(endX));
 		Element punt4Y = doc.createElement("Y");
 		punt4Y.appendChild(doc.createTextNode(startY));
-		shape.appendChild(punt4);
+		element.appendChild(punt4);
 		punt4.appendChild(punt4X);
 		punt4.appendChild(punt4Y);
 

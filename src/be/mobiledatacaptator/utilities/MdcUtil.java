@@ -18,6 +18,14 @@ public class MdcUtil {
 
 		Toast.makeText(context, message, Toast.LENGTH_SHORT).show();
 	}
+	
+	public static void showToastShort(int message , Context context) {
+		if (message == -1) {
+			message = R.string.unknown_error;
+		}
+		Toast.makeText(context, message, Toast.LENGTH_SHORT).show();
+	}
+	
 
 	public static void showToastLong(String message, Context context) {
 		if (message == null || message == "") {
