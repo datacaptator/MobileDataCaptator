@@ -44,6 +44,7 @@ import be.mobiledatacaptator.drawing_model.Circle;
 import be.mobiledatacaptator.drawing_model.IDrawable;
 import be.mobiledatacaptator.drawing_model.Line;
 import be.mobiledatacaptator.drawing_model.PolyGone;
+import be.mobiledatacaptator.drawing_model.Shape;
 import be.mobiledatacaptator.drawing_model.Text;
 import be.mobiledatacaptator.drawing_views.DrawingView;
 import be.mobiledatacaptator.model.LayerCategory;
@@ -86,7 +87,7 @@ public class DrawingActivity extends Activity implements OnClickListener, OnItem
 		buttonDrawText = (Button) findViewById(R.id.buttonDrawText);
 		checkBoxCenter = (CheckBox) findViewById(R.id.checkBoxCenter);
 		editTextInputText = (EditText) findViewById(R.id.editTextInputText);
-		
+
 		buttonDrawCircle.setOnClickListener(this);
 		buttonDrawLine.setOnClickListener(this);
 		buttonDrawShape.setOnClickListener(this);
@@ -95,7 +96,7 @@ public class DrawingActivity extends Activity implements OnClickListener, OnItem
 		buttonDrawText.setOnClickListener(this);
 		checkBoxCenter.setOnCheckedChangeListener(this);
 		editTextInputText.addTextChangedListener(this);
-		
+
 		setTitle(MdcUtil.setActivityTitle(unitOfWork, getApplicationContext()));
 
 		// format prefixFicheDrawingName = PUT3014
@@ -159,43 +160,116 @@ public class DrawingActivity extends Activity implements OnClickListener, OnItem
 						Circle circle = new Circle(radius, x, y, layer);
 						drawingView.addShapeToList(circle);
 					} else if (drawingType.equalsIgnoreCase("Polygoon")) {
+
 						LayerCategory layer = returnLayer((eElement.getElementsByTagName("Layer").item(0).getTextContent()));
 						boolean closedLine = false;
 						closedLine = eElement.getElementsByTagName("Gesloten").item(0).getTextContent().equalsIgnoreCase("ja");
 
-						PolyGone polyGone = new PolyGone(layer, closedLine);
-						Line line = null;
-						NodeList punten = eElement.getElementsByTagName("Punt");
-						Point startPoint = null;
-						Point endPoint = null;
-						List<Line> lines = new ArrayList<Line>();
+						if (closedLine) {
 
-						for (int pnt = 0; pnt < punten.getLength(); pnt++) {
-							Node puntNode = punten.item(pnt);
+							Shape shape = new Shape();
+							shape.setLayer(layer);
 
-							Element ePunt = (Element) puntNode;
+							NodeList punten = eElement.getElementsByTagName("Punt");
+							Point startPoint = null;
+							Point endPoint = null;
 
-							if (pnt % 2 == 0) {
+							for (int pnt = 0; pnt < punten.getLength(); pnt++) {
+								Node puntNode = punten.item(pnt);
 
-								int x = Integer.valueOf(ePunt.getElementsByTagName("X").item(0).getTextContent());
-								int y = Integer.valueOf(ePunt.getElementsByTagName("Y").item(0).getTextContent());
+								Element ePunt = (Element) puntNode;
 
-								startPoint = new Point(x, y);
-							} else {
-								int x = Integer.valueOf(ePunt.getElementsByTagName("X").item(0).getTextContent());
-								int y = Integer.valueOf(ePunt.getElementsByTagName("Y").item(0).getTextContent());
+								if (pnt == 0) {
 
-								endPoint = new Point(x, y);
+									int x = Integer.valueOf(ePunt.getElementsByTagName("X").item(0).getTextContent());
+									int y = Integer.valueOf(ePunt.getElementsByTagName("Y").item(0).getTextContent());
 
-								line = new Line(layer, startPoint, endPoint);
-								lines.add(line);
+									startPoint = new Point(x, y);
+									Log.e("ReadXML start", "("+ String.valueOf(startPoint.x) + ","  +String.valueOf(startPoint.y) +  ")");
+									
+									shape.setXMLStartPoint(startPoint);
+									
+								} else if(pnt == 2){
+									int x = Integer.valueOf(ePunt.getElementsByTagName("X").item(0).getTextContent());
+									int y = Integer.valueOf(ePunt.getElementsByTagName("Y").item(0).getTextContent());
+
+									endPoint = new Point(x, y);
+									Log.e("ReadXML end", "("+ String.valueOf(endPoint.x) + ","  +String.valueOf(endPoint.y) +  ")");
+									shape.setXMLEndPoint(endPoint);
+
+								}
 							}
-						}
 
-						polyGone.setLines(lines);
-						lines = null;
-						drawingView.addShapeToList(polyGone);
-						polyGone = null;
+							drawingView.addShapeToList(shape);
+							shape = null;
+
+							// PolyGone polyGone = new PolyGone(layer, closedLine);
+							// Line line = null;
+							// NodeList punten = eElement.getElementsByTagName("Punt");
+							// Point startPoint = null;
+							// Point endPoint = null;
+							// List<Line> lines = new ArrayList<Line>();
+							// Log.e("closedLine", "tot hier2");
+							// for (int pnt = 0; pnt < punten.getLength(); pnt++) {
+							// Node puntNode = punten.item(pnt);
+							//
+							// Element ePunt = (Element) puntNode;
+							//
+							// if (pnt % 2 == 0) {
+							//
+							// int x = Integer.valueOf(ePunt.getElementsByTagName("X").item(0).getTextContent());
+							// int y = Integer.valueOf(ePunt.getElementsByTagName("Y").item(0).getTextContent());
+							//
+							// startPoint = new Point(x, y);
+							// } else {
+							// int x = Integer.valueOf(ePunt.getElementsByTagName("X").item(0).getTextContent());
+							// int y = Integer.valueOf(ePunt.getElementsByTagName("Y").item(0).getTextContent());
+							//
+							// endPoint = new Point(x, y);
+							//
+							// line = new Line(layer, startPoint, endPoint);
+							// lines.add(line);
+							// }
+							// }
+							//
+							// Log.e("closedLine", "tot hier3");
+							// polyGone.setLines(lines);
+							// lines = null;
+							// drawingView.addShapeToList(polyGone);
+							// polyGone = null;
+
+						} else // noLine
+						{
+							NodeList punten = eElement.getElementsByTagName("Punt");
+							Point startPoint = null;
+							Point endPoint = null;
+
+							Line line = new Line();
+							line.setLayer(layer);
+
+							for (int pnt = 0; pnt < punten.getLength(); pnt++) {
+								Node puntNode = punten.item(pnt);
+
+								Element ePunt = (Element) puntNode;
+
+								if (pnt % 2 == 0) {
+
+									int x = Integer.valueOf(ePunt.getElementsByTagName("X").item(0).getTextContent());
+									int y = Integer.valueOf(ePunt.getElementsByTagName("Y").item(0).getTextContent());
+									startPoint = new Point(x, y);
+									line.setStartPoint(startPoint);
+								} else {
+									int x = Integer.valueOf(ePunt.getElementsByTagName("X").item(0).getTextContent());
+									int y = Integer.valueOf(ePunt.getElementsByTagName("Y").item(0).getTextContent());
+
+									endPoint = new Point(x, y);
+									line.setEndPoint(endPoint);
+								}
+							}
+
+							drawingView.addShapeToList(line);
+
+						}
 
 					} else if (drawingType.equalsIgnoreCase("Tekst")) {
 						LayerCategory layer = returnLayer((eElement.getElementsByTagName("Layer").item(0).getTextContent()));
@@ -218,7 +292,7 @@ public class DrawingActivity extends Activity implements OnClickListener, OnItem
 			Log.e("readXmlSaxParser_SAXException", e.getLocalizedMessage());
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
-			Log.e("readXmlSaxParser_SAXException", e.getLocalizedMessage());
+			Log.e("readXmlSaxParser_IOException", e.getLocalizedMessage());
 		}
 
 	}
@@ -234,14 +308,14 @@ public class DrawingActivity extends Activity implements OnClickListener, OnItem
 		try {
 			Document doc = DocumentBuilderFactory.newInstance().newDocumentBuilder().newDocument();
 			List<IDrawable> iDrawables = drawingView.getiDrawables();
-			
+
 			Element rootElement = doc.createElement("ConfiguratieSchets");
 			doc.appendChild(rootElement);
 			for (IDrawable iDrawable : iDrawables) {
 				iDrawable.appendXml(doc);
-				
+
 			}
-			
+
 			TransformerFactory tf = TransformerFactory.newInstance();
 			Transformer transformer = tf.newTransformer();
 			transformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "yes");
@@ -254,7 +328,7 @@ public class DrawingActivity extends Activity implements OnClickListener, OnItem
 		} catch (Exception e) {
 			MdcUtil.showToastShort(e.getMessage(), this);
 		}
-		
+
 	}
 
 	@Override
@@ -313,13 +387,13 @@ public class DrawingActivity extends Activity implements OnClickListener, OnItem
 	@Override
 	public void afterTextChanged(Editable s) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void beforeTextChanged(CharSequence s, int start, int count, int after) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override

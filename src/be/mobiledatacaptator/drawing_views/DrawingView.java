@@ -21,9 +21,7 @@ import be.mobiledatacaptator.drawing_model.Shape;
 import be.mobiledatacaptator.model.LayerCategory;
 import android.view.View.OnTouchListener;
 
-
 public class DrawingView extends View implements OnTouchListener {
-
 
 	private FigureType figureType = FigureType.Line;
 	private List<IDrawable> iDrawables = new ArrayList<IDrawable>();
@@ -36,7 +34,7 @@ public class DrawingView extends View implements OnTouchListener {
 	public DrawingView(Context context, AttributeSet attrs) {
 		super(context, attrs);
 		this.setOnTouchListener(this);
-		
+
 	}
 
 	public void setFigureType(FigureType figureType) {
@@ -85,16 +83,12 @@ public class DrawingView extends View implements OnTouchListener {
 			}
 			activeFigure.setStartPoint(p);
 			activeFigure.setLayer(getLayer());
-			
+
 			if (activeFigure instanceof Text) {
-			Log.e("tekst", inputText);
-				
 				Text textInput = (Text) activeFigure;
 				textInput.setText(inputText);
-				
-				Log.e("tekst", textInput.toString());
 			}
-			
+
 			if (fromCenter) {
 				p.x = view.getWidth() / 2;
 				p.y = view.getHeight() / 2;
@@ -108,8 +102,7 @@ public class DrawingView extends View implements OnTouchListener {
 			break;
 
 		case MotionEvent.ACTION_UP:
-				startNewFigure = activeFigure.addPoint(p);
-			
+			startNewFigure = activeFigure.addPoint(p);
 			invalidate();
 			break;
 
@@ -162,5 +155,4 @@ public class DrawingView extends View implements OnTouchListener {
 		return iDrawables;
 	}
 
-	
 }
