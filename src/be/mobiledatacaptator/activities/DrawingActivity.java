@@ -52,10 +52,12 @@ import be.mobiledatacaptator.model.Project;
 import be.mobiledatacaptator.model.UnitOfWork;
 import be.mobiledatacaptator.utilities.MdcUtil;
 
-public class DrawingActivity extends Activity implements OnClickListener, OnItemSelectedListener, OnCheckedChangeListener, TextWatcher {
+public class DrawingActivity extends Activity implements OnClickListener, OnItemSelectedListener,
+		OnCheckedChangeListener, TextWatcher {
 	private Project project;
 	private UnitOfWork unitOfWork;
-	private Button buttonDrawCircle, buttonDrawLine, buttonDrawShape, buttonDrawMultiLine, buttonDrawUndo, buttonDrawText;
+	private Button buttonDrawCircle, buttonDrawLine, buttonDrawShape, buttonDrawMultiLine, buttonDrawUndo,
+			buttonDrawText;
 	private EditText editTextInputText;
 	private CheckBox checkBoxCenter;
 	private Spinner spinnerLayerCategory;
@@ -74,8 +76,8 @@ public class DrawingActivity extends Activity implements OnClickListener, OnItem
 		drawingView = (DrawingView) findViewById(R.id.drawingView);
 
 		spinnerLayerCategory = (Spinner) findViewById(R.id.spinnerLayerCategory);
-		ArrayAdapter<LayerCategory> adapter = new ArrayAdapter<LayerCategory>(getBaseContext(), android.R.layout.simple_spinner_dropdown_item,
-				project.getLayerCategories());
+		ArrayAdapter<LayerCategory> adapter = new ArrayAdapter<LayerCategory>(getBaseContext(),
+				android.R.layout.simple_spinner_dropdown_item, project.getLayerCategories());
 		spinnerLayerCategory.setAdapter(adapter);
 		spinnerLayerCategory.setOnItemSelectedListener(this);
 
@@ -154,7 +156,8 @@ public class DrawingActivity extends Activity implements OnClickListener, OnItem
 					String drawingType = elementNode.getAttributes().getNamedItem("Type").getNodeValue();
 
 					if (drawingType.equalsIgnoreCase("Cirkel")) {
-						LayerCategory layer = returnLayer((eElement.getElementsByTagName("Layer").item(0).getTextContent()));
+						LayerCategory layer = returnLayer((eElement.getElementsByTagName("Layer").item(0)
+								.getTextContent()));
 						int radius = Integer.valueOf(eElement.getElementsByTagName("Straal").item(0).getTextContent());
 						int x = Integer.valueOf(eElement.getElementsByTagName("X").item(0).getTextContent());
 						int y = Integer.valueOf(eElement.getElementsByTagName("Y").item(0).getTextContent());
@@ -163,9 +166,11 @@ public class DrawingActivity extends Activity implements OnClickListener, OnItem
 						drawingView.addShapeToList(circle);
 					} else if (drawingType.equalsIgnoreCase("Polygoon")) {
 
-						LayerCategory layer = returnLayer((eElement.getElementsByTagName("Layer").item(0).getTextContent()));
+						LayerCategory layer = returnLayer((eElement.getElementsByTagName("Layer").item(0)
+								.getTextContent()));
 						boolean closedLine = false;
-						closedLine = eElement.getElementsByTagName("Gesloten").item(0).getTextContent().equalsIgnoreCase("ja");
+						closedLine = eElement.getElementsByTagName("Gesloten").item(0).getTextContent()
+								.equalsIgnoreCase("ja");
 
 						if (closedLine) {
 
@@ -237,7 +242,8 @@ public class DrawingActivity extends Activity implements OnClickListener, OnItem
 						}
 
 					} else if (drawingType.equalsIgnoreCase("MultiLine")) {
-						LayerCategory layer = returnLayer((eElement.getElementsByTagName("Layer").item(0).getTextContent()));
+						LayerCategory layer = returnLayer((eElement.getElementsByTagName("Layer").item(0)
+								.getTextContent()));
 
 						MultiLine multiLine = new MultiLine();
 						multiLine.setLayer(layer);
@@ -259,7 +265,8 @@ public class DrawingActivity extends Activity implements OnClickListener, OnItem
 						multiLine = null;
 
 					} else if (drawingType.equalsIgnoreCase("Tekst")) {
-						LayerCategory layer = returnLayer((eElement.getElementsByTagName("Layer").item(0).getTextContent()));
+						LayerCategory layer = returnLayer((eElement.getElementsByTagName("Layer").item(0)
+								.getTextContent()));
 						String text = eElement.getElementsByTagName("Tekst").item(0).getTextContent();
 						int x = Integer.valueOf(eElement.getElementsByTagName("X").item(0).getTextContent());
 						int y = Integer.valueOf(eElement.getElementsByTagName("Y").item(0).getTextContent());
@@ -311,7 +318,8 @@ public class DrawingActivity extends Activity implements OnClickListener, OnItem
 				unitOfWork.getDao().saveStringToFile(dataLocationDrawing, output);
 
 			} else {
-				unitOfWork.getDao().delete(dataLocationDrawing);
+				if (unitOfWork.getDao().existsFile(dataLocationDrawing))
+					unitOfWork.getDao().delete(dataLocationDrawing);
 			}
 
 		} catch (Exception e) {
@@ -327,11 +335,13 @@ public class DrawingActivity extends Activity implements OnClickListener, OnItem
 
 			drawingView.setLayer((LayerCategory) spinnerLayerCategory.getSelectedItem());
 
-			buttonDrawCircle.setTextColor(Color.WHITE);
-			buttonDrawLine.setTextColor(Color.WHITE);
-			buttonDrawShape.setTextColor(Color.WHITE);
-			buttonDrawMultiLine.setTextColor(Color.WHITE);
-			buttonDrawText.setTextColor(Color.WHITE);
+			if (view.getId() != R.id.buttonDrawUndo) {
+				buttonDrawCircle.setTextColor(Color.WHITE);
+				buttonDrawLine.setTextColor(Color.WHITE);
+				buttonDrawShape.setTextColor(Color.WHITE);
+				buttonDrawMultiLine.setTextColor(Color.WHITE);
+				buttonDrawText.setTextColor(Color.WHITE);
+			}
 
 			switch (view.getId()) {
 			case R.id.buttonDrawCircle:

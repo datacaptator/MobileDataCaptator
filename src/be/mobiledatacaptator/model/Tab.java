@@ -68,7 +68,11 @@ public class Tab extends Fragment implements ITitleFragment {
 	}
 
 	public void appendXml(Document doc, Element root) {
-		Element element = doc.createElement(name);
+		String s = name.trim();
+		if (s.startsWith("-"))
+			s = s.substring(1);
+		s = s.replace(' ', '_');
+		Element element = doc.createElement(s);
 		root.appendChild(element);
 
 		for (TableRow tr : dataFields) {
