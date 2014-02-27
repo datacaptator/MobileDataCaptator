@@ -277,14 +277,14 @@ public class TakePhotoActivity extends Activity implements OnClickListener, OnIt
 
 			// Hoogte aanpassen
 			if (origHeight > destHeight) {
-				bitmap = Bitmap.createScaledBitmap(bitmap, origWidth / (origHeight / destHeight), destHeight, false);
+				origWidth = (int) (origWidth / ((double)origHeight / destHeight));
+				origHeight = destHeight;
+				bitmap = Bitmap.createScaledBitmap(bitmap, origWidth, origHeight, false);
 			}
-			origWidth = (origWidth / (origHeight / destHeight));
-			origHeight = destHeight;
 
 			// Breedte aanpassen
 			if (origWidth > destWidth) {
-				bitmap = Bitmap.createScaledBitmap(bitmap, destWidth, origHeight / (origWidth / destWidth), false);
+				bitmap = Bitmap.createScaledBitmap(bitmap, destWidth, (int) (origHeight / ((double)origWidth / destWidth)), false);
 			}
 
 			// Wegschrijven

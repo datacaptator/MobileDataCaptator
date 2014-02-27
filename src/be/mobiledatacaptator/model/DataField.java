@@ -133,7 +133,8 @@ public class DataField extends TableRow implements TextWatcher, OnItemSelectedLi
 			// Idien keuzelijst, spinner plaatsen
 			spinnerChoice = new Spinner(getContext());
 			ArrayAdapter<ChoiceItem> adapter = new ArrayAdapter<ChoiceItem>(getContext(),
-					android.R.layout.simple_spinner_dropdown_item, choiceItems);
+					android.R.layout.simple_spinner_item, choiceItems);
+			adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 			spinnerChoice.setAdapter(adapter);
 			spinnerChoice.setOnItemSelectedListener(this);
 			addView(spinnerChoice);
