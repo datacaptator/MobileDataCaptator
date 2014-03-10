@@ -77,7 +77,8 @@ public class DrawingActivity extends Activity implements OnClickListener, OnItem
 
 		spinnerLayerCategory = (Spinner) findViewById(R.id.spinnerLayerCategory);
 		ArrayAdapter<LayerCategory> adapter = new ArrayAdapter<LayerCategory>(getBaseContext(),
-				android.R.layout.simple_spinner_dropdown_item, project.getLayerCategories());
+				android.R.layout.simple_spinner_item, project.getLayerCategories());
+		adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 		spinnerLayerCategory.setAdapter(adapter);
 		spinnerLayerCategory.setOnItemSelectedListener(this);
 
@@ -122,6 +123,7 @@ public class DrawingActivity extends Activity implements OnClickListener, OnItem
 			Log.e("onCreate_DrawingActivity", e.getLocalizedMessage());
 		}
 
+		checkBoxCenter.setChecked(true);
 		buttonDrawLine.setTextColor(Color.GREEN);
 
 	}
