@@ -49,20 +49,24 @@
         </activity>
         <activity
             android:name="be.mobiledatacaptator.activities.TakePhotoActivity"
+            android:parentActivityName="be.mobiledatacaptator.activities.SelectFicheActivity"
             android:screenOrientation="portrait" >
         </activity>
         <activity
             android:name="be.mobiledatacaptator.activities.DrawingActivity"
+            android:parentActivityName="be.mobiledatacaptator.activities.SelectFicheActivity"
             android:screenOrientation="portrait" >
         </activity>
-        <activity android:name="be.mobiledatacaptator.activities.DisplayPhotoActivity" >
+        <activity
+            android:name="be.mobiledatacaptator.activities.DisplayPhotoActivity"
+            android:parentActivityName="be.mobiledatacaptator.activities.TakePhotoActivity" >
         </activity>
         <activity
             android:name="be.mobiledatacaptator.plugins.PluginMasterDetail"
             android:label="@string/title_activity_plugin_leiding_verbinding"
             android:theme="@android:style/Theme.Dialog" >
         </activity>
- <!-- Nodige Dropbox instellingen:______________________________________________________________________ -->
+        <!-- Nodige Dropbox instellingen:______________________________________________________________________ -->
         <activity android:name="com.dropbox.sync.android.DbxAuthActivity" />
         <activity
             android:name="com.dropbox.client2.android.AuthActivity"

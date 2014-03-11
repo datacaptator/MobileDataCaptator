@@ -22,6 +22,7 @@ import android.os.Environment;
 import android.provider.MediaStore;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.WindowManager;
@@ -94,6 +95,16 @@ public class TakePhotoActivity extends Activity implements OnClickListener, OnIt
 		// hide the keyboard
 		getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
 
+	}
+
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		switch (item.getItemId()) {
+		case android.R.id.home:
+			onBackPressed();
+			return (true);
+		}
+		return (super.onOptionsItemSelected(item));
 	}
 
 	private void loadPhotoNames() {
@@ -277,14 +288,15 @@ public class TakePhotoActivity extends Activity implements OnClickListener, OnIt
 
 			// Hoogte aanpassen
 			if (origHeight > destHeight) {
-				origWidth = (int) (origWidth / ((double)origHeight / destHeight));
+				origWidth = (int) (origWidth / ((double) origHeight / destHeight));
 				origHeight = destHeight;
 				bitmap = Bitmap.createScaledBitmap(bitmap, origWidth, origHeight, false);
 			}
 
 			// Breedte aanpassen
 			if (origWidth > destWidth) {
-				bitmap = Bitmap.createScaledBitmap(bitmap, destWidth, (int) (origHeight / ((double)origWidth / destWidth)), false);
+				bitmap = Bitmap.createScaledBitmap(bitmap, destWidth,
+						(int) (origHeight / ((double) origWidth / destWidth)), false);
 			}
 
 			// Wegschrijven

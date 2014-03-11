@@ -93,7 +93,7 @@ public class DataField extends TableRow implements TextWatcher, OnItemSelectedLi
 		if (xmlTemplate.hasAttribute("Link"))
 			link = xmlTemplate.getAttribute("Link");
 		if (xmlTemplate.hasAttribute("Required"))
-			if (xmlTemplate.getAttribute("Required").toLowerCase(Locale.getDefault()).equals("y"))
+			if (xmlTemplate.getAttribute("Required").toLowerCase(Locale.getDefault()).equals("true"))
 				required = true;
 		if (xmlTemplate.hasAttribute("Min"))
 			min = Double.parseDouble(xmlTemplate.getAttribute("Min"));

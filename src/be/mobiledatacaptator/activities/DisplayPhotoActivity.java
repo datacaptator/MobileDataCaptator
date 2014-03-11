@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.MenuItem;
 import android.widget.ImageView;
 import be.mobiledatacaptator.R;
 import be.mobiledatacaptator.model.Project;
@@ -40,6 +41,16 @@ public class DisplayPhotoActivity extends Activity {
 			// TODO Auto-generated catch block
 			Log.e("FileiInputStream CATCH: ", e.getLocalizedMessage());
 		}
+	}
+
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		switch (item.getItemId()) {
+		case android.R.id.home:
+			onBackPressed();
+			return (true);
+		}
+		return (super.onOptionsItemSelected(item));
 	}
 
 }

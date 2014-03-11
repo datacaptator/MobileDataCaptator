@@ -7,13 +7,11 @@ import java.util.List;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.util.Log;
 
 import com.dropbox.sync.android.DbxException;
 import com.dropbox.sync.android.DbxFile;
 import com.dropbox.sync.android.DbxFileInfo;
 import com.dropbox.sync.android.DbxFileStatus;
-import com.dropbox.sync.android.DbxFileStatus.PendingOperation;
 import com.dropbox.sync.android.DbxFileSystem;
 import com.dropbox.sync.android.DbxPath;
 import com.dropbox.sync.android.DbxPath.InvalidPathException;
@@ -65,7 +63,7 @@ public class DropBoxDao implements IMdcDao {
 	@Override
 	public void saveFile(String path, File file) throws Exception {
 		DbxPath dbxPath = new DbxPath(path);
-		DbxFile f;
+		final DbxFile f;
 
 		if (dbxFileSystem.exists(dbxPath)) {
 			f = dbxFileSystem.open(dbxPath);
@@ -88,11 +86,12 @@ public class DropBoxDao implements IMdcDao {
 		}
 		f.writeString(string);
 		f.close();
+
 	}
 
 	@Override
 	public Bitmap getBitmapFromFile(String path) throws Exception {
-		DbxFile f = dbxFileSystem.open(new DbxPath(path));
+		DbxFile dbxFile = dbxFileSystem.open(new DbxPath(path));
 
 		// Dit zou het probmeem met het (soms) niet weergeven van bitmaps moeten
 		// oplossen.
@@ -101,17 +100,14 @@ public class DropBoxDao implements IMdcDao {
 		// niet weer.
 		// Bug? App opnieuw installeren helpt wel...
 
-		DbxFileStatus status = f.getNewerStatus();
+		DbxFileStatus newerStatus = dbxFile.getNewerStatus();
 
-		if (status != null && status.isCached) {
-			f.update();
-			while (f.getNewerStatus().pending == PendingOperation.DOWNLOAD) {
-				Log.d("", "Waiting for " + path + " to be downloaded");
-			}
+		if (newerStatus != null && newerStatus.isCached) {
+			dbxFile.update();
 		}
 
-		Bitmap bitMap = BitmapFactory.decodeStream(f.getReadStream());
-		f.close();
+		Bitmap bitMap = BitmapFactory.decodeStream(dbxFile.getReadStream());
+		dbxFile.close();
 		return bitMap;
 	}
 

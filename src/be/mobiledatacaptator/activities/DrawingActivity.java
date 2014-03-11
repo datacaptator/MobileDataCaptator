@@ -27,6 +27,7 @@ import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.AdapterView;
@@ -57,7 +58,7 @@ public class DrawingActivity extends Activity implements OnClickListener, OnItem
 	private Project project;
 	private UnitOfWork unitOfWork;
 	private Button buttonDrawCircle, buttonDrawLine, buttonDrawShape, buttonDrawMultiLine, buttonDrawUndo,
-			buttonDrawText;
+			buttonDrawText, buttonNextChar;
 	private EditText editTextInputText;
 	private CheckBox checkBoxCenter;
 	private Spinner spinnerLayerCategory;
@@ -88,6 +89,7 @@ public class DrawingActivity extends Activity implements OnClickListener, OnItem
 		buttonDrawMultiLine = (Button) findViewById(R.id.buttonDrawMultiLine);
 		buttonDrawUndo = (Button) findViewById(R.id.buttonDrawUndo);
 		buttonDrawText = (Button) findViewById(R.id.buttonDrawText);
+		buttonNextChar = (Button) findViewById(R.id.buttonNextChar);
 		checkBoxCenter = (CheckBox) findViewById(R.id.checkBoxCenter);
 		editTextInputText = (EditText) findViewById(R.id.editTextInputText);
 
@@ -97,6 +99,7 @@ public class DrawingActivity extends Activity implements OnClickListener, OnItem
 		buttonDrawMultiLine.setOnClickListener(this);
 		buttonDrawUndo.setOnClickListener(this);
 		buttonDrawText.setOnClickListener(this);
+		buttonNextChar.setOnClickListener(this);
 		checkBoxCenter.setOnCheckedChangeListener(this);
 		editTextInputText.addTextChangedListener(this);
 
@@ -128,6 +131,16 @@ public class DrawingActivity extends Activity implements OnClickListener, OnItem
 
 	}
 
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		switch (item.getItemId()) {
+		case android.R.id.home:
+			onBackPressed();
+			return (true);
+		}
+		return (super.onOptionsItemSelected(item));
+	}
+	
 	private LayerCategory returnLayer(String layerFromXml) {
 		List<LayerCategory> layerCategories = project.getLayerCategories();
 
@@ -369,12 +382,31 @@ public class DrawingActivity extends Activity implements OnClickListener, OnItem
 				drawingView.setFigureType(FigureType.Text);
 				buttonDrawText.setTextColor(Color.GREEN);
 				break;
+			case R.id.buttonNextChar:
+				nextChar();
+				drawingView.setFigureType(FigureType.Text);
+				buttonDrawText.setTextColor(Color.GREEN);
+				break;
 			default:
 				break;
 			}
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			Log.e("ButttonClick", e.getLocalizedMessage());
+		}
+
+	}
+
+	private void nextChar() {
+		String s = editTextInputText.getText().toString();
+		if (s.length() == 1) {
+			int i = s.charAt(0);
+			i++;
+			if (i == 91)
+				i = 65;
+			editTextInputText.setText(String.valueOf((char)i));
+		} else {
+			editTextInputText.setText("X");
 		}
 
 	}

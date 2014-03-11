@@ -7,32 +7,29 @@ import be.mobiledatacaptator.model.LayerCategory;
 public abstract class BaseFigure implements IDrawable {
 
 	private LayerCategory layer;
-	
+
 	private Paint paint;
-		
-	public BaseFigure()
-	{
+
+	public BaseFigure() {
 		paint = new Paint();
-		
+
 		paint.setAntiAlias(true);
 		paint.setStrokeWidth(2);
 		paint.setColor(Color.BLACK);
 		paint.setStyle(Paint.Style.STROKE);
 		paint.setStrokeJoin(Paint.Join.ROUND);
 	}
-	
-	
 
-	
 	public abstract String toString();
-	
+
 	public LayerCategory getLayer() {
 		return layer;
 	}
 
 	public void setLayer(LayerCategory layer) {
 		this.layer = layer;
-		this.getPaint().setColor(layer.getColorValue());
+		if (layer != null)
+			this.getPaint().setColor(layer.getColorValue());
 	}
 
 	public Paint getPaint() {
