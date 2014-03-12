@@ -47,7 +47,7 @@ public class Text extends BaseFigure {
 			canvas.drawText(text, getPoint().x, getPoint().y, paint);
 		} catch (Exception e) {
 			Log.e("draw text", e.getLocalizedMessage());
-			
+
 		}
 	}
 
@@ -69,28 +69,28 @@ public class Text extends BaseFigure {
 	}
 
 	@Override
-	public void appendXml(Document doc) {
+	public void appendXml(Document doc, float screensize, float drawingsize) {
 		Element element = doc.createElement("Element");
 		element.setAttribute("Type", "Tekst");
 		doc.getFirstChild().appendChild(element);
-		
+
 		Element layer = doc.createElement("Layer");
 		layer.appendChild(doc.createTextNode(this.getLayer().toString()));
 		element.appendChild(layer);
-		
+
 		Element tekst = doc.createElement("Tekst");
 		tekst.appendChild(doc.createTextNode(this.getText()));
 		element.appendChild(tekst);
-		
+
 		Element centrum = doc.createElement("Centrum");
 		Element x = doc.createElement("X");
-		x.appendChild(doc.createTextNode(String.valueOf(this.getPoint().x)));
+		x.appendChild(doc.createTextNode(String.valueOf((int) (this.getPoint().x / screensize * drawingsize))));
 		Element y = doc.createElement("Y");
-		y.appendChild(doc.createTextNode(String.valueOf(this.getPoint().y)));
+		y.appendChild(doc.createTextNode(String.valueOf((int) (this.getPoint().y / screensize * drawingsize))));
 		element.appendChild(centrum);
 		centrum.appendChild(x);
 		centrum.appendChild(y);
-		
+
 	}
 
 }

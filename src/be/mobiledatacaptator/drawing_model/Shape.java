@@ -57,7 +57,7 @@ public class Shape extends BaseFigure {
 	}
 
 	@Override
-	public void appendXml(Document doc) {
+	public void appendXml(Document doc, float screensize, float drawingsize) {
 		Element element = doc.createElement("Element");
 		element.setAttribute("Type", "Polygoon");
 		doc.getFirstChild().appendChild(element);
@@ -70,10 +70,10 @@ public class Shape extends BaseFigure {
 		closed.appendChild(doc.createTextNode("JA"));
 		element.appendChild(closed);
 
-		String startX = String.valueOf(this.startPoint.x);
-		String startY = String.valueOf(this.startPoint.y);
-		String endX = String.valueOf(this.endPoint.x);
-		String endY = String.valueOf(this.endPoint.y);
+		String startX = String.valueOf((int) (this.startPoint.x/ screensize * drawingsize));
+		String startY = String.valueOf((int) (this.startPoint.y/ screensize * drawingsize));
+		String endX = String.valueOf((int) (this.endPoint.x/ screensize * drawingsize));
+		String endY = String.valueOf((int) (this.endPoint.y/ screensize * drawingsize));
 
 		Element punt1 = doc.createElement("Punt");
 		Element punt1X = doc.createElement("X");

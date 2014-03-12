@@ -150,6 +150,8 @@ public class SelectFicheActivity extends Activity implements OnClickListener {
 					project.getLayerCategories().add(layerCategorie);
 
 				}
+				
+				project.setDrawingSize(Integer.parseInt(root.getAttribute("DrawingSize")));
 
 			} else {
 				project.setLoadSchetsActivity(false);

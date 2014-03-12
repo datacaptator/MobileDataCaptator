@@ -108,27 +108,11 @@ public class DrawingActivity extends Activity implements OnClickListener, OnItem
 		// format prefixFicheDrawingName = PUT3014
 		prefixFicheDrawingName = getIntent().getExtras().getString("prefixFicheDrawingName");
 		dataLocationDrawing = project.getDataLocation() + prefixFicheDrawingName + ".txt";
-
-		try {
-			// if drawing exist - loadDrawing
-			if (unitOfWork.getDao().existsFile(dataLocationDrawing)) {
-
-				String xml = unitOfWork.getDao().getFilecontent(dataLocationDrawing);
-
-				readXmlSaxParser(xml);
-
-				// invoke onDraw method
-				drawingView.invalidate();
-			}
-
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			Log.e("onCreate_DrawingActivity", e.getLocalizedMessage());
-		}
+		
+		drawingView.setDrawingActivity(this);
 
 		checkBoxCenter.setChecked(true);
 		buttonDrawLine.setTextColor(Color.GREEN);
-
 	}
 
 	@Override
@@ -140,7 +124,7 @@ public class DrawingActivity extends Activity implements OnClickListener, OnItem
 		}
 		return (super.onOptionsItemSelected(item));
 	}
-	
+
 	private LayerCategory returnLayer(String layerFromXml) {
 		List<LayerCategory> layerCategories = project.getLayerCategories();
 
@@ -150,6 +134,12 @@ public class DrawingActivity extends Activity implements OnClickListener, OnItem
 			}
 		}
 		return null;
+	}
+
+	private int getScaledValue(int i) {
+		float uit = i / (float) project.getDrawingSize();
+		uit *= (float) drawingView.getMeasuredWidth();
+		return (int) uit;
 	}
 
 	private void readXmlSaxParser(String xml) {
@@ -177,7 +167,7 @@ public class DrawingActivity extends Activity implements OnClickListener, OnItem
 						int x = Integer.valueOf(eElement.getElementsByTagName("X").item(0).getTextContent());
 						int y = Integer.valueOf(eElement.getElementsByTagName("Y").item(0).getTextContent());
 
-						Circle circle = new Circle(radius, x, y, layer);
+						Circle circle = new Circle(getScaledValue(radius), getScaledValue(x), getScaledValue(y), layer);
 						drawingView.addShapeToList(circle);
 					} else if (drawingType.equalsIgnoreCase("Polygoon")) {
 
@@ -206,7 +196,7 @@ public class DrawingActivity extends Activity implements OnClickListener, OnItem
 									int x = Integer.valueOf(ePunt.getElementsByTagName("X").item(0).getTextContent());
 									int y = Integer.valueOf(ePunt.getElementsByTagName("Y").item(0).getTextContent());
 
-									startPoint = new Point(x, y);
+									startPoint = new Point(getScaledValue(x), getScaledValue(y));
 
 									shape.setXMLStartPoint(startPoint);
 
@@ -214,7 +204,7 @@ public class DrawingActivity extends Activity implements OnClickListener, OnItem
 									int x = Integer.valueOf(ePunt.getElementsByTagName("X").item(0).getTextContent());
 									int y = Integer.valueOf(ePunt.getElementsByTagName("Y").item(0).getTextContent());
 
-									endPoint = new Point(x, y);
+									endPoint = new Point(getScaledValue(x), getScaledValue(y));
 									shape.setXMLEndPoint(endPoint);
 
 								}
@@ -241,13 +231,13 @@ public class DrawingActivity extends Activity implements OnClickListener, OnItem
 
 									int x = Integer.valueOf(ePunt.getElementsByTagName("X").item(0).getTextContent());
 									int y = Integer.valueOf(ePunt.getElementsByTagName("Y").item(0).getTextContent());
-									startPoint = new Point(x, y);
+									startPoint = new Point(getScaledValue(x), getScaledValue(y));
 									line.setStartPoint(startPoint);
 								} else {
 									int x = Integer.valueOf(ePunt.getElementsByTagName("X").item(0).getTextContent());
 									int y = Integer.valueOf(ePunt.getElementsByTagName("Y").item(0).getTextContent());
 
-									endPoint = new Point(x, y);
+									endPoint = new Point(getScaledValue(x), getScaledValue(y));
 									line.setEndPoint(endPoint);
 								}
 							}
@@ -273,7 +263,7 @@ public class DrawingActivity extends Activity implements OnClickListener, OnItem
 							int x = Integer.valueOf(ePunt.getElementsByTagName("X").item(0).getTextContent());
 							int y = Integer.valueOf(ePunt.getElementsByTagName("Y").item(0).getTextContent());
 
-							multiLine.addPoint(new Point(x, y));
+							multiLine.addPoint(new Point(getScaledValue(x), getScaledValue(y)));
 						}
 
 						drawingView.addShapeToList(multiLine);
@@ -286,7 +276,7 @@ public class DrawingActivity extends Activity implements OnClickListener, OnItem
 						int x = Integer.valueOf(eElement.getElementsByTagName("X").item(0).getTextContent());
 						int y = Integer.valueOf(eElement.getElementsByTagName("Y").item(0).getTextContent());
 
-						Text mdcText = new Text(text, x, y, layer);
+						Text mdcText = new Text(text, getScaledValue(x), getScaledValue(y), layer);
 						drawingView.addShapeToList(mdcText);
 					}
 
@@ -312,6 +302,26 @@ public class DrawingActivity extends Activity implements OnClickListener, OnItem
 		saveDrawing();
 	}
 
+	public void loadDrawing() {
+		try {
+			// if drawing exist - loadDrawing
+			if (unitOfWork.getDao().existsFile(dataLocationDrawing)) {
+
+				String xml = unitOfWork.getDao().getFilecontent(dataLocationDrawing);
+
+				readXmlSaxParser(xml);
+				drawingView.setDrawingActivity(null);
+
+				// invoke onDraw method
+				drawingView.invalidate();
+			}
+
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			Log.e("onCreate_DrawingActivity", e.getLocalizedMessage());
+		}
+	}
+
 	private void saveDrawing() {
 		try {
 			Document doc = DocumentBuilderFactory.newInstance().newDocumentBuilder().newDocument();
@@ -320,7 +330,7 @@ public class DrawingActivity extends Activity implements OnClickListener, OnItem
 				Element rootElement = doc.createElement("ConfiguratieSchets");
 				doc.appendChild(rootElement);
 				for (IDrawable iDrawable : iDrawables) {
-					iDrawable.appendXml(doc);
+					iDrawable.appendXml(doc, drawingView.getMeasuredWidth(), project.getDrawingSize());
 				}
 
 				TransformerFactory tf = TransformerFactory.newInstance();
@@ -404,7 +414,7 @@ public class DrawingActivity extends Activity implements OnClickListener, OnItem
 			i++;
 			if (i == 91)
 				i = 65;
-			editTextInputText.setText(String.valueOf((char)i));
+			editTextInputText.setText(String.valueOf((char) i));
 		} else {
 			editTextInputText.setText("X");
 		}

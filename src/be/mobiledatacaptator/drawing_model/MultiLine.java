@@ -41,7 +41,7 @@ public class MultiLine extends BaseFigure {
 	}
 
 	@Override
-	public void appendXml(Document doc) {
+	public void appendXml(Document doc, float screensize, float drawingsize) {
 		Element element = doc.createElement("Element");
 		element.setAttribute("Type", "MultiLine");
 		doc.getFirstChild().appendChild(element);
@@ -49,14 +49,14 @@ public class MultiLine extends BaseFigure {
 		Element layer = doc.createElement("Layer");
 		layer.appendChild(doc.createTextNode(this.getLayer().toString()));
 		element.appendChild(layer);
-	
+
 		for (int i = 1; i < punten.size(); i++) {
 
 			Element point = doc.createElement("Punt");
 			Element x = doc.createElement("X");
-			x.appendChild(doc.createTextNode(String.valueOf(punten.get(i - 1).x)));
+			x.appendChild(doc.createTextNode(String.valueOf((int) (punten.get(i - 1).x / screensize * drawingsize))));
 			Element y = doc.createElement("Y");
-			y.appendChild(doc.createTextNode(String.valueOf(punten.get(i - 1).y)));
+			y.appendChild(doc.createTextNode(String.valueOf((int) (punten.get(i - 1).y / screensize * drawingsize))));
 			element.appendChild(point);
 			point.appendChild(x);
 			point.appendChild(y);

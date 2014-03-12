@@ -70,7 +70,7 @@ public class Circle extends BaseFigure {
 	}
 
 	@Override
-	public void appendXml(Document doc) {
+	public void appendXml(Document doc, float screensize, float drawingsize) {
 		Element element = doc.createElement("Element");
 		element.setAttribute("Type", "Cirkel");
 		doc.getFirstChild().appendChild(element);
@@ -80,14 +80,14 @@ public class Circle extends BaseFigure {
 		element.appendChild(layer);
 
 		Element straal = doc.createElement("Straal");
-		straal.appendChild(doc.createTextNode(String.valueOf((int) this.getRadius())));
+		straal.appendChild(doc.createTextNode(String.valueOf((int) (this.getRadius() / screensize * drawingsize))));
 		element.appendChild(straal);
 
 		Element centrum = doc.createElement("Centrum");
 		Element x = doc.createElement("X");
-		x.appendChild(doc.createTextNode(String.valueOf(this.getPoint().x)));
+		x.appendChild(doc.createTextNode(String.valueOf((int) (this.getPoint().x / screensize * drawingsize))));
 		Element y = doc.createElement("Y");
-		y.appendChild(doc.createTextNode(String.valueOf(this.getPoint().y)));
+		y.appendChild(doc.createTextNode(String.valueOf((int) (this.getPoint().y / screensize * drawingsize))));
 		element.appendChild(centrum);
 		centrum.appendChild(x);
 		centrum.appendChild(y);

@@ -1,6 +1,7 @@
 package be.mobiledatacaptator.dao;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -11,7 +12,6 @@ import android.graphics.BitmapFactory;
 import com.dropbox.sync.android.DbxException;
 import com.dropbox.sync.android.DbxFile;
 import com.dropbox.sync.android.DbxFileInfo;
-import com.dropbox.sync.android.DbxFileStatus;
 import com.dropbox.sync.android.DbxFileSystem;
 import com.dropbox.sync.android.DbxPath;
 import com.dropbox.sync.android.DbxPath.InvalidPathException;
@@ -100,13 +100,16 @@ public class DropBoxDao implements IMdcDao {
 		// niet weer.
 		// Bug? App opnieuw installeren helpt wel...
 
-		DbxFileStatus newerStatus = dbxFile.getNewerStatus();
+		// DbxFileStatus status = dbxFile.getSyncStatus();
+		// DbxFileStatus newerStatus = dbxFile.getNewerStatus();
+		//
+		// if (newerStatus != null && newerStatus.isCached) {
+		// dbxFile.update();
+		// }
 
-		if (newerStatus != null && newerStatus.isCached) {
-			dbxFile.update();
-		}
-
-		Bitmap bitMap = BitmapFactory.decodeStream(dbxFile.getReadStream());
+		FileInputStream fileInputStream = dbxFile.getReadStream();
+		Bitmap bitMap = BitmapFactory.decodeStream(fileInputStream);
+		fileInputStream.close();
 		dbxFile.close();
 		return bitMap;
 	}

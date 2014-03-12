@@ -12,5 +12,5 @@ public interface IDrawable {
 
 	Boolean addPoint(Point p);
 	
-	void appendXml(Document	doc);
+	void appendXml(Document	doc, float screensize, float drawingsize);
 }

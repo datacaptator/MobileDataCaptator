@@ -12,6 +12,7 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnTouchListener;
 import be.mobiledatacaptator.R;
+import be.mobiledatacaptator.activities.DrawingActivity;
 import be.mobiledatacaptator.drawing_model.BaseFigure;
 import be.mobiledatacaptator.drawing_model.Circle;
 import be.mobiledatacaptator.drawing_model.FigureType;
@@ -32,6 +33,7 @@ public class DrawingView extends View implements OnTouchListener {
 	private BaseFigure activeFigure;
 	private Boolean fromCenter = false;
 	private String inputText;
+	private DrawingActivity drawingActivity;
 
 	public DrawingView(Context context, AttributeSet attrs) {
 		super(context, attrs);
@@ -90,8 +92,7 @@ public class DrawingView extends View implements OnTouchListener {
 				Text textInput = (Text) activeFigure;
 				if (this.inputText != null) {
 					textInput.setText(inputText);
-				}
-				else{
+				} else {
 					textInput.setText("");
 					MdcUtil.showToastShort(R.string.enter_text, getContext());
 				}
@@ -123,6 +124,18 @@ public class DrawingView extends View implements OnTouchListener {
 			return super.onTouchEvent(event);
 		}
 		return true;
+	}
+
+	@Override
+	protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
+		// Er voor zorgen dat deze view altijd een vierkant is.
+		super.onMeasure(widthMeasureSpec, heightMeasureSpec);
+		int imageSize = getMeasuredWidth();
+		if (getMeasuredHeight() < imageSize)
+			imageSize = getMeasuredHeight();
+		setMeasuredDimension(imageSize, imageSize);
+		if (drawingActivity != null)
+			drawingActivity.loadDrawing();
 	}
 
 	public void addShapeToList(BaseFigure shape) {
@@ -166,6 +179,10 @@ public class DrawingView extends View implements OnTouchListener {
 
 	public List<IDrawable> getiDrawables() {
 		return iDrawables;
+	}
+
+	public void setDrawingActivity(DrawingActivity drawingActivity) {
+		this.drawingActivity = drawingActivity;
 	}
 
 }
