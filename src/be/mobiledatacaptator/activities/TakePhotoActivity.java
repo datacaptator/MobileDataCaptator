@@ -115,7 +115,7 @@ public class TakePhotoActivity extends Activity implements OnClickListener, OnIt
 			listThisFicheFotoNames = new ArrayList<String>();
 
 			for (String myFotoName : listFotoNames) {
-				if (myFotoName.startsWith(prefixFichePhotoName)) {
+				if (myFotoName.startsWith(prefixFichePhotoName +"_")) {
 					listThisFicheFotoNames.add(myFotoName);
 				}
 			}

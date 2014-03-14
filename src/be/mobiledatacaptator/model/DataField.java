@@ -71,8 +71,9 @@ public class DataField extends TableRow implements TextWatcher, OnItemSelectedLi
 		if (type == VeldType.CHOICE) {
 			if (spinnerChoice.getSelectedItem() != null) {
 				element.appendChild(doc.createTextNode(spinnerChoice.getSelectedItem().toString()));
-				element.setAttribute(getContext().getString(R.string.IdnForXmlAttr),
-						String.valueOf(((ChoiceItem) spinnerChoice.getSelectedItem()).getId()));
+				if (((ChoiceItem) spinnerChoice.getSelectedItem()).getId() > -1)
+					element.setAttribute(getContext().getString(R.string.IdnForXmlAttr),
+							String.valueOf(((ChoiceItem) spinnerChoice.getSelectedItem()).getId()));
 			}
 		} else {
 			if (editTextValue.getText() != null) {
@@ -117,7 +118,7 @@ public class DataField extends TableRow implements TextWatcher, OnItemSelectedLi
 			choiceItems.add(new ChoiceItem(-1, ""));
 			for (int l = 0; l < keuzes.getLength(); l++) {
 				Element keuzeNode = (Element) keuzes.item(l);
-				choiceItems.add(new ChoiceItem(Integer.parseInt(keuzeNode.getAttribute("Idn")), keuzeNode
+				choiceItems.add(new ChoiceItem(Integer.parseInt(keuzeNode.getAttribute("idn")), keuzeNode
 						.getAttribute("Text")));
 			}
 		}

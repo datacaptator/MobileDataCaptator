@@ -21,8 +21,8 @@ public class PluginMasterDetailField extends TableRow {
 			@Override
 			public void onClick(View v) {
 				Intent intent = new Intent(getContext(), PluginMasterDetail.class);
-				intent.putExtra("masterField", "VerbondenKnoop");
-				intent.putExtra("detailField", "VerbondenLetter");
+				intent.putExtra("masterField", "OpwaartseRef");
+				intent.putExtra("detailField", "OpwaartseLetter");
 				fragment.startActivityForResult(intent, PluginMasterDetail.PLUGIN_MASTER_DETAIL_ACTRESULT);
 			}
 		});

@@ -102,6 +102,7 @@ public class DropBoxDao implements IMdcDao {
 
 		// DbxFileStatus status = dbxFile.getSyncStatus();
 		// DbxFileStatus newerStatus = dbxFile.getNewerStatus();
+		// DbxFileInfo fileInfo = dbxFile.getInfo();
 		//
 		// if (newerStatus != null && newerStatus.isCached) {
 		// dbxFile.update();
