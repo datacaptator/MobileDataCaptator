@@ -1,7 +1,9 @@
 package be.mobiledatacaptator.model;
 
 import java.math.BigDecimal;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
@@ -39,6 +41,7 @@ public class DataField extends TableRow implements TextWatcher, OnItemSelectedLi
 	private String defaultValue;
 	private String link;
 	private List<ChoiceItem> choiceItems = new ArrayList<ChoiceItem>();
+	private boolean executeLinkOnExit = false;
 
 	private Boolean activateLink = false; // Deze wordt pas true na het inlezen
 											// van de
@@ -65,6 +68,10 @@ public class DataField extends TableRow implements TextWatcher, OnItemSelectedLi
 	}
 
 	public void appendXml(Document doc, Element root) {
+
+		if (executeLinkOnExit)
+			executeLink();
+
 		Element element = doc.createElement(name);
 		root.appendChild(element);
 
@@ -155,10 +162,33 @@ public class DataField extends TableRow implements TextWatcher, OnItemSelectedLi
 			addView(editTextValue);
 		}
 
+		// Defaultvalue inlezen
 		String s = null;
 		if (defaultValue != null)
 			s = defaultValue;
 		setValue(s);
+
+		// Locken indien nodig
+		if (xmlTemplate.hasAttribute("Locked")) {
+			if (xmlTemplate.getAttribute("Locked").toLowerCase(Locale.getDefault()).equals("true")) {
+				if (type == VeldType.CHOICE) {
+					spinnerChoice.setEnabled(false);
+				} else {
+					editTextValue.setEnabled(false);
+				}
+			}
+		}
+
+		// Afhankelijkheden instellen
+		if (!(link == null || link.equals(""))) {
+			String[] linkArr = link.split(";");
+			if (linkArr.length == 3 && linkArr[0].equals("GET")) {
+				if (linkArr[2].equals("START"))
+					executeLink();
+				if (linkArr[2].equals("END"))
+					executeLinkOnExit = true;
+			}
+		}
 	}
 
 	public void setValue(String value) {
@@ -166,14 +196,21 @@ public class DataField extends TableRow implements TextWatcher, OnItemSelectedLi
 		if (type == VeldType.CHOICE) {
 			for (int i = 0; i < choiceItems.size(); i++) {
 				if (choiceItems.get(i).getText().equals(value)) {
+					boolean enabled = spinnerChoice.isEnabled();
+					spinnerChoice.setEnabled(true);
 					spinnerChoice.setSelection(i);
+					spinnerChoice.setEnabled(enabled);
 					break;
 				}
 			}
 		} else {
+			boolean enabled = editTextValue.isEnabled();
+			editTextValue.setEnabled(true);
 			editTextValue.setText(value);
+			editTextValue.setEnabled(enabled);
 		}
 		activateLink = true;
+		executeLinkOnExit=false;
 	}
 
 	private String getValue() {
@@ -220,6 +257,7 @@ public class DataField extends TableRow implements TextWatcher, OnItemSelectedLi
 		return true;
 	}
 
+	@SuppressLint("SimpleDateFormat")
 	private void executeLink() {
 		try {
 			if (!(link == null || link.equals(""))) {
@@ -232,7 +270,7 @@ public class DataField extends TableRow implements TextWatcher, OnItemSelectedLi
 						i++;
 						if (linkArr[i].equals("DELETE")) {
 							getDatafieldByName(toFieldName).setValue(null);
-						} else if (linkArr[i].equals("SET")) {
+						} else if (linkArr[i].equals("CALCULATE")) {
 							BigDecimal d1, d2;
 							i++;
 							try {
@@ -277,6 +315,25 @@ public class DataField extends TableRow implements TextWatcher, OnItemSelectedLi
 																// "TABTITLE;prefix;suffix"
 						tab.setName(linkArr[++i] + getValue() + linkArr[++i]);
 						tab.getGroup().notifyDataSetChanged();
+					} else if (linkArr[i].equals("GET")) {
+						i++;
+						if (linkArr[i].equals("getFICHENAME")) {
+							setValue(UnitOfWork.getInstance().getActiveFiche().getName()
+									.substring(UnitOfWork.getInstance().getActiveProject().getFilePrefix().length()));
+						} else if (linkArr[i].equals("getDATE")) {
+							SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd");
+							Date date = new Date();
+							setValue(dateFormat.format(date));
+						} else if (linkArr[i].equals("getTIME")) {
+							SimpleDateFormat dateFormat = new SimpleDateFormat("HH:mm:ss");
+							Date date = new Date();
+							setValue(dateFormat.format(date));
+						} else {
+							DataField df = getDatafieldByName(linkArr[i]);
+							setValue(df == null ? linkArr[i] : df.getValue());
+						}
+
+						i++;
 					}
 				}
 			}
