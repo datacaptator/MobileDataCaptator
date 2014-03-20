@@ -6,11 +6,11 @@ import android.graphics.Canvas;
 import android.graphics.Point;
 
 public interface IDrawable {
-	void draw(Canvas canvas);
+	void draw(Canvas canvas) throws Exception;
 
 	void setStartPoint(Point p);
 
 	Boolean addPoint(Point p);
 	
-	void appendXml(Document	doc, float screensize, float drawingsize);
+	void appendXml(Document	doc, float screensize, float drawingsize) throws Exception;
 }

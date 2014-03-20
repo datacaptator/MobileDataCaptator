@@ -50,9 +50,7 @@ public class TakePhotoActivity extends Activity implements OnClickListener, OnIt
 	private ListView listViewPhotos;
 	private Intent startCameraIntent;
 	private String prefixFichePhotoName, photoNameToSave, tempFileName, textSelectedPhoto;
-
-	private List<String> listFotoNames;
-	private List<String> listThisFicheFotoNames;
+	private List<String> listFotoNames, listThisFicheFotoNames;
 	private TableLayout tableLayoutPhotoCategory;
 	private Button buttonFreeSuffix, buttonDisplayPhoto, buttonDeletePhoto;
 	private EditText editTextFreeSuffix;
@@ -61,11 +59,11 @@ public class TakePhotoActivity extends Activity implements OnClickListener, OnIt
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.activity_take_photo);
-
+		
 		exceptionLog = new ExceptionLogger(this);
 
 		try {
+			setContentView(R.layout.activity_take_photo);
 			unitOfWork = UnitOfWork.getInstance();
 			project = unitOfWork.getActiveProject();
 
@@ -362,8 +360,7 @@ public class TakePhotoActivity extends Activity implements OnClickListener, OnIt
 						MdcUtil.showToastShort(getString(R.string.select_photo_first), getApplicationContext());
 					}
 				} catch (Exception e) {
-					// TODO Auto-generated catch block
-					Log.e("fout", e.getLocalizedMessage());
+					exceptionLog.error(e);
 				}
 				break;
 
@@ -387,8 +384,7 @@ public class TakePhotoActivity extends Activity implements OnClickListener, OnIt
 								textSelectedPhoto = null;
 								loadPhotoNames();
 							} catch (Exception e) {
-								// TODO Auto-generated catch block
-								Log.e("ERROR DELETING PHOTO - ", e.getLocalizedMessage());
+								exceptionLog.error(e);
 							}
 						}
 					}).setNegativeButton(getString(R.string.no), new DialogInterface.OnClickListener() {

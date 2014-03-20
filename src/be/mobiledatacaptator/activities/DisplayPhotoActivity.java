@@ -13,31 +13,31 @@ import be.mobiledatacaptator.model.UnitOfWork;
 public class DisplayPhotoActivity extends Activity {
 
 	ExceptionLogger exceptionLog;
-	
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.activity_display_photo);
-		
+
 		exceptionLog = new ExceptionLogger(this);
 
 		try {
+			setContentView(R.layout.activity_display_photo);
 
-		Bitmap bitMap;
-		ImageView imageViewDisplayPhoto;
-		Project project;
-		UnitOfWork unitOfWork;
+			Bitmap bitMap;
+			ImageView imageViewDisplayPhoto;
+			Project project;
+			UnitOfWork unitOfWork;
 
-		imageViewDisplayPhoto = (ImageView) findViewById(R.id.imageViewDisplayPhoto);
+			imageViewDisplayPhoto = (ImageView) findViewById(R.id.imageViewDisplayPhoto);
 
-		String photoToDisplay = null;
+			String photoToDisplay = null;
 
-		unitOfWork = UnitOfWork.getInstance();
-		project = unitOfWork.getActiveProject();
+			unitOfWork = UnitOfWork.getInstance();
+			project = unitOfWork.getActiveProject();
 
-		photoToDisplay = getIntent().getExtras().get("photoToDisplay").toString();
+			photoToDisplay = getIntent().getExtras().get("photoToDisplay").toString();
 
-		setTitle(getString(R.string.photo) + " " + photoToDisplay);
+			setTitle(getString(R.string.photo) + " " + photoToDisplay);
 
 			bitMap = unitOfWork.getDao().getBitmapFromFile(project.getDataLocation() + photoToDisplay + ".jpg");
 			imageViewDisplayPhoto.setImageBitmap(bitMap);
@@ -49,10 +49,14 @@ public class DisplayPhotoActivity extends Activity {
 
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
-		switch (item.getItemId()) {
-		case android.R.id.home:
-			onBackPressed();
-			return (true);
+		try {
+			switch (item.getItemId()) {
+			case android.R.id.home:
+				onBackPressed();
+				return (true);
+			}
+		} catch (Exception e) {
+			exceptionLog.error(e);
 		}
 		return (super.onOptionsItemSelected(item));
 	}

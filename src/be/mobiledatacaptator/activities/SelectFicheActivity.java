@@ -31,6 +31,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
 import be.mobiledatacaptator.R;
+import be.mobiledatacaptator.exception_logging.ExceptionLogger;
 import be.mobiledatacaptator.model.Fiche;
 import be.mobiledatacaptator.model.LayerCategory;
 import be.mobiledatacaptator.model.PhotoCategory;
@@ -39,66 +40,77 @@ import be.mobiledatacaptator.model.UnitOfWork;
 import be.mobiledatacaptator.utilities.MdcUtil;
 
 public class SelectFicheActivity extends Activity implements OnClickListener {
-
+	private ExceptionLogger exceptionLog;
 	private Project project;
 	private ListView listViewFiches;
 	private UnitOfWork unitOfWork;
 	private String ficheName = "";
-	Button buttonAddNumber;
-	Button buttonOpenFiche;
-	Button buttonOpenPhoto;
-	Button buttonOpenDrawing;
-	EditText editTextFicheName;
+	private Button buttonAddNumber, buttonOpenFiche, buttonOpenPhoto, buttonOpenDrawing;
+	private EditText editTextFicheName;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		
+		exceptionLog = new ExceptionLogger(this);
+		
+		try {
+			setContentView(R.layout.activity_select_fiche);
 
-		setContentView(R.layout.activity_select_fiche);
+			unitOfWork = UnitOfWork.getInstance();
+			project = unitOfWork.getActiveProject();
 
-		unitOfWork = UnitOfWork.getInstance();
-		project = unitOfWork.getActiveProject();
+			setTitle(getString(R.string.project) + " " + project.getName());
 
-		setTitle(getString(R.string.project) + " " + project.getName());
+			listViewFiches = (ListView) findViewById(R.id.listViewFiches);
+			// TODO -> getCount returns 0 als loadProjectData()/ loadDataFiches() in
+			// onStart() worden uitgevoerd ipv onCreate()
+			// Robrecht ... dit moet nog verder uitgezocht worden ... maar als
+			// onderstaande 2 regeltjes niet hier, dan error in Robotium Test
+			//loadProjectData();
+			//loadDataFiches();
 
-		listViewFiches = (ListView) findViewById(R.id.listViewFiches);
-		// TODO -> getCount returns 0 als loadProjectData()/ loadDataFiches() in
-		// onStart() worden uitgevoerd ipv onCreate()
-		// Robrecht ... dit moet nog verder uitgezocht worden ... maar als
-		// onderstaande 2 regeltjes niet hier, dan error in Robotium Test
-		//loadProjectData();
-		//loadDataFiches();
+			buttonAddNumber = (Button) findViewById(R.id.buttonAddNumber);
+			buttonOpenFiche = (Button) findViewById(R.id.buttonOpenFiche);
+			buttonOpenPhoto = (Button) findViewById(R.id.buttonOpenPhoto);
+			buttonOpenDrawing = (Button) findViewById(R.id.buttonOpenDrawing);
+			editTextFicheName = (EditText) findViewById(R.id.editTextFicheName);
 
-		buttonAddNumber = (Button) findViewById(R.id.buttonAddNumber);
-		buttonOpenFiche = (Button) findViewById(R.id.buttonOpenFiche);
-		buttonOpenPhoto = (Button) findViewById(R.id.buttonOpenPhoto);
-		buttonOpenDrawing = (Button) findViewById(R.id.buttonOpenDrawing);
-		editTextFicheName = (EditText) findViewById(R.id.editTextFicheName);
-
-		buttonAddNumber.setOnClickListener(this);
-		buttonOpenFiche.setOnClickListener(this);
-		buttonOpenPhoto.setOnClickListener(this);
-		buttonOpenDrawing.setOnClickListener(this);
+			buttonAddNumber.setOnClickListener(this);
+			buttonOpenFiche.setOnClickListener(this);
+			buttonOpenPhoto.setOnClickListener(this);
+			buttonOpenDrawing.setOnClickListener(this);
+		} catch (Exception e) {
+			exceptionLog.error(e);
+		}
 	}
 
 	@Override
 	protected void onStart() {
 		super.onStart();
 
-		// Dit hier geplaatst, zodat de lijsten geupdated worden bij het
-		// her-openen van de activity.
-		loadProjectData();
-		loadDataFiches();
-		listViewFiches.requestFocus();
+		try {
+			// Dit hier geplaatst, zodat de lijsten geupdated worden bij het
+			// her-openen van de activity.
+			loadProjectData();
+			loadDataFiches();
+			listViewFiches.requestFocus();
+		} catch (Exception e) {
+			exceptionLog.error(e);
+		}
 	}
 
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
-		switch (item.getItemId()) {
-		case android.R.id.home:
-			UnitOfWork.getInstance().setActiveFiche(null);
-			finish();
-			return (true);
+		try {
+			switch (item.getItemId()) {
+			case android.R.id.home:
+				UnitOfWork.getInstance().setActiveFiche(null);
+				finish();
+				return (true);
+			}
+		} catch (Exception e) {
+			exceptionLog.error(e);
 		}
 
 		return (super.onOptionsItemSelected(item));
@@ -162,7 +174,7 @@ public class SelectFicheActivity extends Activity implements OnClickListener {
 			}
 
 		} catch (Exception e) {
-			MdcUtil.showToastShort(e.getMessage(), this);
+			exceptionLog.error(e);
 		}
 	}
 
@@ -190,63 +202,71 @@ public class SelectFicheActivity extends Activity implements OnClickListener {
 			});
 
 		} catch (Exception e) {
-			MdcUtil.showToastShort(R.string.LoadFiches_error + e.getMessage(), getApplicationContext());
+			exceptionLog.error(e);
 		}
 	}
 
 	@Override
 	public void onClick(View v) {
-		ficheName = editTextFicheName.getText().toString();
-		unitOfWork.setActiveFiche(null);
+		try {
+			ficheName = editTextFicheName.getText().toString();
+			unitOfWork.setActiveFiche(null);
 
-		if (ficheName != null && !(ficheName.equals(""))) {
-			Fiche fiche = new Fiche();
-			fiche.setName(project.getFilePrefix() + ficheName);
-			fiche.setPath(project.getDataLocation() + fiche.getName() + ".xml");
-			unitOfWork.setActiveFiche(fiche);
-		}
+			if (ficheName != null && !(ficheName.equals(""))) {
+				Fiche fiche = new Fiche();
+				fiche.setName(project.getFilePrefix() + ficheName);
+				fiche.setPath(project.getDataLocation() + fiche.getName() + ".xml");
+				unitOfWork.setActiveFiche(fiche);
+			}
 
-		switch (v.getId()) {
+			switch (v.getId()) {
 
-		case R.id.buttonAddNumber:
-			increaseFicheNumber();
-			break;
+			case R.id.buttonAddNumber:
+				increaseFicheNumber();
+				break;
 
-		case R.id.buttonOpenFiche:
-			openFiche();
-			break;
+			case R.id.buttonOpenFiche:
+				openFiche();
+				break;
 
-		case R.id.buttonOpenPhoto:
-			openPhoto();
-			break;
+			case R.id.buttonOpenPhoto:
+				openPhoto();
+				break;
 
-		case R.id.buttonOpenDrawing:
-			openDrawing();
-			break;
+			case R.id.buttonOpenDrawing:
+				openDrawing();
+				break;
 
-		default:
-			break;
+			default:
+				break;
+			}
+		} catch (Exception e) {
+			exceptionLog.error(e);
 		}
 	}
 
 	private void increaseFicheNumber() {
-		if (ficheName != null && !(ficheName.equals(""))) {
+		try {
+			if (ficheName != null && !(ficheName.equals(""))) {
 
-			String input = ficheName;
-			String result = input;
-			Pattern p = Pattern.compile("[0-9]+$");
-			Matcher m = p.matcher(input);
-			if (m.find()) {
-				result = m.group();
-				int t = Integer.parseInt(result);
-				result = input.substring(0, input.length() - result.length()) + ++t;
-				editTextFicheName.setText(result);
-			} else {
-				editTextFicheName.setText(result + "1");
+				String input = ficheName;
+				String result = input;
+				Pattern p = Pattern.compile("[0-9]+$");
+				Matcher m = p.matcher(input);
+				if (m.find()) {
+					result = m.group();
+					int t = Integer.parseInt(result);
+					result = input.substring(0, input.length() - result.length()) + ++t;
+					editTextFicheName.setText(result);
+				} else {
+					editTextFicheName.setText(result + "1");
+				}
+
+				setTitle(MdcUtil.setActivityTitle(editTextFicheName.getText().toString(), unitOfWork,
+						getApplicationContext()));
 			}
-
-			setTitle(MdcUtil.setActivityTitle(editTextFicheName.getText().toString(), unitOfWork,
-					getApplicationContext()));
+		} catch (NumberFormatException e) {
+			exceptionLog.error(e);
 		}
 	}
 
@@ -286,7 +306,7 @@ public class SelectFicheActivity extends Activity implements OnClickListener {
 			}
 
 		} catch (Exception e) {
-			MdcUtil.showToastShort(e.getLocalizedMessage(), getApplicationContext());
+			exceptionLog.error(e);
 		}
 	}
 
@@ -302,7 +322,7 @@ public class SelectFicheActivity extends Activity implements OnClickListener {
 			}
 
 		} catch (Exception e) {
-			MdcUtil.showToastShort(e.getLocalizedMessage(), getApplicationContext());
+			exceptionLog.error(e);
 		}
 	}
 
@@ -318,7 +338,7 @@ public class SelectFicheActivity extends Activity implements OnClickListener {
 			}
 
 		} catch (Exception e) {
-			MdcUtil.showToastShort(e.getLocalizedMessage(), getApplicationContext());
+			exceptionLog.error(e);
 		}
 	}
 

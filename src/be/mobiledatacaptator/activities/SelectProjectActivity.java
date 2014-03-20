@@ -43,14 +43,17 @@ public class SelectProjectActivity extends Activity {
 
 		exceptionLog = new ExceptionLogger(this);
 
-		// Hier wordt de dropboxapi gestart.
-		Intent intent = new Intent(this, StartDropBoxApi.class);
-		startActivityForResult(intent, REQUEST_INITDROPBOX);
+		try {
+			// Hier wordt de dropboxapi gestart.
+			Intent intent = new Intent(this, StartDropBoxApi.class);
+			startActivityForResult(intent, REQUEST_INITDROPBOX);
+		} catch (Exception e) {
+			exceptionLog.error(e);
+		}
 
 	}
 
 	private void start() {
-
 		try {
 			unitOfWork = UnitOfWork.getInstance();
 			// TODO: Nakijken of actief project op null moet worden gezet.
@@ -78,11 +81,10 @@ public class SelectProjectActivity extends Activity {
 
 			buttonOpenProject.setOnClickListener(new OnClickListener() {
 				@Override
-				public void onClick(View v) {
-
+				public void onClick(View button) {
 					try {
 						if (UnitOfWork.getInstance().getActiveProject() != null) {
-							Intent intent = new Intent(v.getContext(), SelectFicheActivity.class);
+							Intent intent = new Intent(button.getContext(), SelectFicheActivity.class);
 							startActivity(intent);
 
 						} else {

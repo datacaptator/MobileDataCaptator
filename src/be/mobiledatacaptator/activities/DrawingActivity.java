@@ -68,11 +68,12 @@ public class DrawingActivity extends Activity implements OnClickListener, OnItem
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.activity_drawing);
-
-		exceptionLog = new ExceptionLogger();
-
+		
+		exceptionLog = new ExceptionLogger(this);
+		
 		try {
+			setContentView(R.layout.activity_drawing);
+
 			unitOfWork = UnitOfWork.getInstance();
 			project = unitOfWork.getActiveProject();
 
@@ -366,13 +367,12 @@ public class DrawingActivity extends Activity implements OnClickListener, OnItem
 	}
 
 	@Override
-	public void onClick(View view) {
-
+	public void onClick(View button) {
 		try {
 
 			drawingView.setLayer((LayerCategory) spinnerLayerCategory.getSelectedItem());
 
-			if (view.getId() != R.id.buttonDrawUndo) {
+			if (button.getId() != R.id.buttonDrawUndo) {
 				buttonDrawCircle.setTextColor(Color.WHITE);
 				buttonDrawLine.setTextColor(Color.WHITE);
 				buttonDrawShape.setTextColor(Color.WHITE);
@@ -380,7 +380,7 @@ public class DrawingActivity extends Activity implements OnClickListener, OnItem
 				buttonDrawText.setTextColor(Color.WHITE);
 			}
 
-			switch (view.getId()) {
+			switch (button.getId()) {
 			case R.id.buttonDrawCircle:
 				drawingView.setFigureType(FigureType.Circle);
 				buttonDrawCircle.setTextColor(Color.GREEN);

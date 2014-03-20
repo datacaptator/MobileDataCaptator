@@ -5,7 +5,6 @@ import org.w3c.dom.Element;
 
 import android.graphics.Canvas;
 import android.graphics.Point;
-import android.util.Log;
 import be.mobiledatacaptator.model.LayerCategory;
 
 public class Circle extends BaseFigure {
@@ -52,18 +51,6 @@ public class Circle extends BaseFigure {
 	}
 
 	@Override
-	public void draw(Canvas canvas) {
-		try {
-
-			canvas.drawCircle(getPoint().x, getPoint().y, getRadius(), getPaint());
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			Log.e("draw MdcCircle", e.getLocalizedMessage());
-		}
-
-	}
-
-	@Override
 	public void setStartPoint(Point startPoint) {
 		this.point = startPoint;
 
@@ -91,7 +78,11 @@ public class Circle extends BaseFigure {
 		element.appendChild(centrum);
 		centrum.appendChild(x);
 		centrum.appendChild(y);
+	}
 
+	@Override
+	public void draw(Canvas canvas) {
+		canvas.drawCircle(getPoint().x, getPoint().y, getRadius(), getPaint());
 	}
 
 }

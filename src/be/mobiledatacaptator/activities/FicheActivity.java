@@ -121,7 +121,6 @@ public class FicheActivity extends FragmentActivity {
 	}
 
 	private void toonFiche() {
-
 		try {
 			setContentView(R.layout.activity_fiche);
 			// final Context context = this;
