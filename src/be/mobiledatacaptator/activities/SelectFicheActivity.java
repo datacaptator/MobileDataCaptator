@@ -51,9 +51,9 @@ public class SelectFicheActivity extends Activity implements OnClickListener {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		
+
 		exceptionLog = new ExceptionLogger(this);
-		
+
 		try {
 			setContentView(R.layout.activity_select_fiche);
 
@@ -63,12 +63,6 @@ public class SelectFicheActivity extends Activity implements OnClickListener {
 			setTitle(getString(R.string.project) + " " + project.getName());
 
 			listViewFiches = (ListView) findViewById(R.id.listViewFiches);
-			// TODO -> getCount returns 0 als loadProjectData()/ loadDataFiches() in
-			// onStart() worden uitgevoerd ipv onCreate()
-			// Robrecht ... dit moet nog verder uitgezocht worden ... maar als
-			// onderstaande 2 regeltjes niet hier, dan error in Robotium Test
-			//loadProjectData();
-			//loadDataFiches();
 
 			buttonAddNumber = (Button) findViewById(R.id.buttonAddNumber);
 			buttonOpenFiche = (Button) findViewById(R.id.buttonOpenFiche);
@@ -90,8 +84,6 @@ public class SelectFicheActivity extends Activity implements OnClickListener {
 		super.onStart();
 
 		try {
-			// Dit hier geplaatst, zodat de lijsten geupdated worden bij het
-			// her-openen van de activity.
 			loadProjectData();
 			loadDataFiches();
 			listViewFiches.requestFocus();
@@ -127,9 +119,6 @@ public class SelectFicheActivity extends Activity implements OnClickListener {
 
 			project.setDataLocation(root.getAttribute("DataLocatie"));
 			project.setFilePrefix(root.getAttribute("FilePrefix"));
-			
-			// TODO -> moet weg
-			
 
 			// photo-functionality
 			if ((root.getAttribute("LoadFotoActivity").equals("true"))) {
@@ -138,8 +127,7 @@ public class SelectFicheActivity extends Activity implements OnClickListener {
 				project.setPhotoCategories(new ArrayList<PhotoCategory>());
 				for (int i = 0; i < nodes.getLength(); i++) {
 					Node node = nodes.item(i);
-					PhotoCategory photoCategorie = new PhotoCategory(((Element) node).getAttribute("Name"),
-							((Element) node).getAttribute("Suffix"));
+					PhotoCategory photoCategorie = new PhotoCategory(((Element) node).getAttribute("Name"), ((Element) node).getAttribute("Suffix"));
 					project.getPhotoCategories().add(photoCategorie);
 				}
 				project.setPhotoHeight(Integer.parseInt(root.getAttribute("PhotoHeight")));
@@ -160,12 +148,12 @@ public class SelectFicheActivity extends Activity implements OnClickListener {
 				for (int i = 0; i < layerCategories.getLength(); i++) {
 					Node node = layerCategories.item(i);
 
-					LayerCategory layerCategorie = new LayerCategory(((Element) node).getAttribute("Name"),
-							Color.parseColor(((Element) node).getAttribute("Color")));
+					LayerCategory layerCategorie = new LayerCategory(((Element) node).getAttribute("Name"), Color.parseColor(((Element) node)
+							.getAttribute("Color")));
 					project.getLayerCategories().add(layerCategorie);
 
 				}
-				
+
 				project.setDrawingSize(Integer.parseInt(root.getAttribute("DrawingSize")));
 
 			} else {
@@ -180,13 +168,11 @@ public class SelectFicheActivity extends Activity implements OnClickListener {
 
 	private void loadDataFiches() {
 		try {
-			List<String> listDataFicheNames = unitOfWork.getDao().getAllFilesFromPathWithExtension(
-					project.getDataLocation(), ".xml", false);
+			List<String> listDataFicheNames = unitOfWork.getDao().getAllFilesFromPathWithExtension(project.getDataLocation(), ".xml", false);
 
 			Collections.sort(listDataFicheNames, Collections.reverseOrder());
 
-			ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,
-					android.R.layout.simple_list_item_activated_1, listDataFicheNames);
+			ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_activated_1, listDataFicheNames);
 			listViewFiches.setAdapter(adapter);
 			listViewFiches.setItemsCanFocus(true);
 			listViewFiches.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
@@ -262,8 +248,7 @@ public class SelectFicheActivity extends Activity implements OnClickListener {
 					editTextFicheName.setText(result + "1");
 				}
 
-				setTitle(MdcUtil.setActivityTitle(editTextFicheName.getText().toString(), unitOfWork,
-						getApplicationContext()));
+				setTitle(MdcUtil.setActivityTitle(editTextFicheName.getText().toString(), unitOfWork, getApplicationContext()));
 			}
 		} catch (NumberFormatException e) {
 			exceptionLog.error(e);
@@ -293,8 +278,7 @@ public class SelectFicheActivity extends Activity implements OnClickListener {
 					AlertDialog.Builder builder = new AlertDialog.Builder(this);
 
 					String ficheName = unitOfWork.getActiveFiche().getName();
-					String builderMessage = getString(R.string.wil_u_fiche) + " " + ficheName + " "
-							+ getString(R.string.openen);
+					String builderMessage = getString(R.string.wil_u_fiche) + " " + ficheName + " " + getString(R.string.openen);
 					builder.setNegativeButton(R.string.no, dialogClickListener).setMessage(builderMessage)
 							.setPositiveButton(R.string.yes, dialogClickListener).show();
 				} else {

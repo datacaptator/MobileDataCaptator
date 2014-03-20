@@ -7,7 +7,6 @@ import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Point;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnTouchListener;
@@ -21,6 +20,7 @@ import be.mobiledatacaptator.drawing_model.Line;
 import be.mobiledatacaptator.drawing_model.MultiLine;
 import be.mobiledatacaptator.drawing_model.Shape;
 import be.mobiledatacaptator.drawing_model.Text;
+import be.mobiledatacaptator.exception_logging.ExceptionLogger;
 import be.mobiledatacaptator.model.LayerCategory;
 import be.mobiledatacaptator.utilities.MdcUtil;
 
@@ -34,9 +34,12 @@ public class DrawingView extends View implements OnTouchListener {
 	private Boolean fromCenter = false;
 	private String inputText;
 	private DrawingActivity drawingActivity;
+	private ExceptionLogger exceptionLog;
 
 	public DrawingView(Context context, AttributeSet attrs) {
 		super(context, attrs);
+		exceptionLog = new ExceptionLogger(context);
+		
 		this.setOnTouchListener(this);
 
 	}
@@ -69,8 +72,7 @@ public class DrawingView extends View implements OnTouchListener {
 				figure.draw(canvas);
 			}
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			Log.e("onDraw DrawingView", e.getLocalizedMessage());
+			exceptionLog.error(e);
 		}
 	}
 

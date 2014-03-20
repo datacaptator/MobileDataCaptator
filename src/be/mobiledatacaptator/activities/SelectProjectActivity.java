@@ -50,14 +50,12 @@ public class SelectProjectActivity extends Activity {
 		} catch (Exception e) {
 			exceptionLog.error(e);
 		}
-
 	}
 
 	private void start() {
 		try {
 			unitOfWork = UnitOfWork.getInstance();
-			// TODO: Nakijken of actief project op null moet worden gezet.
-
+		
 			setTitle(getString(R.string.select_project));
 
 			setContentView(R.layout.activity_select_project);
@@ -127,10 +125,7 @@ public class SelectProjectActivity extends Activity {
 			listViewProjects.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
 
 		} catch (Exception e) {
-
 			exceptionLog.error(e);
-
-			MdcUtil.showToastLong(R.string.LoadProjects_error + e.getMessage(), getApplicationContext());
 		}
 	}
 
@@ -144,7 +139,6 @@ public class SelectProjectActivity extends Activity {
 			}
 		} catch (Exception e) {
 			exceptionLog.error(e);
-
 		}
 	}
 
