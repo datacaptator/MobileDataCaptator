@@ -21,6 +21,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -115,6 +116,9 @@ public class SelectFicheActivity extends Activity implements OnClickListener {
 
 			project.setDataLocation(root.getAttribute("DataLocatie"));
 			project.setFilePrefix(root.getAttribute("FilePrefix"));
+			
+			// TODO -> moet weg
+			
 
 			// photo-functionality
 			if ((root.getAttribute("LoadFotoActivity").equals("true"))) {

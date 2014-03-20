@@ -23,6 +23,7 @@ import android.widget.Button;
 import android.widget.ListView;
 import be.mobiledatacaptator.R;
 import be.mobiledatacaptator.dao.StartDropBoxApi;
+import be.mobiledatacaptator.exception_logging.ExceptionLogger;
 import be.mobiledatacaptator.model.Project;
 import be.mobiledatacaptator.model.UnitOfWork;
 import be.mobiledatacaptator.utilities.MdcUtil;
@@ -34,11 +35,17 @@ public class SelectProjectActivity extends Activity {
 	private UnitOfWork unitOfWork;
 	private ListView listViewProjects;
 	private Button buttonOpenProject = null;
+	
+	
+	private ExceptionLogger logException;
+	
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 
+		logException = new ExceptionLogger(this);
+		
 		// Hier wordt de dropboxapi gestart.
 		Intent intent = new Intent(this, StartDropBoxApi.class);
 		startActivityForResult(intent, REQUEST_INITDROPBOX);
@@ -71,6 +78,24 @@ public class SelectProjectActivity extends Activity {
 
 				if (UnitOfWork.getInstance().getActiveProject() != null) {
 					Intent intent = new Intent(v.getContext(), SelectFicheActivity.class);
+					
+					
+					// TODO code moet weg
+					try {
+						int getal1 = 10;
+						int getal2 = 0;
+						
+						int getal3 = getal1 / getal2;
+					} catch (Exception e) {
+
+						logException.error(e.getLocalizedMessage());
+						
+						//e.printStackTrace();
+					}
+					
+					
+					
+					
 					startActivity(intent);
 
 				} else {

@@ -313,7 +313,7 @@ public class TakePhotoActivity extends Activity implements OnClickListener, OnIt
 			loadPhotoNames();
 
 		} catch (Exception e) {
-			// TODO
+			
 			Log.e("FOUT: savePhoto", e.getLocalizedMessage());
 		}
 	}

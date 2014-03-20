@@ -88,6 +88,24 @@ public class DropBoxDao implements IMdcDao {
 		f.close();
 
 	}
+	
+	@Override
+	public void appendStringToFile(String path, String string) throws Exception {
+		DbxPath dbxPath = new DbxPath(path);
+		DbxFile f;
+
+		if (dbxFileSystem.exists(dbxPath)) {
+			f = dbxFileSystem.open(dbxPath);
+		} else {
+			f = dbxFileSystem.create(new DbxPath(path));
+		}
+		f.appendString(string);
+		f.close();
+		
+	}
+	
+	
+	
 
 	@Override
 	public Bitmap getBitmapFromFile(String path) throws Exception {
@@ -114,5 +132,7 @@ public class DropBoxDao implements IMdcDao {
 		dbxFile.close();
 		return bitMap;
 	}
+
+	
 
 }
