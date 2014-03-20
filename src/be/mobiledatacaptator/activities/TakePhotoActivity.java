@@ -36,13 +36,13 @@ import android.widget.ListView;
 import android.widget.TableLayout;
 import android.widget.TableRow;
 import be.mobiledatacaptator.R;
+import be.mobiledatacaptator.exception_logging.ExceptionLogger;
 import be.mobiledatacaptator.model.PhotoCategory;
 import be.mobiledatacaptator.model.Project;
 import be.mobiledatacaptator.model.UnitOfWork;
 import be.mobiledatacaptator.utilities.MdcUtil;
 
-public class TakePhotoActivity extends Activity implements OnClickListener, OnItemLongClickListener,
-		OnItemClickListener {
+public class TakePhotoActivity extends Activity implements OnClickListener, OnItemLongClickListener, OnItemClickListener {
 
 	final static int TAKE_PICTURE = 0;
 	private Project project;
@@ -56,131 +56,153 @@ public class TakePhotoActivity extends Activity implements OnClickListener, OnIt
 	private TableLayout tableLayoutPhotoCategory;
 	private Button buttonFreeSuffix, buttonDisplayPhoto, buttonDeletePhoto;
 	private EditText editTextFreeSuffix;
+	private ExceptionLogger exceptionLog;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_take_photo);
 
-		unitOfWork = UnitOfWork.getInstance();
-		project = unitOfWork.getActiveProject();
+		exceptionLog = new ExceptionLogger(this);
 
-		// format prefixFichePhotoName = PUT3014
-		prefixFichePhotoName = getIntent().getExtras().getString("prefixFichePhotoName");
+		try {
+			unitOfWork = UnitOfWork.getInstance();
+			project = unitOfWork.getActiveProject();
 
-		listViewPhotos = (ListView) findViewById(R.id.listViewPhotos);
-		tableLayoutPhotoCategory = (TableLayout) findViewById(R.id.tableLayoutPhotoCategory);
-		editTextFreeSuffix = (EditText) findViewById(R.id.editTextFreeSuffix);
-		buttonFreeSuffix = (Button) findViewById(R.id.buttonFreeSuffix);
-		buttonDisplayPhoto = (Button) findViewById(R.id.buttonDisplayPhoto);
-		buttonDeletePhoto = (Button) findViewById(R.id.buttonDeletePhoto);
+			// format prefixFichePhotoName = PUT3014
+			prefixFichePhotoName = getIntent().getExtras().getString("prefixFichePhotoName");
 
-		listViewPhotos.setOnItemClickListener(this);
-		listViewPhotos.setOnItemLongClickListener(this);
+			listViewPhotos = (ListView) findViewById(R.id.listViewPhotos);
+			tableLayoutPhotoCategory = (TableLayout) findViewById(R.id.tableLayoutPhotoCategory);
+			editTextFreeSuffix = (EditText) findViewById(R.id.editTextFreeSuffix);
+			buttonFreeSuffix = (Button) findViewById(R.id.buttonFreeSuffix);
+			buttonDisplayPhoto = (Button) findViewById(R.id.buttonDisplayPhoto);
+			buttonDeletePhoto = (Button) findViewById(R.id.buttonDeletePhoto);
 
-		buttonFreeSuffix.setOnClickListener(photoCategoryListener);
-		buttonDisplayPhoto.setOnClickListener(this);
-		buttonDeletePhoto.setOnClickListener(this);
+			listViewPhotos.setOnItemClickListener(this);
+			listViewPhotos.setOnItemLongClickListener(this);
 
-		setTitle(MdcUtil.setActivityTitle(unitOfWork, getApplicationContext()));
+			buttonFreeSuffix.setOnClickListener(photoCategoryListener);
+			buttonDisplayPhoto.setOnClickListener(this);
+			buttonDeletePhoto.setOnClickListener(this);
 
-		int index = 0;
-		for (PhotoCategory photoCat : project.getPhotoCategories()) {
-			addPhotoCategoriesToLayout(photoCat, index);
-			index++;
+			setTitle(MdcUtil.setActivityTitle(unitOfWork, getApplicationContext()));
+
+			int index = 0;
+			for (PhotoCategory photoCat : project.getPhotoCategories()) {
+				addPhotoCategoriesToLayout(photoCat, index);
+				index++;
+			}
+
+			loadPhotoNames();
+
+			// hide the keyboard
+			getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
+		} catch (Exception e) {
+			exceptionLog.error(e);
 		}
-
-		loadPhotoNames();
-
-		// hide the keyboard
-		getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
 
 	}
 
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
-		switch (item.getItemId()) {
-		case android.R.id.home:
-			onBackPressed();
-			return (true);
+		try {
+			switch (item.getItemId()) {
+			case android.R.id.home:
+				onBackPressed();
+				return (true);
+			}
+		} catch (Exception e) {
+			exceptionLog.error(e);
 		}
 		return (super.onOptionsItemSelected(item));
 	}
 
 	private void loadPhotoNames() {
 		try {
-			listFotoNames = unitOfWork.getDao().getAllFilesFromPathWithExtension(project.getDataLocation(), ".jpg",
-					false);
+			listFotoNames = unitOfWork.getDao().getAllFilesFromPathWithExtension(project.getDataLocation(), ".jpg", false);
 
 			listThisFicheFotoNames = new ArrayList<String>();
 
 			for (String myFotoName : listFotoNames) {
-				if (myFotoName.startsWith(prefixFichePhotoName +"_")) {
+				if (myFotoName.startsWith(prefixFichePhotoName + "_")) {
 					listThisFicheFotoNames.add(myFotoName);
 				}
 			}
 
-			ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,
-					android.R.layout.simple_list_item_activated_1, listThisFicheFotoNames);
+			ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_activated_1, listThisFicheFotoNames);
 			listViewPhotos.setAdapter(adapter);
 			listViewPhotos.setItemsCanFocus(true);
 			listViewPhotos.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
 
 		} catch (Exception e) {
-			MdcUtil.showToastShort(R.string.LoadFiches_error + e.getMessage(), getApplicationContext());
+			exceptionLog.error(e);
 		}
 	}
 
 	private void addPhotoCategoriesToLayout(PhotoCategory photoCategorie, int index) {
-		// Android provides a service
-		// getSystemService(Context.LAYOUT_INFLATER_SERVICE)' to inflate a
-		// layout
-		LayoutInflater inflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-		View newPhotoCategoryView = inflater.inflate(R.layout.new_table_row_photo_category, null);
+		try {
+			// Android provides a service
+			// getSystemService(Context.LAYOUT_INFLATER_SERVICE)' to inflate a
+			// layout
+			LayoutInflater inflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+			View newPhotoCategoryView = inflater.inflate(R.layout.new_table_row_photo_category, null);
 
-		// Get a reference to the buttonNewPhotoCategory on the
-		// new_table_row_photo_category.xml and set
-		// its text + register its onClickListener
-		Button buttonNewPhotoCategory = (Button) newPhotoCategoryView.findViewById(R.id.buttonNewPhotoCategory);
-		buttonNewPhotoCategory.setText(photoCategorie.getName());
-		buttonNewPhotoCategory.setTag(photoCategorie.getSuffix());
-		buttonNewPhotoCategory.setOnClickListener(photoCategoryListener);
+			// Get a reference to the buttonNewPhotoCategory on the
+			// new_table_row_photo_category.xml and set
+			// its text + register its onClickListener
+			Button buttonNewPhotoCategory = (Button) newPhotoCategoryView.findViewById(R.id.buttonNewPhotoCategory);
+			buttonNewPhotoCategory.setText(photoCategorie.getName());
+			buttonNewPhotoCategory.setTag(photoCategorie.getSuffix());
+			buttonNewPhotoCategory.setOnClickListener(photoCategoryListener);
 
-		// Adds programmatically the new_tag_view.xml to the
-		// tableLayoutPhotoCategory at the specified index)
-		tableLayoutPhotoCategory.addView(newPhotoCategoryView, index);
+			// Adds programmatically the new_tag_view.xml to the
+			// tableLayoutPhotoCategory at the specified index)
+			tableLayoutPhotoCategory.addView(newPhotoCategoryView, index);
+		} catch (Exception e) {
+			exceptionLog.error(e);
+		}
 	}
 
 	private String composePhotoName(String photoNameToSave) {
-		int number = 0;
-		List<Integer> numbers = new ArrayList<Integer>();
-		for (String thisFotoName : listThisFicheFotoNames) {
-			if (thisFotoName.startsWith(photoNameToSave)) {
-				String numberFoto = thisFotoName.substring(photoNameToSave.length());
+		try {
+			int number = 0;
+			List<Integer> numbers = new ArrayList<Integer>();
+			for (String thisFotoName : listThisFicheFotoNames) {
+				if (thisFotoName.startsWith(photoNameToSave)) {
+					String numberFoto = thisFotoName.substring(photoNameToSave.length());
 
-				Pattern p = Pattern.compile("\\d+");
-				Matcher m = p.matcher(numberFoto);
-				while (m.find()) {
-					numbers.add(Integer.valueOf(m.group()));
+					Pattern p = Pattern.compile("\\d+");
+					Matcher m = p.matcher(numberFoto);
+					while (m.find()) {
+						numbers.add(Integer.valueOf(m.group()));
+					}
 				}
 			}
+
+			try {
+				number = Collections.max(numbers) + 1;
+			} catch (Exception e) {
+				number = 1;
+			}
+
+			photoNameToSave = photoNameToSave + number;
+
+			return photoNameToSave;
+		} catch (NumberFormatException e) {
+			exceptionLog.error(e);
 		}
 
-		try {
-			number = Collections.max(numbers) + 1;
-		} catch (Exception e) {
-			number = 1;
-		}
-
-		photoNameToSave = photoNameToSave + number;
-
-		return photoNameToSave;
+		return null;
 	}
 
 	private void startCamera(String photoNameToSave) {
-		File storageDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES);
-		File image;
+
 		try {
+
+			File storageDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES);
+			File image;
+
 			image = File.createTempFile(photoNameToSave, /* prefix */
 					".jpg", /* suffix */
 					storageDir /* directory */
@@ -194,12 +216,9 @@ public class TakePhotoActivity extends Activity implements OnClickListener, OnIt
 			startActivityForResult(startCameraIntent, TAKE_PICTURE);
 
 		} catch (IOException IOexception) {
-			// TODO Auto-generated catch block
-			Log.e("startActivityForResult", IOexception.getLocalizedMessage());
-
+			exceptionLog.error(IOexception);
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			Log.e("startActivityForResult", e.getLocalizedMessage());
+			exceptionLog.error(e);
 		}
 
 	}
@@ -236,7 +255,7 @@ public class TakePhotoActivity extends Activity implements OnClickListener, OnIt
 
 				}
 			} catch (Exception e) {
-				MdcUtil.showToastShort(e.getMessage(), getApplicationContext());
+				exceptionLog.error(e);
 			}
 
 		}
@@ -245,16 +264,20 @@ public class TakePhotoActivity extends Activity implements OnClickListener, OnIt
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 
-		if (requestCode == TAKE_PICTURE) {
-			if (resultCode == RESULT_OK) {
-				Log.e("TOT HIER OK", "resultcode == RESULT_OK");
-				savePhoto();
+		try {
+			if (requestCode == TAKE_PICTURE) {
+				if (resultCode == RESULT_OK) {
+					Log.e("TOT HIER OK", "resultcode == RESULT_OK");
+					savePhoto();
+				} else {
+					Log.e("TOT HIER OK", "else resultcode != RESULT_OK");
+				}
 			} else {
-				Log.e("TOT HIER OK", "else resultcode != RESULT_OK");
+				Log.e("TOT HIER OK", "else requestCode != TAKE_PICTURE");
+				super.onActivityResult(requestCode, resultCode, data);
 			}
-		} else {
-			Log.e("TOT HIER OK", "else requestCode != TAKE_PICTURE");
-			super.onActivityResult(requestCode, resultCode, data);
+		} catch (Exception e) {
+			exceptionLog.error(e);
 		}
 	}
 
@@ -295,8 +318,7 @@ public class TakePhotoActivity extends Activity implements OnClickListener, OnIt
 
 			// Breedte aanpassen
 			if (origWidth > destWidth) {
-				bitmap = Bitmap.createScaledBitmap(bitmap, destWidth,
-						(int) (origHeight / ((double) origWidth / destWidth)), false);
+				bitmap = Bitmap.createScaledBitmap(bitmap, destWidth, (int) (origHeight / ((double) origWidth / destWidth)), false);
 			}
 
 			// Wegschrijven
@@ -313,76 +335,93 @@ public class TakePhotoActivity extends Activity implements OnClickListener, OnIt
 			loadPhotoNames();
 
 		} catch (Exception e) {
-			
-			Log.e("FOUT: savePhoto", e.getLocalizedMessage());
+			exceptionLog.error(e);
+
 		}
 	}
 
 	@Override
 	public void onClick(View v) {
-		switch (v.getId()) {
-		case R.id.buttonDeletePhoto:
-			if (textSelectedPhoto != null && !textSelectedPhoto.isEmpty()) {
-				deleteSelectedPhoto(textSelectedPhoto);
-			} else {
-				MdcUtil.showToastShort(getString(R.string.select_photo_first), getApplicationContext());
-			}
-			break;
-
-		case R.id.buttonDisplayPhoto:
-			try {
+		try {
+			switch (v.getId()) {
+			case R.id.buttonDeletePhoto:
 				if (textSelectedPhoto != null && !textSelectedPhoto.isEmpty()) {
-					final Intent displayPhotoIntent = new Intent(this, DisplayPhotoActivity.class);
-					displayPhotoIntent.putExtra("photoToDisplay", textSelectedPhoto);
-					startActivity(displayPhotoIntent);
+					deleteSelectedPhoto(textSelectedPhoto);
 				} else {
 					MdcUtil.showToastShort(getString(R.string.select_photo_first), getApplicationContext());
 				}
-			} catch (Exception e) {
-				// TODO Auto-generated catch block
-				Log.e("fout", e.getLocalizedMessage());
-			}
-			break;
+				break;
 
-		default:
-			break;
+			case R.id.buttonDisplayPhoto:
+				try {
+					if (textSelectedPhoto != null && !textSelectedPhoto.isEmpty()) {
+						final Intent displayPhotoIntent = new Intent(this, DisplayPhotoActivity.class);
+						displayPhotoIntent.putExtra("photoToDisplay", textSelectedPhoto);
+						startActivity(displayPhotoIntent);
+					} else {
+						MdcUtil.showToastShort(getString(R.string.select_photo_first), getApplicationContext());
+					}
+				} catch (Exception e) {
+					// TODO Auto-generated catch block
+					Log.e("fout", e.getLocalizedMessage());
+				}
+				break;
+
+			default:
+				break;
+			}
+		} catch (Exception e) {
+			exceptionLog.error(e);
 		}
 	}
 
 	private void deleteSelectedPhoto(String selectedPhotoName) {
-		AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
-		alertDialogBuilder.setTitle(getString(R.string.delete_photo_));
-		alertDialogBuilder.setMessage(String.format(getString(R.string.click_yes_to_delete_photo), textSelectedPhoto))
-				.setCancelable(false).setPositiveButton(getString(R.string.yes), new DialogInterface.OnClickListener() {
-					public void onClick(DialogInterface dialog, int id) {
-						try {
-							unitOfWork.getDao().delete(project.getDataLocation() + textSelectedPhoto + ".jpg");
-							textSelectedPhoto = null;
-							loadPhotoNames();
-						} catch (Exception e) {
-							// TODO Auto-generated catch block
-							Log.e("ERROR DELETING PHOTO - ", e.getLocalizedMessage());
+		try {
+			AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
+			alertDialogBuilder.setTitle(getString(R.string.delete_photo_));
+			alertDialogBuilder.setMessage(String.format(getString(R.string.click_yes_to_delete_photo), textSelectedPhoto)).setCancelable(false)
+					.setPositiveButton(getString(R.string.yes), new DialogInterface.OnClickListener() {
+						public void onClick(DialogInterface dialog, int id) {
+							try {
+								unitOfWork.getDao().delete(project.getDataLocation() + textSelectedPhoto + ".jpg");
+								textSelectedPhoto = null;
+								loadPhotoNames();
+							} catch (Exception e) {
+								// TODO Auto-generated catch block
+								Log.e("ERROR DELETING PHOTO - ", e.getLocalizedMessage());
+							}
 						}
-					}
-				}).setNegativeButton(getString(R.string.no), new DialogInterface.OnClickListener() {
-					public void onClick(DialogInterface dialog, int id) {
-						dialog.cancel();
-					}
-				});
-		AlertDialog alertDialog = alertDialogBuilder.create();
-		alertDialog.show();
+					}).setNegativeButton(getString(R.string.no), new DialogInterface.OnClickListener() {
+						public void onClick(DialogInterface dialog, int id) {
+							dialog.cancel();
+						}
+					});
+			AlertDialog alertDialog = alertDialogBuilder.create();
+			alertDialog.show();
+		} catch (Exception e) {
+			exceptionLog.error(e);
+		}
 	}
 
 	@Override
 	public boolean onItemLongClick(AdapterView<?> arg0, View arg1, int indexListItem, long arg3) {
-		textSelectedPhoto = (String) listViewPhotos.getItemAtPosition(indexListItem);
-		deleteSelectedPhoto(textSelectedPhoto);
-		return true;
+		try {
+			textSelectedPhoto = (String) listViewPhotos.getItemAtPosition(indexListItem);
+			deleteSelectedPhoto(textSelectedPhoto);
+			return true;
+		} catch (Exception e) {
+			exceptionLog.error(e);
+		}
+		return false;
 	}
 
 	@Override
 	public void onItemClick(AdapterView<?> arg0, View arg1, int indexListItem, long arg3) {
-		textSelectedPhoto = (String) listViewPhotos.getItemAtPosition(indexListItem);
+		try {
+			textSelectedPhoto = (String) listViewPhotos.getItemAtPosition(indexListItem);
+		} catch (Exception e) {
+			exceptionLog.error(e);
+		}
 	}
 
 }

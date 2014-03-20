@@ -25,6 +25,7 @@ import android.view.MenuItem;
 import android.widget.TabHost;
 import be.mobiledatacaptator.R;
 import be.mobiledatacaptator.adapters.FichePagerAdapter;
+import be.mobiledatacaptator.exception_logging.ExceptionLogger;
 import be.mobiledatacaptator.model.DataField;
 import be.mobiledatacaptator.model.Fiche;
 import be.mobiledatacaptator.model.Group;
@@ -35,26 +36,37 @@ import be.mobiledatacaptator.utilities.MdcUtil;
 public class FicheActivity extends FragmentActivity {
 
 	private UnitOfWork unitOfWork;
+	private ExceptionLogger exceptionLog;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 
-		unitOfWork = UnitOfWork.getInstance();
+		exceptionLog = new ExceptionLogger(this);
+		
+		try {
+			unitOfWork = UnitOfWork.getInstance();
 
-		setTitle(MdcUtil.setActivityTitle(unitOfWork, getApplicationContext()));
+			setTitle(MdcUtil.setActivityTitle(unitOfWork, getApplicationContext()));
 
-		LoadTemplate();
-		loadExistingData();
-		toonFiche();
+			LoadTemplate();
+			loadExistingData();
+			toonFiche();
+		} catch (Exception e) {
+			exceptionLog.error(e);
+		}
 	}
 
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
-		switch (item.getItemId()) {
-		case android.R.id.home:
-			onBackPressed();
-			return (true);
+		try {
+			switch (item.getItemId()) {
+			case android.R.id.home:
+				onBackPressed();
+				return (true);
+			}
+		} catch (Exception e) {
+			exceptionLog.error(e);
 		}
 		return (super.onOptionsItemSelected(item));
 	}
@@ -62,6 +74,7 @@ public class FicheActivity extends FragmentActivity {
 	@Override
 	protected void onPause() {
 		super.onPause();
+		
 		saveFiche();
 	}
 
@@ -87,7 +100,7 @@ public class FicheActivity extends FragmentActivity {
 			}
 
 		} catch (Exception e) {
-			MdcUtil.showToastLong(e.getMessage(), this);
+			exceptionLog.error(e);
 		}
 
 	}
@@ -103,21 +116,25 @@ public class FicheActivity extends FragmentActivity {
 				fiche.loadExistingData(root);
 			}
 		} catch (Exception e) {
-			MdcUtil.showToastShort(e.getMessage(), this);
+			exceptionLog.error(e);
 		}
 	}
 
 	private void toonFiche() {
 
-		setContentView(R.layout.activity_fiche);
-		// final Context context = this;
+		try {
+			setContentView(R.layout.activity_fiche);
+			// final Context context = this;
 
-		TabHost tabHost = (TabHost) findViewById(R.id.tabHost_Fiche);
-		tabHost.setup();
+			TabHost tabHost = (TabHost) findViewById(R.id.tabHost_Fiche);
+			tabHost.setup();
 
-		for (Group group : unitOfWork.getActiveFiche().getGroups()) {
-			group.setId(getUniqueId());
-			tabHost.addTab(group.getTabSpec(tabHost));
+			for (Group group : unitOfWork.getActiveFiche().getGroups()) {
+				group.setId(getUniqueId());
+				tabHost.addTab(group.getTabSpec(tabHost));
+			}
+		} catch (Exception e) {
+			exceptionLog.error(e);
 		}
 	}
 
@@ -137,37 +154,47 @@ public class FicheActivity extends FragmentActivity {
 			unitOfWork.getDao().saveStringToFile(fiche.getPath(), output);
 
 		} catch (Exception e) {
-			MdcUtil.showToastShort(e.getMessage(), this);
+			exceptionLog.error(e);
 		}
 	}
 
 	private StringBuilder toonValidatieFouten() {
-		StringBuilder builder = new StringBuilder();
-		for (Group group : unitOfWork.getActiveFiche().getGroups()) {
-			for (Tab tab : group.getTabs()) {
-				for (DataField dataField : tab.getDataFields()) {
-					StringBuilder sb2 = new StringBuilder();
-					if (!(dataField.isValide(sb2))) {
-						if (builder.length() > 0)
-							builder.append("\n");
-						builder.append(dataField.getLabel() + ": " + sb2.toString());
+		try {
+			StringBuilder builder = new StringBuilder();
+			for (Group group : unitOfWork.getActiveFiche().getGroups()) {
+				for (Tab tab : group.getTabs()) {
+					for (DataField dataField : tab.getDataFields()) {
+						StringBuilder sb2 = new StringBuilder();
+						if (!(dataField.isValide(sb2))) {
+							if (builder.length() > 0)
+								builder.append("\n");
+							builder.append(dataField.getLabel() + ": " + sb2.toString());
+						}
 					}
 				}
 			}
+			return builder;
+		} catch (Exception e) {
+			exceptionLog.error(e);
 		}
-		return builder;
+		return null;
 	}
 
 	private int getUniqueId() {
-		int i = 0;
-		Boolean isUnique = false;
-		do {
-			i++;
-			if (findViewById(i) == null)
-				isUnique = true;
-		} while (!(isUnique));
+		try {
+			int i = 0;
+			Boolean isUnique = false;
+			do {
+				i++;
+				if (findViewById(i) == null)
+					isUnique = true;
+			} while (!(isUnique));
 
-		return i;
+			return i;
+		} catch (Exception e) {
+			exceptionLog.error(e);
+		}
+		return -1;
 	}
 
 	private void goBack() {
@@ -176,17 +203,21 @@ public class FicheActivity extends FragmentActivity {
 
 	@Override
 	public void onBackPressed() {
-		StringBuilder builder = toonValidatieFouten();
-		if (builder.length() > 0) {
-			String boodschap = builder.toString();
-			new AlertDialog.Builder(this).setMessage(boodschap).setNegativeButton(R.string.dialogCancel, null)
-					.setPositiveButton(R.string.dialogGaVerder, new OnClickListener() {
-						public void onClick(DialogInterface arg0, int arg1) {
-							goBack();
-						}
-					}).show();
-		} else
-			super.onBackPressed();
+		try {
+			StringBuilder builder = toonValidatieFouten();
+			if (builder.length() > 0) {
+				String boodschap = builder.toString();
+				new AlertDialog.Builder(this).setMessage(boodschap).setNegativeButton(R.string.dialogCancel, null)
+						.setPositiveButton(R.string.dialogGaVerder, new OnClickListener() {
+							public void onClick(DialogInterface arg0, int arg1) {
+								goBack();
+							}
+						}).show();
+			} else
+				super.onBackPressed();
+		} catch (Exception e) {
+			exceptionLog.error(e);
+		}
 	}
 
 }

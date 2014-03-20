@@ -12,7 +12,7 @@ import be.mobiledatacaptator.model.UnitOfWork;
 public class ExceptionLogger {
 	private static ExceptionLogger instance = null;
 	private UnitOfWork unitOfWork;
-	private String tag;
+	private String tagClassName;
 	private Context context;
 
 	public enum Level {
@@ -20,7 +20,7 @@ public class ExceptionLogger {
 	}
 
 	public void LoggerSetup(String className, Level level) {
-		this.tag = className;
+		this.tagClassName = className;
 	}
 
 	public ExceptionLogger(Context context) {
@@ -42,50 +42,50 @@ public class ExceptionLogger {
 		return instance;
 	}
 
-	public void debug(Exception exception) {
-		Log.d(tag, exception.getLocalizedMessage());
-		writeToLogFile(Level.DEBUG, exception);
+	public void debug(Exception e) {
+		Log.d(tagClassName, e.getLocalizedMessage());
+		writeToLogFile(Level.DEBUG, e);
 	}
 
-	public void info(Exception exception) {
-		Log.i(tag, exception.getLocalizedMessage());
-		writeToLogFile(Level.INFO, exception);
+	public void info(Exception e) {
+		Log.i(tagClassName, e.getLocalizedMessage());
+		writeToLogFile(Level.INFO, e);
 	}
 
-	public void warn(Exception exception) {
-		Log.w(tag, exception.getLocalizedMessage());
-		writeToLogFile(Level.WARN, exception);
+	public void warn(Exception e) {
+		Log.w(tagClassName, e.getLocalizedMessage());
+		writeToLogFile(Level.WARN, e);
 	}
 
-	public void error(Exception exception) {
-		Log.e(tag, exception.getLocalizedMessage());
-		writeToLogFile(Level.ERROR, exception);
+	public void error(Exception e) {
+		Log.e(tagClassName, e.getLocalizedMessage());
+		writeToLogFile(Level.ERROR, e);
 	}
 
 	@SuppressLint("SimpleDateFormat")
-	private void writeToLogFile(Level level, Exception exception, Object... parameters) {
+	private void writeToLogFile(Level level, Exception e, Object... parameters) {
 
 		SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd_HH:mm:ss");
 		Date date = new Date();
 
-		StringBuilder exceptionMsg = new StringBuilder();
-		exceptionMsg.append(level.toString());
-		exceptionMsg.append("_");
-		exceptionMsg.append(dateFormat.format(date));
-		exceptionMsg.append("_");
-		exceptionMsg.append(unitOfWork.getActiveProject().getName());
-		exceptionMsg.append("_");
-		exceptionMsg.append(this.tag);
-		exceptionMsg.append("_");
-		exceptionMsg.append(exception.getStackTrace()[0].getMethodName());
-		exceptionMsg.append("_");
-		exceptionMsg.append(exception.getLocalizedMessage());
+		StringBuilder eMsg = new StringBuilder();
+		eMsg.append(level.toString());
+		eMsg.append("_");
+		eMsg.append(dateFormat.format(date));
+		eMsg.append("_");
+		eMsg.append(unitOfWork.getActiveProject().getName());
+		eMsg.append("_");
+		eMsg.append(this.tagClassName);
+		eMsg.append("_");
+		eMsg.append(e.getStackTrace()[0].getMethodName());
+		eMsg.append("_");
+		eMsg.append(e.getLocalizedMessage());
 
 		try {
-			unitOfWork.getDao().appendStringToFile("DataCaptator/ExceptionLog/exception_log.txt", exceptionMsg.toString() + ";\n");
-			showExceptionDialog(exception);
-		} catch (Exception e) {
-			showExceptionDialog(exception);
+			unitOfWork.getDao().appendStringToFile("DataCaptator/ExceptionLog/exception_log.txt", eMsg.toString() + ";\n");
+			showExceptionDialog(e);
+		} catch (Exception ex) {
+			showExceptionDialog(ex);
 
 		}
 	}

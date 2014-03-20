@@ -3,19 +3,25 @@ package be.mobiledatacaptator.activities;
 import android.app.Activity;
 import android.graphics.Bitmap;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.MenuItem;
 import android.widget.ImageView;
 import be.mobiledatacaptator.R;
+import be.mobiledatacaptator.exception_logging.ExceptionLogger;
 import be.mobiledatacaptator.model.Project;
 import be.mobiledatacaptator.model.UnitOfWork;
 
 public class DisplayPhotoActivity extends Activity {
 
+	ExceptionLogger exceptionLog;
+	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_display_photo);
+		
+		exceptionLog = new ExceptionLogger(this);
+
+		try {
 
 		Bitmap bitMap;
 		ImageView imageViewDisplayPhoto;
@@ -33,13 +39,11 @@ public class DisplayPhotoActivity extends Activity {
 
 		setTitle(getString(R.string.photo) + " " + photoToDisplay);
 
-		try {
 			bitMap = unitOfWork.getDao().getBitmapFromFile(project.getDataLocation() + photoToDisplay + ".jpg");
 			imageViewDisplayPhoto.setImageBitmap(bitMap);
 
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			Log.e("FileiInputStream CATCH: ", e.getLocalizedMessage());
+			exceptionLog.error(e);
 		}
 	}
 
