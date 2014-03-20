@@ -35,17 +35,14 @@ public class SelectProjectActivity extends Activity {
 	private UnitOfWork unitOfWork;
 	private ListView listViewProjects;
 	private Button buttonOpenProject = null;
-	
-	
-	private ExceptionLogger logException;
-	
+	private ExceptionLogger exceptionLog;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 
-		logException = new ExceptionLogger(this);
-		
+		exceptionLog = new ExceptionLogger(this);
+
 		// Hier wordt de dropboxapi gestart.
 		Intent intent = new Intent(this, StartDropBoxApi.class);
 		startActivityForResult(intent, REQUEST_INITDROPBOX);
@@ -53,56 +50,52 @@ public class SelectProjectActivity extends Activity {
 	}
 
 	private void start() {
-		unitOfWork = UnitOfWork.getInstance();
-		// TODO: Nakijken of actief project op null moet worden gezet.
 
-		setTitle(getString(R.string.select_project));
+		try {
+			unitOfWork = UnitOfWork.getInstance();
+			// TODO: Nakijken of actief project op null moet worden gezet.
 
-		setContentView(R.layout.activity_select_project);
+			setTitle(getString(R.string.select_project));
 
-		listViewProjects = (ListView) findViewById(R.id.listViewProjects);
-		buttonOpenProject = (Button) findViewById(R.id.buttonOpenProject);
+			setContentView(R.layout.activity_select_project);
 
-		loadProjects();
+			listViewProjects = (ListView) findViewById(R.id.listViewProjects);
+			buttonOpenProject = (Button) findViewById(R.id.buttonOpenProject);
 
-		listViewProjects.setOnItemClickListener(new OnItemClickListener() {
-			@Override
-			public void onItemClick(AdapterView<?> arg0, View arg1, int indexListItem, long arg3) {
-				UnitOfWork.getInstance().setActiveProject((Project) listViewProjects.getItemAtPosition(indexListItem));
-			}
-		});
+			loadProjects();
 
-		buttonOpenProject.setOnClickListener(new OnClickListener() {
-			@Override
-			public void onClick(View v) {
+			listViewProjects.setOnItemClickListener(new OnItemClickListener() {
+				@Override
+				public void onItemClick(AdapterView<?> arg0, View arg1, int indexListItem, long arg3) {
 
-				if (UnitOfWork.getInstance().getActiveProject() != null) {
-					Intent intent = new Intent(v.getContext(), SelectFicheActivity.class);
-					
-					
-					// TODO code moet weg
 					try {
-						int getal1 = 10;
-						int getal2 = 0;
-						
-						int getal3 = getal1 / getal2;
+						UnitOfWork.getInstance().setActiveProject((Project) listViewProjects.getItemAtPosition(indexListItem));
 					} catch (Exception e) {
-
-						logException.error(e.getLocalizedMessage());
-						
-						//e.printStackTrace();
+						exceptionLog.error(e);
 					}
-					
-					
-					
-					
-					startActivity(intent);
-
-				} else {
-					MdcUtil.showToastShort(getString(R.string.select_project_first), getApplicationContext());
 				}
-			}
-		});
+			});
+
+			buttonOpenProject.setOnClickListener(new OnClickListener() {
+				@Override
+				public void onClick(View v) {
+
+					try {
+						if (UnitOfWork.getInstance().getActiveProject() != null) {
+							Intent intent = new Intent(v.getContext(), SelectFicheActivity.class);
+							startActivity(intent);
+
+						} else {
+							MdcUtil.showToastShort(getString(R.string.select_project_first), getApplicationContext());
+						}
+					} catch (Exception e) {
+						exceptionLog.error(e);
+					}
+				}
+			});
+		} catch (Exception e) {
+			exceptionLog.error(e);
+		}
 	}
 
 	private void loadProjects() {
@@ -125,24 +118,31 @@ public class SelectProjectActivity extends Activity {
 				projects.add(myProject);
 			}
 
-			ArrayAdapter<Project> myAdapter = new ArrayAdapter<Project>(this,
-					android.R.layout.simple_list_item_activated_1, projects);
+			ArrayAdapter<Project> myAdapter = new ArrayAdapter<Project>(this, android.R.layout.simple_list_item_activated_1, projects);
 
 			listViewProjects.setAdapter(myAdapter);
 			listViewProjects.setItemsCanFocus(true);
 			listViewProjects.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
 
 		} catch (Exception e) {
+
+			exceptionLog.error(e);
+
 			MdcUtil.showToastLong(R.string.LoadProjects_error + e.getMessage(), getApplicationContext());
 		}
 	}
 
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-		if (requestCode == REQUEST_INITDROPBOX) {
-			start();
-		} else {
-			super.onActivityResult(requestCode, resultCode, data);
+		try {
+			if (requestCode == REQUEST_INITDROPBOX) {
+				start();
+			} else {
+				super.onActivityResult(requestCode, resultCode, data);
+			}
+		} catch (Exception e) {
+			exceptionLog.error(e);
+
 		}
 	}
 
