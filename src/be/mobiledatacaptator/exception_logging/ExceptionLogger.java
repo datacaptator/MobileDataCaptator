@@ -2,6 +2,7 @@ package be.mobiledatacaptator.exception_logging;
 
 import java.text.MessageFormat;
 import java.text.SimpleDateFormat;
+import java.util.Date;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
@@ -16,49 +17,29 @@ public class ExceptionLogger {
 		DEBUG, INFO, WARN, ERROR
 	}
 
-	private Level level = Level.ERROR;
 	private String tag;
-	@SuppressLint("SimpleDateFormat")
-	private SimpleDateFormat format = new SimpleDateFormat("MM/dd/yy hh:mm:ss z");
-
-	// private File logFile;
-
-	public void LoggerSetup(String tag, String logFilename, Level level) {
-
-		this.tag = tag;
-
-		this.level = level;
+	
+	public void LoggerSetup(String className, Level level) {
+		this.tag = className;
 	}
 
 	public ExceptionLogger(Context context) {
-		LoggerSetup(context.getPackageName(), "application.writeToLogFile", Level.INFO);
+		LoggerSetup(context.getClass().getSimpleName(), Level.INFO);
 		unitOfWork = UnitOfWork.getInstance();
 	}
 
+	public ExceptionLogger() {
+		LoggerSetup("NO CONTEXT GIVEN", Level.INFO);
+		unitOfWork = UnitOfWork.getInstance();
+	}
+	
 	public static ExceptionLogger getInstance(Context context) {
 		if (instance == null) {
 			instance = new ExceptionLogger(context);
 		}
 		return instance;
 	}
-
-	public ExceptionLogger() {
-		LoggerSetup("", "application.writeToLogFile", Level.INFO);
-		unitOfWork = UnitOfWork.getInstance();
-	}
-
-	public Level getLevel() {
-		return level;
-	}
-
-	public void setLevel(Level level) {
-		this.level = level;
-	}
-
-	public boolean isLoggable(Level level) {
-		return level.ordinal() >= this.level.ordinal();
-	}
-
+	
 	public void debug(String message, Object... parameters) {
 		if (parameters.length > 0) {
 			Log.d(tag, MessageFormat.format(message, parameters));
@@ -95,16 +76,24 @@ public class ExceptionLogger {
 		writeToLogFile(Level.ERROR, message, parameters);
 	}
 
-	public void error(Throwable throwable) {
-		String message = Log.getStackTraceString(throwable);
-		Log.e(tag, message, throwable);
-		writeToLogFile(Level.ERROR, message);
-	}
-
+	@SuppressLint("SimpleDateFormat")
 	private void writeToLogFile(Level level, String message, Object... parameters) {
 		
+		   SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
+		   Date date = new Date();
+		   
+		   StringBuilder exceptionMsg = new StringBuilder();
+		   exceptionMsg.append(dateFormat.format(date));
+		   exceptionMsg.append("-");
+		   exceptionMsg.append(unitOfWork.getActiveProject().getName());
+		   exceptionMsg.append("-");
+		   exceptionMsg.append(this.tag);
+		   exceptionMsg.append("-");
+		   exceptionMsg.append(message);
+		   
+		
 		try {
-			unitOfWork.getDao().appendStringToFile("DataCaptator/ExceptionLog/exception_log.txt", message + ";\n");
+			unitOfWork.getDao().appendStringToFile("DataCaptator/ExceptionLog/exception_log.txt", exceptionMsg.toString() + ";\n");
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			Log.e("test","test" );
