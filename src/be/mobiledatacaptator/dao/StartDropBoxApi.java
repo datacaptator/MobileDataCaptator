@@ -3,7 +3,7 @@ package be.mobiledatacaptator.dao;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
-import be.mobiledatacaptator.exception_logging.ExceptionLogger;
+import be.mobiledatacaptator.exception_logging.MdcExceptionLogger;
 import be.mobiledatacaptator.model.UnitOfWork;
 import be.mobiledatacaptator.utilities.MdcUtil;
 
@@ -16,16 +16,12 @@ public class StartDropBoxApi extends Activity {
 	public final static String APPSECRET = "d0hprnxcunyp18h";
 	public final static int REQUEST_LINK_TO_DBX = 0;
 	
-	private ExceptionLogger exceptionLog;
-	
+		
 	private DbxAccountManager dbxAccountManager;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-
-		exceptionLog = new ExceptionLogger(this);
-		
 		try {
 			dbxAccountManager = DbxAccountManager.getInstance(getApplicationContext(), APPKEY, APPSECRET);
 
@@ -35,7 +31,7 @@ public class StartDropBoxApi extends Activity {
 				dbxAccountManager.startLink(this, REQUEST_LINK_TO_DBX);
 			}
 		} catch (Exception e) {
-			exceptionLog.error(e);
+			MdcExceptionLogger.error(e, this);
 		}
 	}
 
@@ -48,7 +44,7 @@ public class StartDropBoxApi extends Activity {
 				super.onActivityResult(requestCode, resultCode, data);
 			}
 		} catch (Exception e) {
-			exceptionLog.error(e);
+			MdcExceptionLogger.error(e, this);
 		}
 	}
 
@@ -59,7 +55,7 @@ public class StartDropBoxApi extends Activity {
 			finish();
 		} catch (Exception e) {
 			MdcUtil.showToastShort(e.getMessage(), getApplicationContext());
-			exceptionLog.error(e);
+			MdcExceptionLogger.error(e, this);
 		}
 	}
 }

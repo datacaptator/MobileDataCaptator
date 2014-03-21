@@ -23,7 +23,7 @@ import android.widget.Button;
 import android.widget.ListView;
 import be.mobiledatacaptator.R;
 import be.mobiledatacaptator.dao.StartDropBoxApi;
-import be.mobiledatacaptator.exception_logging.ExceptionLogger;
+import be.mobiledatacaptator.exception_logging.MdcExceptionLogger;
 import be.mobiledatacaptator.model.Project;
 import be.mobiledatacaptator.model.UnitOfWork;
 import be.mobiledatacaptator.utilities.MdcUtil;
@@ -35,20 +35,17 @@ public class SelectProjectActivity extends Activity {
 	private UnitOfWork unitOfWork;
 	private ListView listViewProjects;
 	private Button buttonOpenProject = null;
-	private ExceptionLogger exceptionLog;
-
+	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-
-		exceptionLog = new ExceptionLogger(this);
 
 		try {
 			// Hier wordt de dropboxapi gestart.
 			Intent intent = new Intent(this, StartDropBoxApi.class);
 			startActivityForResult(intent, REQUEST_INITDROPBOX);
 		} catch (Exception e) {
-			exceptionLog.error(e);
+			MdcExceptionLogger.error(e, this);
 		}
 	}
 
@@ -64,7 +61,7 @@ public class SelectProjectActivity extends Activity {
 			buttonOpenProject = (Button) findViewById(R.id.buttonOpenProject);
 
 			loadProjects();
-
+			
 			listViewProjects.setOnItemClickListener(new OnItemClickListener() {
 				@Override
 				public void onItemClick(AdapterView<?> arg0, View arg1, int indexListItem, long arg3) {
@@ -72,7 +69,7 @@ public class SelectProjectActivity extends Activity {
 					try {
 						UnitOfWork.getInstance().setActiveProject((Project) listViewProjects.getItemAtPosition(indexListItem));
 					} catch (Exception e) {
-						exceptionLog.error(e);
+						MdcExceptionLogger.error(e, SelectProjectActivity.this);
 					}
 				}
 			});
@@ -89,12 +86,12 @@ public class SelectProjectActivity extends Activity {
 							MdcUtil.showToastShort(getString(R.string.select_project_first), getApplicationContext());
 						}
 					} catch (Exception e) {
-						exceptionLog.error(e);
+						MdcExceptionLogger.error(e, SelectProjectActivity.this);
 					}
 				}
 			});
 		} catch (Exception e) {
-			exceptionLog.error(e);
+			MdcExceptionLogger.error(e, this);
 		}
 	}
 
@@ -125,7 +122,7 @@ public class SelectProjectActivity extends Activity {
 			listViewProjects.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
 
 		} catch (Exception e) {
-			exceptionLog.error(e);
+			MdcExceptionLogger.error(e, this);
 		}
 	}
 
@@ -138,7 +135,7 @@ public class SelectProjectActivity extends Activity {
 				super.onActivityResult(requestCode, resultCode, data);
 			}
 		} catch (Exception e) {
-			exceptionLog.error(e);
+			MdcExceptionLogger.error(e, this);
 		}
 	}
 

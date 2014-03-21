@@ -6,20 +6,16 @@ import android.os.Bundle;
 import android.view.MenuItem;
 import android.widget.ImageView;
 import be.mobiledatacaptator.R;
-import be.mobiledatacaptator.exception_logging.ExceptionLogger;
+import be.mobiledatacaptator.exception_logging.MdcExceptionLogger;
 import be.mobiledatacaptator.model.Project;
 import be.mobiledatacaptator.model.UnitOfWork;
 
 public class DisplayPhotoActivity extends Activity {
 
-	ExceptionLogger exceptionLog;
-
-	@Override
+		@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-
-		exceptionLog = new ExceptionLogger(this);
-
+	
 		try {
 			setContentView(R.layout.activity_display_photo);
 
@@ -43,7 +39,7 @@ public class DisplayPhotoActivity extends Activity {
 			imageViewDisplayPhoto.setImageBitmap(bitMap);
 
 		} catch (Exception e) {
-			exceptionLog.error(e);
+			MdcExceptionLogger.error(e, this);
 		}
 	}
 
@@ -56,7 +52,7 @@ public class DisplayPhotoActivity extends Activity {
 				return (true);
 			}
 		} catch (Exception e) {
-			exceptionLog.error(e);
+			MdcExceptionLogger.error(e, this);
 		}
 		return (super.onOptionsItemSelected(item));
 	}

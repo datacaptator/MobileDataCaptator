@@ -20,7 +20,6 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -36,7 +35,7 @@ import android.widget.ListView;
 import android.widget.TableLayout;
 import android.widget.TableRow;
 import be.mobiledatacaptator.R;
-import be.mobiledatacaptator.exception_logging.ExceptionLogger;
+import be.mobiledatacaptator.exception_logging.MdcExceptionLogger;
 import be.mobiledatacaptator.model.PhotoCategory;
 import be.mobiledatacaptator.model.Project;
 import be.mobiledatacaptator.model.UnitOfWork;
@@ -54,15 +53,11 @@ public class TakePhotoActivity extends Activity implements OnClickListener, OnIt
 	private TableLayout tableLayoutPhotoCategory;
 	private Button buttonFreeSuffix, buttonDisplayPhoto, buttonDeletePhoto;
 	private EditText editTextFreeSuffix;
-	private ExceptionLogger exceptionLog;
-
+	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		
-		exceptionLog = new ExceptionLogger(this);
-
-		try {
+			try {
 			setContentView(R.layout.activity_take_photo);
 			unitOfWork = UnitOfWork.getInstance();
 			project = unitOfWork.getActiveProject();
@@ -97,7 +92,7 @@ public class TakePhotoActivity extends Activity implements OnClickListener, OnIt
 			// hide the keyboard
 			getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
 		} catch (Exception e) {
-			exceptionLog.error(e);
+			MdcExceptionLogger.error(e, this);
 		}
 
 	}
@@ -111,7 +106,7 @@ public class TakePhotoActivity extends Activity implements OnClickListener, OnIt
 				return (true);
 			}
 		} catch (Exception e) {
-			exceptionLog.error(e);
+			MdcExceptionLogger.error(e, this);
 		}
 		return (super.onOptionsItemSelected(item));
 	}
@@ -134,7 +129,7 @@ public class TakePhotoActivity extends Activity implements OnClickListener, OnIt
 			listViewPhotos.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
 
 		} catch (Exception e) {
-			exceptionLog.error(e);
+			MdcExceptionLogger.error(e, this);
 		}
 	}
 
@@ -158,7 +153,7 @@ public class TakePhotoActivity extends Activity implements OnClickListener, OnIt
 			// tableLayoutPhotoCategory at the specified index)
 			tableLayoutPhotoCategory.addView(newPhotoCategoryView, index);
 		} catch (Exception e) {
-			exceptionLog.error(e);
+			MdcExceptionLogger.error(e, this);
 		}
 	}
 
@@ -188,7 +183,7 @@ public class TakePhotoActivity extends Activity implements OnClickListener, OnIt
 
 			return photoNameToSave;
 		} catch (NumberFormatException e) {
-			exceptionLog.error(e);
+			MdcExceptionLogger.error(e, this);
 		}
 
 		return null;
@@ -214,9 +209,9 @@ public class TakePhotoActivity extends Activity implements OnClickListener, OnIt
 			startActivityForResult(startCameraIntent, TAKE_PICTURE);
 
 		} catch (IOException IOexception) {
-			exceptionLog.error(IOexception);
+			MdcExceptionLogger.error(IOexception, this);
 		} catch (Exception e) {
-			exceptionLog.error(e);
+			MdcExceptionLogger.error(e, this);
 		}
 
 	}
@@ -253,7 +248,7 @@ public class TakePhotoActivity extends Activity implements OnClickListener, OnIt
 
 				}
 			} catch (Exception e) {
-				exceptionLog.error(e);
+				MdcExceptionLogger.error(e, TakePhotoActivity.this);
 			}
 
 		}
@@ -265,17 +260,17 @@ public class TakePhotoActivity extends Activity implements OnClickListener, OnIt
 		try {
 			if (requestCode == TAKE_PICTURE) {
 				if (resultCode == RESULT_OK) {
-					Log.e("TOT HIER OK", "resultcode == RESULT_OK");
 					savePhoto();
 				} else {
-					Log.e("TOT HIER OK", "else resultcode != RESULT_OK");
+					throw new Exception("resultcode != RESULT_OK");
 				}
 			} else {
-				Log.e("TOT HIER OK", "else requestCode != TAKE_PICTURE");
-				super.onActivityResult(requestCode, resultCode, data);
+				throw new Exception("requestCode != TAKE_PICTURE");
 			}
 		} catch (Exception e) {
-			exceptionLog.error(e);
+			MdcExceptionLogger.error(e, this);
+		} finally {
+			super.onActivityResult(requestCode, resultCode, data);
 		}
 	}
 
@@ -333,7 +328,7 @@ public class TakePhotoActivity extends Activity implements OnClickListener, OnIt
 			loadPhotoNames();
 
 		} catch (Exception e) {
-			exceptionLog.error(e);
+			MdcExceptionLogger.error(e, this);
 
 		}
 	}
@@ -360,7 +355,7 @@ public class TakePhotoActivity extends Activity implements OnClickListener, OnIt
 						MdcUtil.showToastShort(getString(R.string.select_photo_first), getApplicationContext());
 					}
 				} catch (Exception e) {
-					exceptionLog.error(e);
+					MdcExceptionLogger.error(e, this);
 				}
 				break;
 
@@ -368,7 +363,7 @@ public class TakePhotoActivity extends Activity implements OnClickListener, OnIt
 				break;
 			}
 		} catch (Exception e) {
-			exceptionLog.error(e);
+			MdcExceptionLogger.error(e, this);
 		}
 	}
 
@@ -384,7 +379,7 @@ public class TakePhotoActivity extends Activity implements OnClickListener, OnIt
 								textSelectedPhoto = null;
 								loadPhotoNames();
 							} catch (Exception e) {
-								exceptionLog.error(e);
+								MdcExceptionLogger.error(e, TakePhotoActivity.this);
 							}
 						}
 					}).setNegativeButton(getString(R.string.no), new DialogInterface.OnClickListener() {
@@ -395,7 +390,7 @@ public class TakePhotoActivity extends Activity implements OnClickListener, OnIt
 			AlertDialog alertDialog = alertDialogBuilder.create();
 			alertDialog.show();
 		} catch (Exception e) {
-			exceptionLog.error(e);
+			MdcExceptionLogger.error(e, this);
 		}
 	}
 
@@ -406,7 +401,7 @@ public class TakePhotoActivity extends Activity implements OnClickListener, OnIt
 			deleteSelectedPhoto(textSelectedPhoto);
 			return true;
 		} catch (Exception e) {
-			exceptionLog.error(e);
+			MdcExceptionLogger.error(e, this);
 		}
 		return false;
 	}
@@ -416,7 +411,7 @@ public class TakePhotoActivity extends Activity implements OnClickListener, OnIt
 		try {
 			textSelectedPhoto = (String) listViewPhotos.getItemAtPosition(indexListItem);
 		} catch (Exception e) {
-			exceptionLog.error(e);
+			MdcExceptionLogger.error(e, this);
 		}
 	}
 

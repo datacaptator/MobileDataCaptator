@@ -47,7 +47,7 @@ import be.mobiledatacaptator.drawing_model.MultiLine;
 import be.mobiledatacaptator.drawing_model.Shape;
 import be.mobiledatacaptator.drawing_model.Text;
 import be.mobiledatacaptator.drawing_views.DrawingView;
-import be.mobiledatacaptator.exception_logging.ExceptionLogger;
+import be.mobiledatacaptator.exception_logging.MdcExceptionLogger;
 import be.mobiledatacaptator.model.LayerCategory;
 import be.mobiledatacaptator.model.Project;
 import be.mobiledatacaptator.model.UnitOfWork;
@@ -63,13 +63,10 @@ public class DrawingActivity extends Activity implements OnClickListener, OnItem
 	private DrawingView drawingView;
 	private String prefixFicheDrawingName;
 	private String dataLocationDrawing;
-	private ExceptionLogger exceptionLog;
-
+	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		
-		exceptionLog = new ExceptionLogger(this);
 		
 		try {
 			setContentView(R.layout.activity_drawing);
@@ -117,7 +114,7 @@ public class DrawingActivity extends Activity implements OnClickListener, OnItem
 			checkBoxCenter.setChecked(true);
 			buttonDrawLine.setTextColor(Color.GREEN);
 		} catch (Exception e) {
-			exceptionLog.error(e);
+			MdcExceptionLogger.error(e, this);
 		}
 	}
 
@@ -131,7 +128,7 @@ public class DrawingActivity extends Activity implements OnClickListener, OnItem
 			}
 
 		} catch (Exception e) {
-			exceptionLog.error(e);
+			MdcExceptionLogger.error(e, this);
 
 		}
 		return (super.onOptionsItemSelected(item));
@@ -148,7 +145,7 @@ public class DrawingActivity extends Activity implements OnClickListener, OnItem
 			}
 			return null;
 		} catch (Exception e) {
-			exceptionLog.error(e);
+			MdcExceptionLogger.error(e, this);
 		}
 
 		return null;
@@ -160,7 +157,7 @@ public class DrawingActivity extends Activity implements OnClickListener, OnItem
 			uit *= (float) drawingView.getMeasuredWidth();
 			return (int) uit;
 		} catch (Exception e) {
-			exceptionLog.error(e);
+			MdcExceptionLogger.error(e, this);
 		}
 		return -1;
 	}
@@ -301,11 +298,11 @@ public class DrawingActivity extends Activity implements OnClickListener, OnItem
 			}
 
 		} catch (ParserConfigurationException e) {
-			exceptionLog.error(e);
+			MdcExceptionLogger.error(e, this);
 		} catch (SAXException e) {
-			exceptionLog.error(e);
+			MdcExceptionLogger.error(e, this);
 		} catch (IOException e) {
-			exceptionLog.error(e);
+			MdcExceptionLogger.error(e, this);
 		}
 
 	}
@@ -331,7 +328,7 @@ public class DrawingActivity extends Activity implements OnClickListener, OnItem
 			}
 
 		} catch (Exception e) {
-			exceptionLog.error(e);
+			MdcExceptionLogger.error(e, this);
 		}
 	}
 
@@ -361,7 +358,7 @@ public class DrawingActivity extends Activity implements OnClickListener, OnItem
 			}
 
 		} catch (Exception e) {
-			exceptionLog.error(e);
+			MdcExceptionLogger.error(e, this);
 		}
 
 	}
@@ -413,7 +410,7 @@ public class DrawingActivity extends Activity implements OnClickListener, OnItem
 				break;
 			}
 		} catch (Exception e) {
-			exceptionLog.error(e);
+			MdcExceptionLogger.error(e, this);
 		}
 
 	}
@@ -431,7 +428,7 @@ public class DrawingActivity extends Activity implements OnClickListener, OnItem
 				editTextInputText.setText("X");
 			}
 		} catch (Exception e) {
-			exceptionLog.error(e);
+			MdcExceptionLogger.error(e, this);
 		}
 
 	}
@@ -441,7 +438,7 @@ public class DrawingActivity extends Activity implements OnClickListener, OnItem
 		try {
 			drawingView.setLayer((LayerCategory) spinnerLayerCategory.getItemAtPosition(selelectctedItem));
 		} catch (Exception e) {
-			exceptionLog.error(e);
+			MdcExceptionLogger.error(e, this);
 		}
 	}
 
@@ -456,7 +453,7 @@ public class DrawingActivity extends Activity implements OnClickListener, OnItem
 			if (isChecked)
 				drawingView.setFromCenter(true);
 		} catch (Exception e) {
-			exceptionLog.error(e);
+			MdcExceptionLogger.error(e, this);
 		}
 
 	}
@@ -474,7 +471,7 @@ public class DrawingActivity extends Activity implements OnClickListener, OnItem
 		try {
 			drawingView.setInputText(editTextInputText.getText().toString());
 		} catch (Exception e) {
-			exceptionLog.error(e);
+			MdcExceptionLogger.error(e, this);
 		}
 
 	}

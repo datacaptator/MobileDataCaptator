@@ -31,7 +31,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
 import be.mobiledatacaptator.R;
-import be.mobiledatacaptator.exception_logging.ExceptionLogger;
+import be.mobiledatacaptator.exception_logging.MdcExceptionLogger;
 import be.mobiledatacaptator.model.Fiche;
 import be.mobiledatacaptator.model.LayerCategory;
 import be.mobiledatacaptator.model.PhotoCategory;
@@ -40,7 +40,6 @@ import be.mobiledatacaptator.model.UnitOfWork;
 import be.mobiledatacaptator.utilities.MdcUtil;
 
 public class SelectFicheActivity extends Activity implements OnClickListener {
-	private ExceptionLogger exceptionLog;
 	private Project project;
 	private ListView listViewFiches;
 	private UnitOfWork unitOfWork;
@@ -52,8 +51,6 @@ public class SelectFicheActivity extends Activity implements OnClickListener {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 
-		exceptionLog = new ExceptionLogger(this);
-
 		try {
 			setContentView(R.layout.activity_select_fiche);
 
@@ -63,6 +60,7 @@ public class SelectFicheActivity extends Activity implements OnClickListener {
 			setTitle(getString(R.string.project) + " " + project.getName());
 
 			listViewFiches = (ListView) findViewById(R.id.listViewFiches);
+	
 
 			buttonAddNumber = (Button) findViewById(R.id.buttonAddNumber);
 			buttonOpenFiche = (Button) findViewById(R.id.buttonOpenFiche);
@@ -75,7 +73,7 @@ public class SelectFicheActivity extends Activity implements OnClickListener {
 			buttonOpenPhoto.setOnClickListener(this);
 			buttonOpenDrawing.setOnClickListener(this);
 		} catch (Exception e) {
-			exceptionLog.error(e);
+			MdcExceptionLogger.error(e, this);
 		}
 	}
 
@@ -88,7 +86,7 @@ public class SelectFicheActivity extends Activity implements OnClickListener {
 			loadDataFiches();
 			listViewFiches.requestFocus();
 		} catch (Exception e) {
-			exceptionLog.error(e);
+			MdcExceptionLogger.error(e, this);
 		}
 	}
 
@@ -102,7 +100,7 @@ public class SelectFicheActivity extends Activity implements OnClickListener {
 				return (true);
 			}
 		} catch (Exception e) {
-			exceptionLog.error(e);
+			MdcExceptionLogger.error(e, this);
 		}
 
 		return (super.onOptionsItemSelected(item));
@@ -162,7 +160,7 @@ public class SelectFicheActivity extends Activity implements OnClickListener {
 			}
 
 		} catch (Exception e) {
-			exceptionLog.error(e);
+			MdcExceptionLogger.error(e, this);
 		}
 	}
 
@@ -188,7 +186,7 @@ public class SelectFicheActivity extends Activity implements OnClickListener {
 			});
 
 		} catch (Exception e) {
-			exceptionLog.error(e);
+			MdcExceptionLogger.error(e, this);
 		}
 	}
 
@@ -227,7 +225,7 @@ public class SelectFicheActivity extends Activity implements OnClickListener {
 				break;
 			}
 		} catch (Exception e) {
-			exceptionLog.error(e);
+			MdcExceptionLogger.error(e, this);
 		}
 	}
 
@@ -251,7 +249,7 @@ public class SelectFicheActivity extends Activity implements OnClickListener {
 				setTitle(MdcUtil.setActivityTitle(editTextFicheName.getText().toString(), unitOfWork, getApplicationContext()));
 			}
 		} catch (NumberFormatException e) {
-			exceptionLog.error(e);
+			MdcExceptionLogger.error(e, this);
 		}
 	}
 
@@ -290,7 +288,7 @@ public class SelectFicheActivity extends Activity implements OnClickListener {
 			}
 
 		} catch (Exception e) {
-			exceptionLog.error(e);
+			MdcExceptionLogger.error(e, this);
 		}
 	}
 
@@ -306,7 +304,7 @@ public class SelectFicheActivity extends Activity implements OnClickListener {
 			}
 
 		} catch (Exception e) {
-			exceptionLog.error(e);
+			MdcExceptionLogger.error(e, this);
 		}
 	}
 
@@ -322,7 +320,7 @@ public class SelectFicheActivity extends Activity implements OnClickListener {
 			}
 
 		} catch (Exception e) {
-			exceptionLog.error(e);
+			MdcExceptionLogger.error(e, this);
 		}
 	}
 

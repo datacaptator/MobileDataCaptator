@@ -25,7 +25,7 @@ import android.view.MenuItem;
 import android.widget.TabHost;
 import be.mobiledatacaptator.R;
 import be.mobiledatacaptator.adapters.FichePagerAdapter;
-import be.mobiledatacaptator.exception_logging.ExceptionLogger;
+import be.mobiledatacaptator.exception_logging.MdcExceptionLogger;
 import be.mobiledatacaptator.model.DataField;
 import be.mobiledatacaptator.model.Fiche;
 import be.mobiledatacaptator.model.Group;
@@ -36,14 +36,11 @@ import be.mobiledatacaptator.utilities.MdcUtil;
 public class FicheActivity extends FragmentActivity {
 
 	private UnitOfWork unitOfWork;
-	private ExceptionLogger exceptionLog;
-
+	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 
-		exceptionLog = new ExceptionLogger(this);
-		
 		try {
 			unitOfWork = UnitOfWork.getInstance();
 
@@ -53,7 +50,7 @@ public class FicheActivity extends FragmentActivity {
 			loadExistingData();
 			toonFiche();
 		} catch (Exception e) {
-			exceptionLog.error(e);
+			MdcExceptionLogger.error(e, this);
 		}
 	}
 
@@ -66,7 +63,7 @@ public class FicheActivity extends FragmentActivity {
 				return (true);
 			}
 		} catch (Exception e) {
-			exceptionLog.error(e);
+			MdcExceptionLogger.error(e, this);
 		}
 		return (super.onOptionsItemSelected(item));
 	}
@@ -100,7 +97,7 @@ public class FicheActivity extends FragmentActivity {
 			}
 
 		} catch (Exception e) {
-			exceptionLog.error(e);
+			MdcExceptionLogger.error(e, this);
 		}
 
 	}
@@ -116,7 +113,7 @@ public class FicheActivity extends FragmentActivity {
 				fiche.loadExistingData(root);
 			}
 		} catch (Exception e) {
-			exceptionLog.error(e);
+			MdcExceptionLogger.error(e, this);
 		}
 	}
 
@@ -133,7 +130,7 @@ public class FicheActivity extends FragmentActivity {
 				tabHost.addTab(group.getTabSpec(tabHost));
 			}
 		} catch (Exception e) {
-			exceptionLog.error(e);
+			MdcExceptionLogger.error(e, this);
 		}
 	}
 
@@ -153,7 +150,7 @@ public class FicheActivity extends FragmentActivity {
 			unitOfWork.getDao().saveStringToFile(fiche.getPath(), output);
 
 		} catch (Exception e) {
-			exceptionLog.error(e);
+			MdcExceptionLogger.error(e, this);
 		}
 	}
 
@@ -174,7 +171,7 @@ public class FicheActivity extends FragmentActivity {
 			}
 			return builder;
 		} catch (Exception e) {
-			exceptionLog.error(e);
+			MdcExceptionLogger.error(e, this);
 		}
 		return null;
 	}
@@ -191,7 +188,7 @@ public class FicheActivity extends FragmentActivity {
 
 			return i;
 		} catch (Exception e) {
-			exceptionLog.error(e);
+			MdcExceptionLogger.error(e, this);
 		}
 		return -1;
 	}
@@ -215,7 +212,7 @@ public class FicheActivity extends FragmentActivity {
 			} else
 				super.onBackPressed();
 		} catch (Exception e) {
-			exceptionLog.error(e);
+			MdcExceptionLogger.error(e, this);
 		}
 	}
 
