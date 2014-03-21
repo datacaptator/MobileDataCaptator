@@ -50,7 +50,7 @@
             android:layout_width="@dimen/buttonAddNumber"
             android:layout_height="wrap_content"
             android:layout_marginTop="5dp"
-            android:text="@string/plus_sign"
+            android:text="@string/button_increase_fiche"
             android:textColor="@color/button_white" />
     </TableRow>
 

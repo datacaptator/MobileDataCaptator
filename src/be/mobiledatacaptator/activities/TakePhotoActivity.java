@@ -319,7 +319,7 @@ public class TakePhotoActivity extends Activity implements OnClickListener, OnIt
 				bitmap.compress(Bitmap.CompressFormat.JPEG, 80, new FileOutputStream(tempFile));
 				unitOfWork.getDao().saveFile(project.getDataLocation() + photoNameToSave + ".jpg", tempFile);
 			} catch (Exception e) {
-				MdcUtil.showToastShort(getString(R.string.errorSavePhoto), this);
+				MdcExceptionLogger.error(e, this);
 			}
 
 			// Tijdelijke file verwijderen

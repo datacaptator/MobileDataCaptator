@@ -67,7 +67,7 @@
             android:id="@+id/buttonDrawText"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/button_draw_Text" />
+            android:text="@string/button_draw_text" />
 
         <LinearLayout
             android:layout_width="wrap_content"
@@ -90,7 +90,7 @@
                 style="?android:attr/buttonStyleSmall"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/plus_sign" />
+                android:text="@string/button_increase_character" />
 
         </LinearLayout>
         

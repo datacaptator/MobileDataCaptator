@@ -9,9 +9,9 @@
 
     <!-- SelectProjectActivity -->
     <string name="select_project">Selecteer een Project</string>
-    <string name="open_project">Open project</string>
+    <string name="button_open_project">Open project</string>
     <string name="select_project_first">Selecteer eerst een Project!</string>
-    <string name="LoadProjects_error">Fout bij openen projecten </string>
+   
 
     <!-- SelectFicheActivity -->
     <string name="project">Project:</string>
@@ -20,16 +20,13 @@
     <string name="button_open_fiche">Open Fiche</string>
     <string name="button_open_photo">Open Foto</string>
     <string name="button_open_drawing">Open Schets</string>
+    <string name="button_increase_fiche">+</string>
     <string name="select_fiche_first">Selecteeer eerst een Fiche!</string>
     <string name="yes">Ja</string>
     <string name="no">Nee</string>
-    <string name="plus_sign">+</string>
     <string name="fiche">fiche</string>
-    <string name="wil_u_fiche">Wil u fiche</string>
-    <string name="openen">openen?</string>
-    <string name="wil_u_aan_fiche">Wil u aan fiche</string>
-    <string name="add_photo">een foto toevoegen?</string>
-    <string name="LoadFiches_error">Fout bij laden fiches </string>
+    <string name="do_you_want_to_open_fiche_x">Wil u fiche %1$s openen?</string>
+    
 
     <!-- FicheActivity -->
     <string name="AddNew">Nieuwe Tab</string>
@@ -51,29 +48,29 @@
     <string name="button_delete_photo">Verwijder</string>
     <string name="delete_photo_">Foto Verwijderen?</string>
     <string name="click_yes_to_delete_photo">Klik Ja om Foto %1$s te Verwijderen</string>
-	<string name="enter_suffix">Vul een Suffix in!</string>
-	<string name="select_photo_first">Selecteer eerst een Foto!</string>
-	<string name="errorSavePhoto">Fout bij wegschrijven naar dropbox.</string>
+    <string name="enter_suffix">Vul een Suffix in!</string>
+    <string name="select_photo_first">Selecteer eerst een Foto!</string>
     
+
     <!-- DisplayPhotoActivity -->
     <string name="display_photo">Getoonde Foto</string>
     <string name="photo">Foto: </string>
-    
+
     <!-- DrawingActivity -->
     <string name="button_draw_circle">Cirkel</string>
     <string name="button_draw_line">Lijn</string>
     <string name="button_draw_shape">Shape</string>
-	<string name="button_draw_multi_line">Polyline</string>
-	<string name="button_draw_undo">Undo</string>
-	<string name="checkbox_center">Center</string>
-	<string name="editTextInputText"></string>
-	<string name="button_draw_Text">Tekst</string>
-	<string name="enter_text">Geef een tekst in aub!</string>
-	
-	<!-- Plugins -->
+    <string name="button_draw_multi_line">Polyline</string>
+    <string name="button_draw_text">Tekst</string>
+    <string name="button_increase_character">+</string>
+    <string name="button_draw_undo">Undo</string>
+    <string name="checkbox_center">Center</string>
+    <string name="editTextInputText"></string>
+    <string name="enter_text">Geef een tekst in aub!</string>
+
+    <!-- Plugins -->
     <string name="title_activity_plugin_leiding_verbinding">Leiding Verbinding</string>
     <string name="kiesVerbinding">Kies verbinding</string>
     <string name="cancel">Cancel</string>
-    
 
 </resources>

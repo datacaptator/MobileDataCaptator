@@ -88,7 +88,7 @@ public class SelectFicheActivity extends Activity implements OnClickListener {
 			// TODO - 3 regels moeten uit comment na testen
 			loadProjectData();
 			loadDataFiches();
-			// listViewFiches.requestFocus();
+			listViewFiches.requestFocus();
 		} catch (Exception e) {
 			MdcExceptionLogger.error(e, this);
 		}
@@ -306,7 +306,10 @@ public class SelectFicheActivity extends Activity implements OnClickListener {
 					AlertDialog.Builder builder = new AlertDialog.Builder(this);
 
 					String ficheName = unitOfWork.getActiveFiche().getName();
-					String builderMessage = getString(R.string.wil_u_fiche) + " " + ficheName + " " + getString(R.string.openen);
+					//String builderMessage = getString(R.string.wil_u_fiche) + " " + ficheName + " " + getString(R.string.openen);
+					String builderMessage = String.format(getString(R.string.do_you_want_to_open_fiche_x), ficheName);
+					
+					
 					builder.setNegativeButton(R.string.no, dialogClickListener).setMessage(builderMessage)
 							.setPositiveButton(R.string.yes, dialogClickListener).show();
 				} else {
