@@ -24,19 +24,19 @@ public class MdcExceptionLogger {
 		tagClassName = setupContext.getClass().getSimpleName();
 	}
 
-	public void debug(Exception e, Context context) {
+	public static void debug(Exception e, Context context) {
 		loggerSetup(context);
 		Log.d(tagClassName, e.getLocalizedMessage());
 		writeToLogFile(Level.DEBUG, e);
 	}
 
-	public void info(Exception e, Context context) {
+	public static void info(Exception e, Context context) {
 		loggerSetup(context);
 		Log.i(tagClassName, e.getLocalizedMessage());
 		writeToLogFile(Level.INFO, e);
 	}
 
-	public void warn(Exception e, Context context) {
+	public static void warn(Exception e, Context context) {
 		loggerSetup(context);
 		Log.w(tagClassName, e.getLocalizedMessage());
 		writeToLogFile(Level.WARN, e);
@@ -76,7 +76,10 @@ public class MdcExceptionLogger {
 
 		try {
 			unitOfWork.getDao().appendStringToFile("DataCaptator/ExceptionLog/exception_log.txt", eMsg.toString() + ";\n");
-			showExceptionDialog(e);
+			if(level == Level.ERROR){
+				showExceptionDialog(e);	
+			}
+			
 		} catch (Exception ex) {
 			showExceptionDialog(ex);
 

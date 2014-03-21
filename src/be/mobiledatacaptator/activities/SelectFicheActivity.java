@@ -60,7 +60,10 @@ public class SelectFicheActivity extends Activity implements OnClickListener {
 			setTitle(getString(R.string.project) + " " + project.getName());
 
 			listViewFiches = (ListView) findViewById(R.id.listViewFiches);
-	
+			// TODO - 3 regels moeten in comment na testen
+			loadProjectData();
+			loadDataFiches();
+			// listViewFiches.requestFocus();
 
 			buttonAddNumber = (Button) findViewById(R.id.buttonAddNumber);
 			buttonOpenFiche = (Button) findViewById(R.id.buttonOpenFiche);
@@ -82,9 +85,10 @@ public class SelectFicheActivity extends Activity implements OnClickListener {
 		super.onStart();
 
 		try {
+			// TODO - 3 regels moeten uit comment na testen
 			loadProjectData();
 			loadDataFiches();
-			listViewFiches.requestFocus();
+			// listViewFiches.requestFocus();
 		} catch (Exception e) {
 			MdcExceptionLogger.error(e, this);
 		}
@@ -128,8 +132,18 @@ public class SelectFicheActivity extends Activity implements OnClickListener {
 					PhotoCategory photoCategorie = new PhotoCategory(((Element) node).getAttribute("Name"), ((Element) node).getAttribute("Suffix"));
 					project.getPhotoCategories().add(photoCategorie);
 				}
-				project.setPhotoHeight(Integer.parseInt(root.getAttribute("PhotoHeight")));
-				project.setPhotoWidth(Integer.parseInt(root.getAttribute("PhotoWidth")));
+
+				try {
+					project.setPhotoHeight(Integer.parseInt(root.getAttribute("PhotoHeight")));
+					project.setPhotoWidth(Integer.parseInt(root.getAttribute("PhotoWidth")));
+				} catch (Exception e) {
+					project.setPhotoHeight(960);
+					project.setPhotoWidth(1280);
+
+					Exception myException = new Exception("photoWidth & photoHeight programmatically set");
+					MdcExceptionLogger.warn(myException, this);
+					myException = null;
+				}
 
 			} else // no photo-Activity
 			{
@@ -139,6 +153,7 @@ public class SelectFicheActivity extends Activity implements OnClickListener {
 
 			// drawing-functionality
 			if ((root.getAttribute("LoadSchetsActivity").equals("true"))) {
+
 				project.setLoadSchetsActivity(true);
 
 				NodeList layerCategories = root.getElementsByTagName("LayerCategorie");
@@ -152,11 +167,26 @@ public class SelectFicheActivity extends Activity implements OnClickListener {
 
 				}
 
-				project.setDrawingSize(Integer.parseInt(root.getAttribute("DrawingSize")));
+				try {
+					project.setDrawingSize(Integer.parseInt(root.getAttribute("DrawingSize")));
+				} catch (Exception e) {
+
+					project.setDrawingSize(10000);
+
+					Exception myException = new Exception("drawingSize programmatically set");
+					MdcExceptionLogger.warn(myException, this);
+					myException = null;
+				}
 
 			} else {
+
 				project.setLoadSchetsActivity(false);
-				buttonOpenDrawing.setVisibility(View.INVISIBLE);
+				try {
+					buttonOpenDrawing.setVisibility(View.INVISIBLE);
+				} catch (Exception e) {
+
+				}
+
 			}
 
 		} catch (Exception e) {
