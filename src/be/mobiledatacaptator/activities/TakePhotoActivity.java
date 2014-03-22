@@ -262,7 +262,7 @@ public class TakePhotoActivity extends Activity implements OnClickListener, OnIt
 				if (resultCode == RESULT_OK) {
 					savePhoto();
 				} else {
-					throw new Exception("resultcode != RESULT_OK");
+					//throw new Exception("resultcode != RESULT_OK");
 				}
 			} else {
 				throw new Exception("requestCode != TAKE_PICTURE");
