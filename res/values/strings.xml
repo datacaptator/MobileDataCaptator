@@ -22,8 +22,8 @@
     <string name="button_open_drawing">Open Schets</string>
     <string name="button_increase_fiche">+</string>
     <string name="select_fiche_first">Selecteeer eerst een Fiche!</string>
-    <string name="yes">Ja</string>
-    <string name="no">Nee</string>
+    <string name="button_yes">Ja</string>
+    <string name="button_no">Nee</string>
     <string name="fiche">fiche</string>
     <string name="do_you_want_to_open_fiche_x">Wil u fiche %1$s openen?</string>
     

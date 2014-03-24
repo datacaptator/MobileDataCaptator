@@ -372,7 +372,7 @@ public class TakePhotoActivity extends Activity implements OnClickListener, OnIt
 			AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
 			alertDialogBuilder.setTitle(getString(R.string.delete_photo_));
 			alertDialogBuilder.setMessage(String.format(getString(R.string.click_yes_to_delete_photo), textSelectedPhoto)).setCancelable(false)
-					.setPositiveButton(getString(R.string.yes), new DialogInterface.OnClickListener() {
+					.setPositiveButton(getString(R.string.button_yes), new DialogInterface.OnClickListener() {
 						public void onClick(DialogInterface dialog, int id) {
 							try {
 								unitOfWork.getDao().delete(project.getDataLocation() + textSelectedPhoto + ".jpg");
@@ -382,7 +382,7 @@ public class TakePhotoActivity extends Activity implements OnClickListener, OnIt
 								MdcExceptionLogger.error(e, TakePhotoActivity.this);
 							}
 						}
-					}).setNegativeButton(getString(R.string.no), new DialogInterface.OnClickListener() {
+					}).setNegativeButton(getString(R.string.button_no), new DialogInterface.OnClickListener() {
 						public void onClick(DialogInterface dialog, int id) {
 							dialog.cancel();
 						}

@@ -310,8 +310,8 @@ public class SelectFicheActivity extends Activity implements OnClickListener {
 					String builderMessage = String.format(getString(R.string.do_you_want_to_open_fiche_x), ficheName);
 					
 					
-					builder.setNegativeButton(R.string.no, dialogClickListener).setMessage(builderMessage)
-							.setPositiveButton(R.string.yes, dialogClickListener).show();
+					builder.setNegativeButton(R.string.button_no, dialogClickListener).setMessage(builderMessage)
+							.setPositiveButton(R.string.button_yes, dialogClickListener).show();
 				} else {
 					startActivity(intent);
 				}
