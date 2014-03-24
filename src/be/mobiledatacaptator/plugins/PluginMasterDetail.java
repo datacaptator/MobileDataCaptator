@@ -101,8 +101,12 @@ public class PluginMasterDetail extends Activity {
 							waarden.add(nodeList.item(0).getTextContent());
 
 							String s = nodeList.item(0).getTextContent();
-							nodeList = detailXml.getElementsByTagName("LeidingDiameter");
-							s += " - " + (nodeList.getLength() > 0 ? nodeList.item(0).getTextContent() : "");
+							nodeList = detailXml.getElementsByTagName("LeidingVorm");
+							s += nodeList.getLength() > 0 ?" - " + nodeList.item(0).getTextContent() : "";
+							nodeList = detailXml.getElementsByTagName("LeidingAfmeting1");
+							s += nodeList.getLength() > 0 ?" - " + nodeList.item(0).getTextContent() : "";
+							nodeList = detailXml.getElementsByTagName("LeidingAfmeting2");
+							s += nodeList.getLength() > 0 ?" - " + nodeList.item(0).getTextContent() : "";
 							// ...
 							teksten.add(s);
 						}
