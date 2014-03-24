@@ -75,7 +75,7 @@ public class MdcExceptionLogger {
 		eMsg.append(e.getLocalizedMessage());
 
 		try {
-			unitOfWork.getDao().appendStringToFile("DataCaptator/ExceptionLog/exception_log.txt", eMsg.toString() + ";\n");
+			unitOfWork.getDao().appendStringToFile("MobileDataCaptator/exception_log.txt", eMsg.toString() + ";\n");
 			if(level == Level.ERROR){
 				showExceptionDialog(e);	
 			}
