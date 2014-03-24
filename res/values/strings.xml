@@ -3,7 +3,7 @@
 
     <!-- Algemeen -->
     <string name="app_name">Mobile DataCaptator</string>
-    <string name="dropbox_location_projects">DataCaptator/AppData/Projects.xml</string>
+    <string name="dropbox_location_projects">MobileDataCaptator/Projects.xml</string>
     <string name="unknown_error">Niet nader omschreven fout</string>
     <string name="ok">OK</string>
 
