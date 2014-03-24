@@ -61,8 +61,8 @@ public class SelectFicheActivity extends Activity implements OnClickListener {
 
 			listViewFiches = (ListView) findViewById(R.id.listViewFiches);
 			// TODO - 3 regels moeten in comment na testen
-			loadProjectData();
-			loadDataFiches();
+			// loadProjectData();
+			// loadDataFiches();
 			// listViewFiches.requestFocus();
 
 			buttonAddNumber = (Button) findViewById(R.id.buttonAddNumber);
