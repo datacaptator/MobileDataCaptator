@@ -1,9 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
+    <!-- Dropbox instellingen voor SPC-account: -->
+    <!-- <string name="dropbox_location_projects">MobileDataCaptator/Projects.xml</string> -->
+
+
+    <!-- Dropbox instellingen voor MobileDataCaptator-account: -->
+    <string name="dropbox_location_projects">DataCaptator/AppData/Projects.xml</string>
+
     <!-- Algemeen -->
     <string name="app_name">Mobile DataCaptator</string>
-    <string name="dropbox_location_projects">MobileDataCaptator/Projects.xml</string>
     <string name="unknown_error">Niet nader omschreven fout</string>
     <string name="ok">OK</string>
 
@@ -11,7 +17,6 @@
     <string name="select_project">Selecteer een Project</string>
     <string name="button_open_project">Open project</string>
     <string name="select_project_first">Selecteer eerst een Project!</string>
-   
 
     <!-- SelectFicheActivity -->
     <string name="project">Project:</string>
@@ -26,7 +31,6 @@
     <string name="button_no">Nee</string>
     <string name="fiche">fiche</string>
     <string name="do_you_want_to_open_fiche_x">Wil u fiche %1$s openen?</string>
-    
 
     <!-- FicheActivity -->
     <string name="AddNew">Nieuwe Tab</string>
@@ -50,7 +54,6 @@
     <string name="click_yes_to_delete_photo">Klik Ja om Foto %1$s te Verwijderen</string>
     <string name="enter_suffix">Vul een Suffix in!</string>
     <string name="select_photo_first">Selecteer eerst een Foto!</string>
-    
 
     <!-- DisplayPhotoActivity -->
     <string name="display_photo">Getoonde Foto</string>

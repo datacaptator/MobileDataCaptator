@@ -73,7 +73,12 @@
             android:name="com.dropbox.client2.android.AuthActivity"
             android:launchMode="singleTask" >
             <intent-filter>
-                <data android:scheme="db-1iuuns3gstd6kbt" />
+
+                <!-- Dropbox instellingen voor SPC-account: -->
+                <!-- <data android:scheme="db-1iuuns3gstd6kbt" /> -->
+
+                <!-- Dropbox instellingen voor MobileDataCaptator-account: -->
+                <data android:scheme="db-1bzrye5f167u7ov" />
 
                 <action android:name="android.intent.action.VIEW" />
 

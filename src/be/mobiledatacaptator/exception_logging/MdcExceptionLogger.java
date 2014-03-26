@@ -41,14 +41,13 @@ public class MdcExceptionLogger {
 		Log.w(tagClassName, e.getLocalizedMessage());
 		writeToLogFile(Level.WARN, e);
 	}
-	
+
 	public static void error(Exception e, Context context) {
 		loggerSetup(context);
 		Log.e(tagClassName, e.getLocalizedMessage());
 		writeToLogFile(Level.ERROR, e);
 	}
 
-	
 	@SuppressLint("SimpleDateFormat")
 	private static void writeToLogFile(Level level, Exception e, Object... parameters) {
 
@@ -60,12 +59,13 @@ public class MdcExceptionLogger {
 		eMsg.append("_");
 		eMsg.append(dateFormat.format(date));
 		eMsg.append("_");
-		
+
 		try {
-			eMsg.append(unitOfWork.getActiveProject().getName()); // Nog geen project gekozen -> error
+			eMsg.append(unitOfWork.getActiveProject().getName());
+			// Nog geen project gekozen -> error
 			eMsg.append("_");
 		} catch (Exception e1) {
-			eMsg.append("NoProjectChoice"); 
+			eMsg.append("NoProjectChoice");
 			eMsg.append("_");
 		}
 		eMsg.append(tagClassName);
@@ -75,11 +75,18 @@ public class MdcExceptionLogger {
 		eMsg.append(e.getLocalizedMessage());
 
 		try {
-			unitOfWork.getDao().appendStringToFile("MobileDataCaptator/exception_log.txt", eMsg.toString() + ";\n");
-			if(level == Level.ERROR){
-				showExceptionDialog(e);	
+			// Voor SPC-account:
+			// unitOfWork.getDao().appendStringToFile("MobileDataCaptator/exception_log.txt",
+			// eMsg.toString() + ";\n");
+
+			// Voor DataCaptator-account:
+			unitOfWork.getDao().appendStringToFile("DataCaptator/ExceptionLog/exception_log.txt",
+					eMsg.toString() + ";\n");
+
+			if (level == Level.ERROR) {
+				showExceptionDialog(e);
 			}
-			
+
 		} catch (Exception ex) {
 			showExceptionDialog(ex);
 
@@ -87,14 +94,15 @@ public class MdcExceptionLogger {
 	}
 
 	private static void showExceptionDialog(Exception ex) {
-		
+
 		if (myContext != null) {
 			AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(myContext);
 			alertDialogBuilder.setTitle("Application Error!");
-			alertDialogBuilder.setMessage("Contact your IT-Administrator \n" + ex.getMessage()).setCancelable(true).setNegativeButton("OK", null);
+			alertDialogBuilder.setMessage("Contact your IT-Administrator \n" + ex.getMessage()).setCancelable(true)
+					.setNegativeButton("OK", null);
 			AlertDialog alertDialog = alertDialogBuilder.create();
 			alertDialog.show();
 		}
-		
+
 	}
 }
