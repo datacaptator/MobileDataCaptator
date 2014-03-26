@@ -11,7 +11,6 @@
     <string name="select_project">Séleccionez un Projet </string>
     <string name="button_open_project">Ouvrir projet</string>
     <string name="select_project_first">Séleccionez d\'abord un projet!</string>
-   
 
     <!-- SelectFicheActivity -->
     <string name="project">Projet:</string>
@@ -26,14 +25,13 @@
     <string name="button_no">Non</string>
     <string name="fiche">Fiche</string>
     <string name="do_you_want_to_open_fiche_x">Voulez-vous ouvrir fiche %1$s?</string>
-    
 
     <!-- FicheActivity -->
     <string name="AddNew">Nouveau Tab</string>
     <string name="IdnForXmlAttr">idn</string>
     <string name="LinkFout">Fout bij uitvoeren link.</string>
-    <string name="dialogGaVerder">Fermer</string>
-    <string name="dialogCancel">D\'abord résoudre</string>
+    <string name="dialog_go">Fermer</string>
+    <string name="dialog_cancel">D\'abord résoudre</string>
     <string name="ValVerplicht">Obligé!</string>
     <string name="ValTeLaag">Ne correspond pas au minimum</string>
     <string name="ValTeHoog">Ne correspond pas au maximum</string>
@@ -50,7 +48,6 @@
     <string name="click_yes_to_delete_photo">Clickez Oui pour éraser la photo %1$s</string>
     <string name="enter_suffix">Entrez le suffix!</string>
     <string name="select_photo_first">Sélecionnez d\'abord une photo!</string>
-    
 
     <!-- DisplayPhotoActivity -->
     <string name="display_photo">Photo </string>

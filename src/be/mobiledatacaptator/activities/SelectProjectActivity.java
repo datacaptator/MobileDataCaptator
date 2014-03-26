@@ -35,7 +35,7 @@ public class SelectProjectActivity extends Activity {
 	private UnitOfWork unitOfWork;
 	private ListView listViewProjects;
 	private Button buttonOpenProject = null;
-	
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -44,6 +44,7 @@ public class SelectProjectActivity extends Activity {
 			// Hier wordt de dropboxapi gestart.
 			Intent intent = new Intent(this, StartDropBoxApi.class);
 			startActivityForResult(intent, REQUEST_INITDROPBOX);
+
 		} catch (Exception e) {
 			MdcExceptionLogger.error(e, this);
 		}
@@ -52,7 +53,7 @@ public class SelectProjectActivity extends Activity {
 	private void start() {
 		try {
 			unitOfWork = UnitOfWork.getInstance();
-		
+
 			setTitle(getString(R.string.select_project));
 
 			setContentView(R.layout.activity_select_project);
@@ -61,7 +62,7 @@ public class SelectProjectActivity extends Activity {
 			buttonOpenProject = (Button) findViewById(R.id.buttonOpenProject);
 
 			loadProjects();
-			
+
 			listViewProjects.setOnItemClickListener(new OnItemClickListener() {
 				@Override
 				public void onItemClick(AdapterView<?> arg0, View arg1, int indexListItem, long arg3) {
@@ -71,6 +72,32 @@ public class SelectProjectActivity extends Activity {
 					} catch (Exception e) {
 						MdcExceptionLogger.error(e, SelectProjectActivity.this);
 					}
+				}
+			});
+
+			listViewProjects.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+				@Override
+				public boolean onItemLongClick(AdapterView<?> parent, View view, int indexListItem, long id) {
+					try {
+
+						listViewProjects.performItemClick(listViewProjects.getAdapter().getView(indexListItem, null, null), indexListItem,
+								listViewProjects.getAdapter().getItemId(indexListItem));
+
+						try {
+							if (UnitOfWork.getInstance().getActiveProject() != null) {
+								Intent intent = new Intent(listViewProjects.getContext(), SelectFicheActivity.class);
+								startActivity(intent);
+
+							} else {
+								MdcUtil.showToastShort(getString(R.string.select_project_first), getApplicationContext());
+							}
+						} catch (Exception e) {
+							MdcExceptionLogger.error(e, SelectProjectActivity.this);
+						}
+					} catch (Exception e) {
+						MdcExceptionLogger.error(e, SelectProjectActivity.this);
+					}
+					return true;
 				}
 			});
 

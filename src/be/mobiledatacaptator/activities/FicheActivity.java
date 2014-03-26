@@ -203,8 +203,8 @@ public class FicheActivity extends FragmentActivity {
 			StringBuilder builder = toonValidatieFouten();
 			if (builder.length() > 0) {
 				String boodschap = builder.toString();
-				new AlertDialog.Builder(this).setMessage(boodschap).setNegativeButton(R.string.dialogCancel, null)
-						.setPositiveButton(R.string.dialogGaVerder, new OnClickListener() {
+				new AlertDialog.Builder(this).setMessage(boodschap).setNegativeButton(R.string.dialog_cancel, null)
+						.setPositiveButton(R.string.dialog_go, new OnClickListener() {
 							public void onClick(DialogInterface arg0, int arg1) {
 								goBack();
 							}

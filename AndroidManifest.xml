@@ -67,6 +67,7 @@
             android:theme="@android:style/Theme.Dialog" >
         </activity>
         <!-- Nodige Dropbox instellingen:______________________________________________________________________ -->
+
         <activity android:name="com.dropbox.sync.android.DbxAuthActivity" />
         <activity
             android:name="com.dropbox.client2.android.AuthActivity"

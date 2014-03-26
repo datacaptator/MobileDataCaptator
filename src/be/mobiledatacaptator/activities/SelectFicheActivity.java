@@ -61,9 +61,9 @@ public class SelectFicheActivity extends Activity implements OnClickListener {
 
 			listViewFiches = (ListView) findViewById(R.id.listViewFiches);
 			// TODO - 3 regels moeten in comment na testen
-			// loadProjectData();
-			// loadDataFiches();
-			// listViewFiches.requestFocus();
+			loadProjectData();
+			loadDataFiches();
+			listViewFiches.requestFocus();
 
 			buttonAddNumber = (Button) findViewById(R.id.buttonAddNumber);
 			buttonOpenFiche = (Button) findViewById(R.id.buttonOpenFiche);
@@ -86,9 +86,9 @@ public class SelectFicheActivity extends Activity implements OnClickListener {
 
 		try {
 			// TODO - 3 regels moeten uit comment na testen
-			loadProjectData();
-			loadDataFiches();
-			listViewFiches.requestFocus();
+			// loadProjectData();
+			// loadDataFiches();
+			// listViewFiches.requestFocus();
 		} catch (Exception e) {
 			MdcExceptionLogger.error(e, this);
 		}
@@ -215,6 +215,28 @@ public class SelectFicheActivity extends Activity implements OnClickListener {
 				}
 			});
 
+			// ////////////////////
+
+			listViewFiches.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+				@Override
+				public boolean onItemLongClick(AdapterView<?> parent, View view, int indexListItem, long id) {
+					try {
+
+						listViewFiches.performItemClick(listViewFiches.getAdapter().getView(indexListItem, null, null), indexListItem, listViewFiches
+								.getAdapter().getItemId(indexListItem));
+
+						buttonOpenFiche.performClick();
+						
+						
+					} catch (Exception e) {
+						MdcExceptionLogger.error(e, SelectFicheActivity.this);
+					}
+					return true;
+				}
+			});
+
+			// /////////////////////////////////////
+
 		} catch (Exception e) {
 			MdcExceptionLogger.error(e, this);
 		}
@@ -306,10 +328,9 @@ public class SelectFicheActivity extends Activity implements OnClickListener {
 					AlertDialog.Builder builder = new AlertDialog.Builder(this);
 
 					String ficheName = unitOfWork.getActiveFiche().getName();
-					//String builderMessage = getString(R.string.wil_u_fiche) + " " + ficheName + " " + getString(R.string.openen);
+					// String builderMessage = getString(R.string.wil_u_fiche) + " " + ficheName + " " + getString(R.string.openen);
 					String builderMessage = String.format(getString(R.string.do_you_want_to_open_fiche_x), ficheName);
-					
-					
+
 					builder.setNegativeButton(R.string.button_no, dialogClickListener).setMessage(builderMessage)
 							.setPositiveButton(R.string.button_yes, dialogClickListener).show();
 				} else {
