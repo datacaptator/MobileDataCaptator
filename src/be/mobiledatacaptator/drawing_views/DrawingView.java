@@ -20,8 +20,8 @@ import be.mobiledatacaptator.drawing_model.Line;
 import be.mobiledatacaptator.drawing_model.MultiLine;
 import be.mobiledatacaptator.drawing_model.Shape;
 import be.mobiledatacaptator.drawing_model.Text;
-import be.mobiledatacaptator.exception_logging.MdcExceptionLogger;
 import be.mobiledatacaptator.model.LayerCategory;
+import be.mobiledatacaptator.utilities.MdcExceptionLogger;
 import be.mobiledatacaptator.utilities.MdcUtil;
 
 public class DrawingView extends View implements OnTouchListener {
@@ -34,7 +34,6 @@ public class DrawingView extends View implements OnTouchListener {
 	private Boolean fromCenter = false;
 	private String inputText;
 	private DrawingActivity drawingActivity;
-
 
 	public DrawingView(Context context, AttributeSet attrs) {
 		super(context, attrs);
@@ -68,13 +67,14 @@ public class DrawingView extends View implements OnTouchListener {
 		try {
 			for (IDrawable figure : iDrawables) {
 				figure.draw(canvas);
-				
+
 			}
 		} catch (Exception e) {
 			MdcExceptionLogger.error(e, getContext());
 		}
 	}
 
+	@Override
 	public boolean onTouch(View view, MotionEvent event) {
 		int x = (int) event.getX();
 		int y = (int) event.getY();

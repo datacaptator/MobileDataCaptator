@@ -3,9 +3,9 @@ package be.mobiledatacaptator.drawing_model;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
-import be.mobiledatacaptator.model.LayerCategory;
 import android.graphics.Canvas;
 import android.graphics.Point;
+import be.mobiledatacaptator.model.LayerCategory;
 
 public class Line extends BaseFigure {
 	private Point startPoint;
@@ -24,6 +24,7 @@ public class Line extends BaseFigure {
 		return startPoint;
 	}
 
+	@Override
 	public void setStartPoint(Point startPoint) {
 		this.startPoint = startPoint;
 	}

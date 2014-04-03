@@ -6,16 +6,16 @@ import android.os.Bundle;
 import android.view.MenuItem;
 import android.widget.ImageView;
 import be.mobiledatacaptator.R;
-import be.mobiledatacaptator.exception_logging.MdcExceptionLogger;
 import be.mobiledatacaptator.model.Project;
 import be.mobiledatacaptator.model.UnitOfWork;
+import be.mobiledatacaptator.utilities.MdcExceptionLogger;
 
 public class DisplayPhotoActivity extends Activity {
 
-		@Override
+	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-	
+
 		try {
 			setContentView(R.layout.activity_display_photo);
 

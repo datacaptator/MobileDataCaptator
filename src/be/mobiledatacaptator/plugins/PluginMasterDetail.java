@@ -17,6 +17,7 @@ import android.app.Activity;
 import android.os.Bundle;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
@@ -63,7 +64,7 @@ public class PluginMasterDetail extends Activity {
 					android.R.layout.simple_list_item_activated_1, listDataFicheNames);
 			listViewPluginMasterDetail.setAdapter(adapter);
 			listViewPluginMasterDetail.setItemsCanFocus(true);
-			listViewPluginMasterDetail.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
+			listViewPluginMasterDetail.setChoiceMode(AbsListView.CHOICE_MODE_SINGLE);
 
 			listViewPluginMasterDetail.setOnItemClickListener(new OnItemClickListener() {
 				@Override
@@ -102,11 +103,11 @@ public class PluginMasterDetail extends Activity {
 
 							String s = nodeList.item(0).getTextContent();
 							nodeList = detailXml.getElementsByTagName("LeidingVorm");
-							s += nodeList.getLength() > 0 ?" - " + nodeList.item(0).getTextContent() : "";
+							s += nodeList.getLength() > 0 ? " - " + nodeList.item(0).getTextContent() : "";
 							nodeList = detailXml.getElementsByTagName("LeidingAfmeting1");
-							s += nodeList.getLength() > 0 ?" - " + nodeList.item(0).getTextContent() : "";
+							s += nodeList.getLength() > 0 ? " - " + nodeList.item(0).getTextContent() : "";
 							nodeList = detailXml.getElementsByTagName("LeidingAfmeting2");
-							s += nodeList.getLength() > 0 ?" - " + nodeList.item(0).getTextContent() : "";
+							s += nodeList.getLength() > 0 ? " - " + nodeList.item(0).getTextContent() : "";
 							// ...
 							teksten.add(s);
 						}
@@ -118,7 +119,7 @@ public class PluginMasterDetail extends Activity {
 					android.R.layout.simple_list_item_activated_1, teksten);
 			listViewPluginMasterDetail.setAdapter(adapter);
 			listViewPluginMasterDetail.setItemsCanFocus(true);
-			listViewPluginMasterDetail.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
+			listViewPluginMasterDetail.setChoiceMode(AbsListView.CHOICE_MODE_SINGLE);
 
 			listViewPluginMasterDetail.setOnItemClickListener(new OnItemClickListener() {
 				@Override

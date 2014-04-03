@@ -12,7 +12,7 @@ public class Fiche {
 	private String name;
 	private String path;
 	private List<Group> groups = new ArrayList<Group>();
-	
+
 	public void appendXml(Document doc) {
 		Element element = doc.createElement("DataFiche");
 		doc.appendChild(element);
@@ -53,5 +53,5 @@ public class Fiche {
 	public List<Group> getGroups() {
 		return groups;
 	}
-	
+
 }

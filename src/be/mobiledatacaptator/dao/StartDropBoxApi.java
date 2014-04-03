@@ -3,8 +3,8 @@ package be.mobiledatacaptator.dao;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
-import be.mobiledatacaptator.exception_logging.MdcExceptionLogger;
 import be.mobiledatacaptator.model.UnitOfWork;
+import be.mobiledatacaptator.utilities.MdcExceptionLogger;
 import be.mobiledatacaptator.utilities.MdcUtil;
 
 import com.dropbox.sync.android.DbxAccountManager;

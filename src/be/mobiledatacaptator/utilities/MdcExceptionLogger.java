@@ -1,4 +1,4 @@
-package be.mobiledatacaptator.exception_logging;
+package be.mobiledatacaptator.utilities;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;

@@ -25,6 +25,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.WindowManager;
+import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.AdapterView.OnItemLongClickListener;
@@ -35,13 +36,14 @@ import android.widget.ListView;
 import android.widget.TableLayout;
 import android.widget.TableRow;
 import be.mobiledatacaptator.R;
-import be.mobiledatacaptator.exception_logging.MdcExceptionLogger;
 import be.mobiledatacaptator.model.PhotoCategory;
 import be.mobiledatacaptator.model.Project;
 import be.mobiledatacaptator.model.UnitOfWork;
+import be.mobiledatacaptator.utilities.MdcExceptionLogger;
 import be.mobiledatacaptator.utilities.MdcUtil;
 
-public class TakePhotoActivity extends Activity implements OnClickListener, OnItemLongClickListener, OnItemClickListener {
+public class TakePhotoActivity extends Activity implements OnClickListener, OnItemLongClickListener,
+		OnItemClickListener {
 
 	final static int TAKE_PICTURE = 0;
 	private Project project;
@@ -53,11 +55,11 @@ public class TakePhotoActivity extends Activity implements OnClickListener, OnIt
 	private TableLayout tableLayoutPhotoCategory;
 	private Button buttonFreeSuffix, buttonDisplayPhoto, buttonDeletePhoto;
 	private EditText editTextFreeSuffix;
-	
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-			try {
+		try {
 			setContentView(R.layout.activity_take_photo);
 			unitOfWork = UnitOfWork.getInstance();
 			project = unitOfWork.getActiveProject();
@@ -113,7 +115,8 @@ public class TakePhotoActivity extends Activity implements OnClickListener, OnIt
 
 	private void loadPhotoNames() {
 		try {
-			listFotoNames = unitOfWork.getDao().getAllFilesFromPathWithExtension(project.getDataLocation(), ".jpg", false);
+			listFotoNames = unitOfWork.getDao().getAllFilesFromPathWithExtension(project.getDataLocation(), ".jpg",
+					false);
 
 			listThisFicheFotoNames = new ArrayList<String>();
 
@@ -123,10 +126,11 @@ public class TakePhotoActivity extends Activity implements OnClickListener, OnIt
 				}
 			}
 
-			ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_activated_1, listThisFicheFotoNames);
+			ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,
+					android.R.layout.simple_list_item_activated_1, listThisFicheFotoNames);
 			listViewPhotos.setAdapter(adapter);
 			listViewPhotos.setItemsCanFocus(true);
-			listViewPhotos.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
+			listViewPhotos.setChoiceMode(AbsListView.CHOICE_MODE_SINGLE);
 
 		} catch (Exception e) {
 			MdcExceptionLogger.error(e, this);
@@ -262,7 +266,7 @@ public class TakePhotoActivity extends Activity implements OnClickListener, OnIt
 				if (resultCode == RESULT_OK) {
 					savePhoto();
 				} else {
-					//throw new Exception("resultcode != RESULT_OK");
+					// throw new Exception("resultcode != RESULT_OK");
 				}
 			} else {
 				throw new Exception("requestCode != TAKE_PICTURE");
@@ -311,7 +315,8 @@ public class TakePhotoActivity extends Activity implements OnClickListener, OnIt
 
 			// Breedte aanpassen
 			if (origWidth > destWidth) {
-				bitmap = Bitmap.createScaledBitmap(bitmap, destWidth, (int) (origHeight / ((double) origWidth / destWidth)), false);
+				bitmap = Bitmap.createScaledBitmap(bitmap, destWidth,
+						(int) (origHeight / ((double) origWidth / destWidth)), false);
 			}
 
 			// Wegschrijven
@@ -371,8 +376,11 @@ public class TakePhotoActivity extends Activity implements OnClickListener, OnIt
 		try {
 			AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
 			alertDialogBuilder.setTitle(getString(R.string.delete_photo_));
-			alertDialogBuilder.setMessage(String.format(getString(R.string.click_yes_to_delete_photo), textSelectedPhoto)).setCancelable(false)
+			alertDialogBuilder
+					.setMessage(String.format(getString(R.string.click_yes_to_delete_photo), textSelectedPhoto))
+					.setCancelable(false)
 					.setPositiveButton(getString(R.string.button_yes), new DialogInterface.OnClickListener() {
+						@Override
 						public void onClick(DialogInterface dialog, int id) {
 							try {
 								unitOfWork.getDao().delete(project.getDataLocation() + textSelectedPhoto + ".jpg");
@@ -383,6 +391,7 @@ public class TakePhotoActivity extends Activity implements OnClickListener, OnIt
 							}
 						}
 					}).setNegativeButton(getString(R.string.button_no), new DialogInterface.OnClickListener() {
+						@Override
 						public void onClick(DialogInterface dialog, int id) {
 							dialog.cancel();
 						}

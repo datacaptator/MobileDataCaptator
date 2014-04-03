@@ -11,6 +11,6 @@ public interface IDrawable {
 	void setStartPoint(Point p);
 
 	Boolean addPoint(Point p);
-	
-	void appendXml(Document	doc, float screensize, float drawingsize) throws Exception;
+
+	void appendXml(Document doc, float screensize, float drawingsize) throws Exception;
 }

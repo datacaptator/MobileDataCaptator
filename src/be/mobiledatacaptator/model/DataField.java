@@ -210,7 +210,7 @@ public class DataField extends TableRow implements TextWatcher, OnItemSelectedLi
 			editTextValue.setEnabled(enabled);
 		}
 		activateLink = true;
-		executeLinkOnExit=false;
+		executeLinkOnExit = false;
 	}
 
 	private String getValue() {

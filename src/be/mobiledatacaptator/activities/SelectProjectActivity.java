@@ -16,6 +16,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
@@ -23,9 +24,9 @@ import android.widget.Button;
 import android.widget.ListView;
 import be.mobiledatacaptator.R;
 import be.mobiledatacaptator.dao.StartDropBoxApi;
-import be.mobiledatacaptator.exception_logging.MdcExceptionLogger;
 import be.mobiledatacaptator.model.Project;
 import be.mobiledatacaptator.model.UnitOfWork;
+import be.mobiledatacaptator.utilities.MdcExceptionLogger;
 import be.mobiledatacaptator.utilities.MdcUtil;
 
 public class SelectProjectActivity extends Activity {
@@ -68,7 +69,8 @@ public class SelectProjectActivity extends Activity {
 				public void onItemClick(AdapterView<?> arg0, View arg1, int indexListItem, long arg3) {
 
 					try {
-						UnitOfWork.getInstance().setActiveProject((Project) listViewProjects.getItemAtPosition(indexListItem));
+						UnitOfWork.getInstance().setActiveProject(
+								(Project) listViewProjects.getItemAtPosition(indexListItem));
 					} catch (Exception e) {
 						MdcExceptionLogger.error(e, SelectProjectActivity.this);
 					}
@@ -80,7 +82,8 @@ public class SelectProjectActivity extends Activity {
 				public boolean onItemLongClick(AdapterView<?> parent, View view, int indexListItem, long id) {
 					try {
 
-						listViewProjects.performItemClick(listViewProjects.getAdapter().getView(indexListItem, null, null), indexListItem,
+						listViewProjects.performItemClick(
+								listViewProjects.getAdapter().getView(indexListItem, null, null), indexListItem,
 								listViewProjects.getAdapter().getItemId(indexListItem));
 
 						try {
@@ -89,7 +92,8 @@ public class SelectProjectActivity extends Activity {
 								startActivity(intent);
 
 							} else {
-								MdcUtil.showToastShort(getString(R.string.select_project_first), getApplicationContext());
+								MdcUtil.showToastShort(getString(R.string.select_project_first),
+										getApplicationContext());
 							}
 						} catch (Exception e) {
 							MdcExceptionLogger.error(e, SelectProjectActivity.this);
@@ -142,11 +146,12 @@ public class SelectProjectActivity extends Activity {
 				projects.add(myProject);
 			}
 
-			ArrayAdapter<Project> myAdapter = new ArrayAdapter<Project>(this, android.R.layout.simple_list_item_activated_1, projects);
+			ArrayAdapter<Project> myAdapter = new ArrayAdapter<Project>(this,
+					android.R.layout.simple_list_item_activated_1, projects);
 
 			listViewProjects.setAdapter(myAdapter);
 			listViewProjects.setItemsCanFocus(true);
-			listViewProjects.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
+			listViewProjects.setChoiceMode(AbsListView.CHOICE_MODE_SINGLE);
 
 		} catch (Exception e) {
 			MdcExceptionLogger.error(e, this);

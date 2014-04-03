@@ -81,8 +81,8 @@ public class Group extends ViewPager {
 
 				PagerTitleStrip strip = new PagerTitleStrip(getContext());
 				ViewPager.LayoutParams layoutParams = new ViewPager.LayoutParams();
-				layoutParams.height = ViewPager.LayoutParams.WRAP_CONTENT;
-				layoutParams.width = ViewPager.LayoutParams.MATCH_PARENT;
+				layoutParams.height = android.view.ViewGroup.LayoutParams.WRAP_CONTENT;
+				layoutParams.width = android.view.ViewGroup.LayoutParams.MATCH_PARENT;
 				layoutParams.gravity = Gravity.TOP;
 				strip.setBackgroundColor(Color.DKGRAY);
 				addView(strip, layoutParams);

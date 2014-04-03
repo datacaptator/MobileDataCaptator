@@ -24,6 +24,7 @@ import android.os.Bundle;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
@@ -31,12 +32,12 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
 import be.mobiledatacaptator.R;
-import be.mobiledatacaptator.exception_logging.MdcExceptionLogger;
 import be.mobiledatacaptator.model.Fiche;
 import be.mobiledatacaptator.model.LayerCategory;
 import be.mobiledatacaptator.model.PhotoCategory;
 import be.mobiledatacaptator.model.Project;
 import be.mobiledatacaptator.model.UnitOfWork;
+import be.mobiledatacaptator.utilities.MdcExceptionLogger;
 import be.mobiledatacaptator.utilities.MdcUtil;
 
 public class SelectFicheActivity extends Activity implements OnClickListener {
@@ -61,9 +62,9 @@ public class SelectFicheActivity extends Activity implements OnClickListener {
 
 			listViewFiches = (ListView) findViewById(R.id.listViewFiches);
 			// TODO - 3 regels moeten in comment na testen
-			loadProjectData();
-			loadDataFiches();
-			listViewFiches.requestFocus();
+			// loadProjectData();
+			// loadDataFiches();
+			// listViewFiches.requestFocus();
 
 			buttonAddNumber = (Button) findViewById(R.id.buttonAddNumber);
 			buttonOpenFiche = (Button) findViewById(R.id.buttonOpenFiche);
@@ -86,9 +87,9 @@ public class SelectFicheActivity extends Activity implements OnClickListener {
 
 		try {
 			// TODO - 3 regels moeten uit comment na testen
-			// loadProjectData();
-			// loadDataFiches();
-			// listViewFiches.requestFocus();
+			loadProjectData();
+			loadDataFiches();
+			listViewFiches.requestFocus();
 		} catch (Exception e) {
 			MdcExceptionLogger.error(e, this);
 		}
@@ -129,7 +130,8 @@ public class SelectFicheActivity extends Activity implements OnClickListener {
 				project.setPhotoCategories(new ArrayList<PhotoCategory>());
 				for (int i = 0; i < nodes.getLength(); i++) {
 					Node node = nodes.item(i);
-					PhotoCategory photoCategorie = new PhotoCategory(((Element) node).getAttribute("Name"), ((Element) node).getAttribute("Suffix"));
+					PhotoCategory photoCategorie = new PhotoCategory(((Element) node).getAttribute("Name"),
+							((Element) node).getAttribute("Suffix"));
 					project.getPhotoCategories().add(photoCategorie);
 				}
 
@@ -161,8 +163,8 @@ public class SelectFicheActivity extends Activity implements OnClickListener {
 				for (int i = 0; i < layerCategories.getLength(); i++) {
 					Node node = layerCategories.item(i);
 
-					LayerCategory layerCategorie = new LayerCategory(((Element) node).getAttribute("Name"), Color.parseColor(((Element) node)
-							.getAttribute("Color")));
+					LayerCategory layerCategorie = new LayerCategory(((Element) node).getAttribute("Name"),
+							Color.parseColor(((Element) node).getAttribute("Color")));
 					project.getLayerCategories().add(layerCategorie);
 
 				}
@@ -196,14 +198,16 @@ public class SelectFicheActivity extends Activity implements OnClickListener {
 
 	private void loadDataFiches() {
 		try {
-			List<String> listDataFicheNames = unitOfWork.getDao().getAllFilesFromPathWithExtension(project.getDataLocation(), ".xml", false);
+			List<String> listDataFicheNames = unitOfWork.getDao().getAllFilesFromPathWithExtension(
+					project.getDataLocation(), ".xml", false);
 
 			Collections.sort(listDataFicheNames, Collections.reverseOrder());
 
-			ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_activated_1, listDataFicheNames);
+			ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,
+					android.R.layout.simple_list_item_activated_1, listDataFicheNames);
 			listViewFiches.setAdapter(adapter);
 			listViewFiches.setItemsCanFocus(true);
-			listViewFiches.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
+			listViewFiches.setChoiceMode(AbsListView.CHOICE_MODE_SINGLE);
 
 			listViewFiches.setOnItemClickListener(new OnItemClickListener() {
 				@Override
@@ -222,12 +226,11 @@ public class SelectFicheActivity extends Activity implements OnClickListener {
 				public boolean onItemLongClick(AdapterView<?> parent, View view, int indexListItem, long id) {
 					try {
 
-						listViewFiches.performItemClick(listViewFiches.getAdapter().getView(indexListItem, null, null), indexListItem, listViewFiches
-								.getAdapter().getItemId(indexListItem));
+						listViewFiches.performItemClick(listViewFiches.getAdapter().getView(indexListItem, null, null),
+								indexListItem, listViewFiches.getAdapter().getItemId(indexListItem));
 
 						buttonOpenFiche.performClick();
-						
-						
+
 					} catch (Exception e) {
 						MdcExceptionLogger.error(e, SelectFicheActivity.this);
 					}
@@ -298,7 +301,8 @@ public class SelectFicheActivity extends Activity implements OnClickListener {
 					editTextFicheName.setText(result + "1");
 				}
 
-				setTitle(MdcUtil.setActivityTitle(editTextFicheName.getText().toString(), unitOfWork, getApplicationContext()));
+				setTitle(MdcUtil.setActivityTitle(editTextFicheName.getText().toString(), unitOfWork,
+						getApplicationContext()));
 			}
 		} catch (NumberFormatException e) {
 			MdcExceptionLogger.error(e, this);
@@ -328,7 +332,8 @@ public class SelectFicheActivity extends Activity implements OnClickListener {
 					AlertDialog.Builder builder = new AlertDialog.Builder(this);
 
 					String ficheName = unitOfWork.getActiveFiche().getName();
-					// String builderMessage = getString(R.string.wil_u_fiche) + " " + ficheName + " " + getString(R.string.openen);
+					// String builderMessage = getString(R.string.wil_u_fiche) +
+					// " " + ficheName + " " + getString(R.string.openen);
 					String builderMessage = String.format(getString(R.string.do_you_want_to_open_fiche_x), ficheName);
 
 					builder.setNegativeButton(R.string.button_no, dialogClickListener).setMessage(builderMessage)

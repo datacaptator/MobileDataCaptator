@@ -25,18 +25,18 @@ import android.view.MenuItem;
 import android.widget.TabHost;
 import be.mobiledatacaptator.R;
 import be.mobiledatacaptator.adapters.FichePagerAdapter;
-import be.mobiledatacaptator.exception_logging.MdcExceptionLogger;
 import be.mobiledatacaptator.model.DataField;
 import be.mobiledatacaptator.model.Fiche;
 import be.mobiledatacaptator.model.Group;
 import be.mobiledatacaptator.model.Tab;
 import be.mobiledatacaptator.model.UnitOfWork;
+import be.mobiledatacaptator.utilities.MdcExceptionLogger;
 import be.mobiledatacaptator.utilities.MdcUtil;
 
 public class FicheActivity extends FragmentActivity {
 
 	private UnitOfWork unitOfWork;
-	
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -71,7 +71,7 @@ public class FicheActivity extends FragmentActivity {
 	@Override
 	protected void onPause() {
 		super.onPause();
-		
+
 		saveFiche();
 	}
 
@@ -205,6 +205,7 @@ public class FicheActivity extends FragmentActivity {
 				String boodschap = builder.toString();
 				new AlertDialog.Builder(this).setMessage(boodschap).setNegativeButton(R.string.dialog_cancel, null)
 						.setPositiveButton(R.string.dialog_go, new OnClickListener() {
+							@Override
 							public void onClick(DialogInterface arg0, int arg1) {
 								goBack();
 							}
