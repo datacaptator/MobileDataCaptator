@@ -63,6 +63,7 @@ public class SelectProjectActivity extends Activity {
 			buttonOpenProject = (Button) findViewById(R.id.buttonOpenProject);
 
 			loadProjects();
+			unitOfWork.setActiveProject(null);
 
 			listViewProjects.setOnItemClickListener(new OnItemClickListener() {
 				@Override
