@@ -345,6 +345,7 @@ public class DrawingActivity extends Activity implements OnClickListener, OnItem
 			List<IDrawable> iDrawables = drawingView.getiDrawables();
 			if (iDrawables.size() > 0) {
 				Element rootElement = doc.createElement("ConfiguratieSchets");
+				rootElement.setAttribute("DrawingSize", Integer.toString(project.getDrawingSize()));
 				doc.appendChild(rootElement);
 				for (IDrawable iDrawable : iDrawables) {
 					iDrawable.appendXml(doc, drawingView.getMeasuredWidth(), project.getDrawingSize());
