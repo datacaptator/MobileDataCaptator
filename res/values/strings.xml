@@ -2,11 +2,11 @@
 <resources>
 
     <!-- Dropbox instellingen voor SPC-account: -->
-    <!-- <string name="dropbox_location_projects">MobileDataCaptator/Projects.xml</string> -->
+    <string name="dropbox_location_projects">MobileDataCaptator/Projects.xml</string>
 
 
     <!-- Dropbox instellingen voor MobileDataCaptator-account: -->
-    <string name="dropbox_location_projects">DataCaptator/AppData/Projects.xml</string>
+<!--     <string name="dropbox_location_projects">DataCaptator/AppData/Projects.xml</string> -->
 
     <!-- Algemeen -->
     <string name="app_name">Mobile DataCaptator</string>

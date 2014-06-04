@@ -76,12 +76,12 @@ public class MdcExceptionLogger {
 
 		try {
 			// Voor SPC-account:
-			// unitOfWork.getDao().appendStringToFile("MobileDataCaptator/exception_log.txt",
-			// eMsg.toString() + ";\n");
+			 unitOfWork.getDao().appendStringToFile("MobileDataCaptator/exception_log.txt",
+			 eMsg.toString() + ";\n");
 
 			// Voor DataCaptator-account:
-			unitOfWork.getDao().appendStringToFile("DataCaptator/ExceptionLog/exception_log.txt",
-					eMsg.toString() + ";\n");
+			// unitOfWork.getDao().appendStringToFile("DataCaptator/ExceptionLog/exception_log.txt",
+			// eMsg.toString() + ";\n");
 
 			if (level == Level.ERROR) {
 				showExceptionDialog(e);

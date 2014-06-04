@@ -13,12 +13,12 @@ import com.dropbox.sync.android.DbxFileSystem;
 public class StartDropBoxApi extends Activity {
 
 	// Dropbox instellingen voor SPC-account:
-	// public final static String APPKEY = "1iuuns3gstd6kbt";
-	// public final static String APPSECRET = "pbxmkw7vj47k4l7";
+	public final static String APPKEY = "1iuuns3gstd6kbt";
+	public final static String APPSECRET = "pbxmkw7vj47k4l7";
 
 	// Dropbox instellingen voor MobileDataCaptator-account:
-	public final static String APPKEY = "1bzrye5f167u7ov";
-	public final static String APPSECRET = "d0hprnxcunyp18h";
+	// public final static String APPKEY = "1bzrye5f167u7ov";
+	// public final static String APPSECRET = "d0hprnxcunyp18h";
 
 	public final static int REQUEST_LINK_TO_DBX = 0;
 

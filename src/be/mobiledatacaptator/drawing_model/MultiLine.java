@@ -26,13 +26,25 @@ public class MultiLine extends BaseFigure {
 
 	@Override
 	public void setStartPoint(Point p) {
-		punten.add(p);
+		if (!PointEqualsPresident(p))
+			punten.add(p);
+		if (punten.size() == 1)
+			punten.add(p);
 	}
 
 	@Override
 	public Boolean addPoint(Point p) {
-		punten.add(p);
+		if (!PointEqualsPresident(p))
+			punten.add(p);
 		return false;
+	}
+
+	public void moveLastPoint(Point p) {
+		if (punten.size() == 0) {
+			punten.add(p);
+		} else {
+			punten.set(punten.size() - 1, p);
+		}
 	}
 
 	@Override
@@ -63,6 +75,12 @@ public class MultiLine extends BaseFigure {
 
 		}
 
+	}
+
+	private boolean PointEqualsPresident(Point p) {
+		if (punten.size() == 0)
+			return false;
+		return punten.get(punten.size() - 1).equals(p.x, p.y);
 	}
 
 }

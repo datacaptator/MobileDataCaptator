@@ -7,6 +7,7 @@ import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Point;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnTouchListener;
@@ -108,7 +109,11 @@ public class DrawingView extends View implements OnTouchListener {
 			break;
 
 		case MotionEvent.ACTION_MOVE:
-			activeFigure.addPoint(p);
+			if (activeFigure instanceof MultiLine) {
+				((MultiLine) activeFigure).moveLastPoint(p);
+			} else {
+				activeFigure.addPoint(p);
+			}
 
 			invalidate();
 
@@ -171,6 +176,7 @@ public class DrawingView extends View implements OnTouchListener {
 		if (!(iDrawables.isEmpty())) {
 			iDrawables.remove(iDrawables.size() - 1);
 			invalidate();
+			startNewFigure = true;
 		}
 	}
 

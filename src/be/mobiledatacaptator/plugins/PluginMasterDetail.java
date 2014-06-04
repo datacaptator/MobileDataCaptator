@@ -104,9 +104,9 @@ public class PluginMasterDetail extends Activity {
 							String s = nodeList.item(0).getTextContent();
 							nodeList = detailXml.getElementsByTagName("LeidingVorm");
 							s += nodeList.getLength() > 0 ? " - " + nodeList.item(0).getTextContent() : "";
-							nodeList = detailXml.getElementsByTagName("LeidingAfmeting1");
+							nodeList = detailXml.getElementsByTagName("LeidingBreedte");
 							s += nodeList.getLength() > 0 ? " - " + nodeList.item(0).getTextContent() : "";
-							nodeList = detailXml.getElementsByTagName("LeidingAfmeting2");
+							nodeList = detailXml.getElementsByTagName("LeidingHoogte");
 							s += nodeList.getLength() > 0 ? " - " + nodeList.item(0).getTextContent() : "";
 							// ...
 							teksten.add(s);
