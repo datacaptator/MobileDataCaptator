@@ -24,9 +24,28 @@ public class Line extends BaseFigure {
 		return startPoint;
 	}
 
-	@Override
 	public void setStartPoint(Point startPoint) {
 		this.startPoint = startPoint;
+	}
+
+	public Boolean addPoint(Point point) {
+		this.endPoint = point;
+		return true;
+	}
+
+	@Override
+	public void setDown(Point p) {
+		setStartPoint(p);
+	}
+
+	@Override
+	public void setMove(Point p) {
+		addPoint(p);
+	}
+
+	@Override
+	public Boolean setUp(Point p) {
+		return addPoint(p);
 	}
 
 	public Point getEndPoint() {
@@ -46,12 +65,6 @@ public class Line extends BaseFigure {
 	@Override
 	public String toString() {
 		return "MdcLine";
-	}
-
-	@Override
-	public Boolean addPoint(Point point) {
-		this.endPoint = point;
-		return true;
 	}
 
 	@Override

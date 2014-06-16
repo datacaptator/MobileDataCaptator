@@ -57,15 +57,19 @@ public class Text extends BaseFigure {
 	}
 
 	@Override
-	public Boolean addPoint(Point point) {
-		this.point = point;
-		return true;
+	public void setDown(Point p) {
+		this.point = p;
 	}
 
 	@Override
-	public void setStartPoint(Point point) {
-		this.point = point;
+	public void setMove(Point p) {
+		this.point = p;
+	}
 
+	@Override
+	public Boolean setUp(Point p) {
+		this.point = p;
+		return true;
 	}
 
 	@Override

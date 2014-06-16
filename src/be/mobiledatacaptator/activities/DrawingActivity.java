@@ -29,6 +29,7 @@ import android.text.TextWatcher;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.View.OnLongClickListener;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.ArrayAdapter;
@@ -44,7 +45,7 @@ import be.mobiledatacaptator.drawing_model.FigureType;
 import be.mobiledatacaptator.drawing_model.IDrawable;
 import be.mobiledatacaptator.drawing_model.Line;
 import be.mobiledatacaptator.drawing_model.MultiLine;
-import be.mobiledatacaptator.drawing_model.Shape;
+import be.mobiledatacaptator.drawing_model.RotatedShape;
 import be.mobiledatacaptator.drawing_model.Text;
 import be.mobiledatacaptator.drawing_views.DrawingView;
 import be.mobiledatacaptator.model.LayerCategory;
@@ -104,6 +105,31 @@ public class DrawingActivity extends Activity implements OnClickListener, OnItem
 			buttonNextChar.setOnClickListener(this);
 			checkBoxCenter.setOnCheckedChangeListener(this);
 			editTextInputText.addTextChangedListener(this);
+
+			buttonDrawShape.setOnLongClickListener(new OnLongClickListener() {
+				@Override
+				public boolean onLongClick(View v) {
+					if (buttonDrawShape.getText().equals(getString(R.string.button_draw_shape))) {
+						buttonDrawShape.setText(getString(R.string.button_draw_shape_rotated));
+					} else {
+						buttonDrawShape.setText(getString(R.string.button_draw_shape));
+					}
+					return false;
+				}
+			});
+
+			buttonDrawMultiLine.setOnLongClickListener(new OnLongClickListener() {
+				@Override
+				public boolean onLongClick(View v) {
+					if (buttonDrawMultiLine.getText().equals(getString(R.string.button_draw_multi_line))) {
+						buttonDrawMultiLine.setText(getString(R.string.button_draw_multi_Shape));
+					} else {
+						buttonDrawMultiLine.setText(getString(R.string.button_draw_multi_line));
+					}
+
+					return false;
+				}
+			});
 
 			setTitle(MdcUtil.setActivityTitle(unitOfWork, getApplicationContext()));
 
@@ -200,35 +226,20 @@ public class DrawingActivity extends Activity implements OnClickListener, OnItem
 
 						if (closedLine) {
 
-							Shape shape = new Shape();
+							RotatedShape shape = new RotatedShape();
 							shape.setLayer(layer);
 
 							NodeList punten = eElement.getElementsByTagName("Punt");
-							Point startPoint = null;
-							Point endPoint = null;
 
 							for (int pnt = 0; pnt < punten.getLength(); pnt++) {
 								Node puntNode = punten.item(pnt);
 
 								Element ePunt = (Element) puntNode;
 
-								if (pnt == 0) {
+								int x = Integer.valueOf(ePunt.getElementsByTagName("X").item(0).getTextContent());
+								int y = Integer.valueOf(ePunt.getElementsByTagName("Y").item(0).getTextContent());
 
-									int x = Integer.valueOf(ePunt.getElementsByTagName("X").item(0).getTextContent());
-									int y = Integer.valueOf(ePunt.getElementsByTagName("Y").item(0).getTextContent());
-
-									startPoint = new Point(getScaledValue(x), getScaledValue(y));
-
-									shape.setXMLStartPoint(startPoint);
-
-								} else if (pnt == 2) {
-									int x = Integer.valueOf(ePunt.getElementsByTagName("X").item(0).getTextContent());
-									int y = Integer.valueOf(ePunt.getElementsByTagName("Y").item(0).getTextContent());
-
-									endPoint = new Point(getScaledValue(x), getScaledValue(y));
-									shape.setXMLEndPoint(endPoint);
-
-								}
+								shape.getPunten()[pnt] = new Point(getScaledValue(x), getScaledValue(y));
 							}
 
 							drawingView.addShapeToList(shape);
@@ -271,7 +282,12 @@ public class DrawingActivity extends Activity implements OnClickListener, OnItem
 						LayerCategory layer = returnLayer((eElement.getElementsByTagName("Layer").item(0)
 								.getTextContent()));
 
-						MultiLine multiLine = new MultiLine();
+						boolean closedLine = false;
+						if (eElement.getElementsByTagName("Gesloten").getLength() > 0)
+							closedLine = eElement.getElementsByTagName("Gesloten").item(0).getTextContent()
+									.equalsIgnoreCase("ja");
+
+						MultiLine multiLine = new MultiLine(closedLine);
 						multiLine.setLayer(layer);
 
 						NodeList punten = eElement.getElementsByTagName("Punt");
@@ -284,7 +300,7 @@ public class DrawingActivity extends Activity implements OnClickListener, OnItem
 							int x = Integer.valueOf(ePunt.getElementsByTagName("X").item(0).getTextContent());
 							int y = Integer.valueOf(ePunt.getElementsByTagName("Y").item(0).getTextContent());
 
-							multiLine.addPoint(new Point(getScaledValue(x), getScaledValue(y)));
+							multiLine.setUp(new Point(getScaledValue(x), getScaledValue(y)));
 						}
 
 						drawingView.addShapeToList(multiLine);
@@ -395,11 +411,19 @@ public class DrawingActivity extends Activity implements OnClickListener, OnItem
 				buttonDrawLine.setTextColor(Color.GREEN);
 				break;
 			case R.id.buttonDrawShape:
-				drawingView.setFigureType(FigureType.Shape);
+				if (buttonDrawShape.getText().equals(getString(R.string.button_draw_shape))) {
+					drawingView.setFigureType(FigureType.Shape);
+				} else {
+					drawingView.setFigureType(FigureType.RotatedShape);
+				}
 				buttonDrawShape.setTextColor(Color.GREEN);
 				break;
 			case R.id.buttonDrawMultiLine:
-				drawingView.setFigureType(FigureType.Multiline);
+				if (buttonDrawMultiLine.getText().equals(getString(R.string.button_draw_multi_line))) {
+					drawingView.setFigureType(FigureType.Multiline);
+				} else {
+					drawingView.setFigureType(FigureType.MultiShape);
+				}
 				buttonDrawMultiLine.setTextColor(Color.GREEN);
 				break;
 			case R.id.buttonDrawUndo:

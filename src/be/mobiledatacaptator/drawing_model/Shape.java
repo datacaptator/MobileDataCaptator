@@ -15,15 +15,12 @@ public class Shape extends BaseFigure {
 	@Override
 	public void draw(Canvas canvas) {
 		canvas.drawRect(l, b, r, o, getPaint());
-
 	}
 
-	@Override
 	public void setStartPoint(Point p) {
 		centerPoint = p;
 	}
 
-	@Override
 	public Boolean addPoint(Point p) {
 		endPoint = p;
 
@@ -32,6 +29,21 @@ public class Shape extends BaseFigure {
 		startPoint.y = (centerPoint.y - (endPoint.y - centerPoint.y));
 		bereken();
 		return true;
+	}
+
+	@Override
+	public void setDown(Point p) {
+		setStartPoint(p);
+	}
+
+	@Override
+	public void setMove(Point p) {
+		addPoint(p);
+	}
+
+	@Override
+	public Boolean setUp(Point p) {
+		return addPoint(p);
 	}
 
 	private void bereken() {

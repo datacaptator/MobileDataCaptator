@@ -7,7 +7,6 @@ import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Point;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnTouchListener;
@@ -19,6 +18,7 @@ import be.mobiledatacaptator.drawing_model.FigureType;
 import be.mobiledatacaptator.drawing_model.IDrawable;
 import be.mobiledatacaptator.drawing_model.Line;
 import be.mobiledatacaptator.drawing_model.MultiLine;
+import be.mobiledatacaptator.drawing_model.RotatedShape;
 import be.mobiledatacaptator.drawing_model.Shape;
 import be.mobiledatacaptator.drawing_model.Text;
 import be.mobiledatacaptator.model.LayerCategory;
@@ -87,7 +87,14 @@ public class DrawingView extends View implements OnTouchListener {
 			if (startNewFigure) {
 				makeNewFigure();
 			}
-			activeFigure.setStartPoint(p);
+
+			if (fromCenter) {
+				p.x = view.getWidth() / 2;
+				p.y = view.getHeight() / 2;
+			}
+
+			activeFigure.setDown(p);
+
 			activeFigure.setLayer(getLayer());
 
 			if (activeFigure instanceof Text) {
@@ -99,31 +106,16 @@ public class DrawingView extends View implements OnTouchListener {
 					MdcUtil.showToastShort(R.string.enter_text, getContext());
 				}
 			}
-
-			if (fromCenter) {
-				p.x = view.getWidth() / 2;
-				p.y = view.getHeight() / 2;
-				activeFigure.setStartPoint(p);
-			}
-
 			break;
 
 		case MotionEvent.ACTION_MOVE:
-			if (activeFigure instanceof MultiLine) {
-				((MultiLine) activeFigure).moveLastPoint(p);
-			} else {
-				activeFigure.addPoint(p);
-			}
-
+			activeFigure.setMove(p);
 			invalidate();
-
 			break;
 
 		case MotionEvent.ACTION_UP:
-			startNewFigure = activeFigure.addPoint(p);
-
+			startNewFigure = activeFigure.setUp(p);
 			invalidate();
-
 			break;
 
 		default:
@@ -159,8 +151,14 @@ public class DrawingView extends View implements OnTouchListener {
 		case Shape:
 			activeFigure = new Shape();
 			break;
+		case RotatedShape:
+			activeFigure = new RotatedShape();
+			break;
 		case Multiline:
-			activeFigure = new MultiLine();
+			activeFigure = new MultiLine(false);
+			break;
+		case MultiShape:
+			activeFigure = new MultiLine(true);
 			break;
 		case Text:
 			activeFigure = new Text();

@@ -20,13 +20,27 @@ public class Circle extends BaseFigure {
 		setLayer(layer);
 	}
 
-	@Override
 	public Boolean addPoint(Point addPoint) {
 		float a = addPoint.x - point.x;
 		float b = addPoint.y - point.y;
 
 		radius = (float) Math.sqrt(a * a + b * b);
 		return true;
+	}
+
+	@Override
+	public void setDown(Point p) {
+		this.point = p;
+	}
+
+	@Override
+	public void setMove(Point p) {
+		addPoint(p);
+	}
+
+	@Override
+	public Boolean setUp(Point p) {
+		return addPoint(p);
 	}
 
 	public Point getPoint() {
@@ -48,12 +62,6 @@ public class Circle extends BaseFigure {
 	@Override
 	public String toString() {
 		return "Circle";
-	}
-
-	@Override
-	public void setStartPoint(Point startPoint) {
-		this.point = startPoint;
-
 	}
 
 	@Override
