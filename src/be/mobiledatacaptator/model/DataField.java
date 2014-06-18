@@ -277,7 +277,7 @@ public class DataField extends TableRow implements TextWatcher, OnItemSelectedLi
 								if (linkArr[i].equals("THIS")) {
 									d1 = new BigDecimal(getValue());
 								} else {
-									DataField df = getDatafieldByName(linkArr[i]);
+									DataField df = getFirstNonEmtyDatafieldByName(linkArr[i]);
 									d1 = new BigDecimal(df != null ? df.getValue() : linkArr[i]);
 								}
 							} catch (NumberFormatException e) {
@@ -289,7 +289,7 @@ public class DataField extends TableRow implements TextWatcher, OnItemSelectedLi
 									if (linkArr[i].equals("THIS")) {
 										d2 = new BigDecimal(getValue());
 									} else {
-										DataField df = getDatafieldByName(linkArr[i]);
+										DataField df = getFirstNonEmtyDatafieldByName(linkArr[i]);
 										d2 = new BigDecimal(df != null ? df.getValue() : linkArr[i]);
 									}
 								} catch (NumberFormatException e) {
@@ -373,6 +373,20 @@ public class DataField extends TableRow implements TextWatcher, OnItemSelectedLi
 			}
 		}
 		return null;
+	}
+
+	private DataField getFirstNonEmtyDatafieldByName(String name) {
+		String fne = "FIRSTNONEMPTY";
+		if (name.toUpperCase().startsWith("FIRSTNONEMPTY")) {
+			String[] fields = name.substring(fne.length() + 1, name.length() - 1).split(",");
+			for (String s : fields) {
+				DataField dataField = getDatafieldByName(s);
+				if (dataField.getValue() != null && !dataField.getValue().isEmpty())
+					return dataField;
+			}
+			return null;
+		} else
+			return getDatafieldByName(name);
 	}
 
 	public String getName() {
