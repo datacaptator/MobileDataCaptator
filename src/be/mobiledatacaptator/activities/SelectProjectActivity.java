@@ -12,8 +12,12 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Environment;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.AbsListView;
@@ -67,55 +71,55 @@ public class SelectProjectActivity extends Activity {
 
 			listViewProjects.setOnItemClickListener(new OnItemClickListener() {
 				@Override
-				public void onItemClick(AdapterView<?> arg0, View arg1, int indexListItem, long arg3) {
+				public void onItemClick(AdapterView<?> arg0, View arg1,
+						int indexListItem, long arg3) {
 
 					try {
 						UnitOfWork.getInstance().setActiveProject(
-								(Project) listViewProjects.getItemAtPosition(indexListItem));
+								(Project) listViewProjects
+										.getItemAtPosition(indexListItem));
 					} catch (Exception e) {
 						MdcExceptionLogger.error(e, SelectProjectActivity.this);
 					}
 				}
 			});
 
-			listViewProjects.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
-				@Override
-				public boolean onItemLongClick(AdapterView<?> parent, View view, int indexListItem, long id) {
-					try {
+			listViewProjects
+					.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+						@Override
+						public boolean onItemLongClick(AdapterView<?> parent,
+								View view, int indexListItem, long id) {
+							try {
 
-						listViewProjects.performItemClick(
-								listViewProjects.getAdapter().getView(indexListItem, null, null), indexListItem,
-								listViewProjects.getAdapter().getItemId(indexListItem));
+								listViewProjects.performItemClick(
+										listViewProjects.getAdapter().getView(
+												indexListItem, null, null),
+										indexListItem,
+										listViewProjects.getAdapter()
+												.getItemId(indexListItem));
 
-						try {
-							if (UnitOfWork.getInstance().getActiveProject() != null) {
-								Intent intent = new Intent(listViewProjects.getContext(), SelectFicheActivity.class);
-								startActivity(intent);
-
-							} else {
-								MdcUtil.showToastShort(getString(R.string.select_project_first),
-										getApplicationContext());
+								saveProjectData();
+							} catch (Exception e) {
+								MdcExceptionLogger.error(e,
+										SelectProjectActivity.this);
 							}
-						} catch (Exception e) {
-							MdcExceptionLogger.error(e, SelectProjectActivity.this);
+							return true;
 						}
-					} catch (Exception e) {
-						MdcExceptionLogger.error(e, SelectProjectActivity.this);
-					}
-					return true;
-				}
-			});
+					});
 
 			buttonOpenProject.setOnClickListener(new OnClickListener() {
 				@Override
 				public void onClick(View button) {
 					try {
 						if (UnitOfWork.getInstance().getActiveProject() != null) {
-							Intent intent = new Intent(button.getContext(), SelectFicheActivity.class);
+							Intent intent = new Intent(button.getContext(),
+									SelectFicheActivity.class);
 							startActivity(intent);
 
 						} else {
-							MdcUtil.showToastShort(getString(R.string.select_project_first), getApplicationContext());
+							MdcUtil.showToastShort(
+									getString(R.string.select_project_first),
+									getApplicationContext());
 						}
 					} catch (Exception e) {
 						MdcExceptionLogger.error(e, SelectProjectActivity.this);
@@ -131,8 +135,10 @@ public class SelectProjectActivity extends Activity {
 		try {
 			ArrayList<Project> projects = new ArrayList<Project>();
 
-			String xml = unitOfWork.getDao().getFilecontent(getString(R.string.dropbox_location_projects));
-			DocumentBuilder db = DocumentBuilderFactory.newInstance().newDocumentBuilder();
+			String xml = unitOfWork.getDao().getFilecontent(
+					getString(R.string.dropbox_location_projects));
+			DocumentBuilder db = DocumentBuilderFactory.newInstance()
+					.newDocumentBuilder();
 			Document dom = db.parse(new ByteArrayInputStream(xml.getBytes()));
 
 			Element root = dom.getDocumentElement();
@@ -141,8 +147,10 @@ public class SelectProjectActivity extends Activity {
 				Project myProject = new Project();
 				Node projectNode = forms.item(i);
 
-				myProject.setName(projectNode.getAttributes().getNamedItem("Name").getNodeValue());
-				myProject.setTemplate(projectNode.getAttributes().getNamedItem("Template").getNodeValue());
+				myProject.setName(projectNode.getAttributes()
+						.getNamedItem("Name").getNodeValue());
+				myProject.setTemplate(projectNode.getAttributes()
+						.getNamedItem("Template").getNodeValue());
 
 				projects.add(myProject);
 			}
@@ -157,6 +165,65 @@ public class SelectProjectActivity extends Activity {
 		} catch (Exception e) {
 			MdcExceptionLogger.error(e, this);
 		}
+	}
+
+	private void saveProjectData() {
+		try {
+			if (isExternalStorageWritable()
+					&& unitOfWork.getActiveProject() != null) {
+				//
+				final Context ctxt = this;
+				DialogInterface.OnClickListener dialogClickListener = new DialogInterface.OnClickListener() {
+					@Override
+					public void onClick(DialogInterface dialog, int which) {
+						switch (which) {
+						case DialogInterface.BUTTON_POSITIVE:
+							try {
+								String path = unitOfWork.getActiveProject()
+										.getDataLocation();
+								UnitOfWork
+										.getInstance()
+										.getDao()
+										.saveAllFilesFromPath(
+												ctxt,
+												path,
+												getString(R.string.exportLocatie));
+							} catch (Exception e) {
+								e.printStackTrace();
+							}
+							break;
+
+						case DialogInterface.BUTTON_NEGATIVE:
+							break;
+						}
+					}
+				};
+
+				AlertDialog.Builder builder = new AlertDialog.Builder(this);
+
+				String projectName = unitOfWork.getActiveProject().getName();
+				String builderMessage = String.format(
+						getString(R.string.VraagExportData), projectName);
+
+				builder.setNegativeButton(R.string.button_no,
+						dialogClickListener)
+						.setMessage(builderMessage)
+						.setPositiveButton(R.string.button_yes,
+								dialogClickListener).show();
+
+			}
+		} catch (Exception e) {
+			MdcExceptionLogger.error(e, SelectProjectActivity.this);
+		}
+	}
+
+	/* Checks if external storage is available for read and write */
+	public boolean isExternalStorageWritable() {
+		String state = Environment.getExternalStorageState();
+		if (Environment.MEDIA_MOUNTED.equals(state)) {
+			return true;
+		}
+		return false;
 	}
 
 	@Override

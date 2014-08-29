@@ -2,12 +2,19 @@ package be.mobiledatacaptator.dao;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
 
+import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.media.MediaScannerConnection;
+import android.os.Environment;
+import android.util.Log;
 
 import com.dropbox.sync.android.DbxException;
 import com.dropbox.sync.android.DbxFile;
@@ -33,17 +40,20 @@ public class DropBoxDao implements IMdcDao {
 	}
 
 	@Override
-	public List<String> getAllFilesFromPathWithExtension(String path, String extension, Boolean returnExtension)
+	public List<String> getAllFilesFromPathWithExtension(String path,
+			String extension, Boolean returnExtension)
 			throws InvalidPathException, DbxException {
 
 		List<String> folderContent = new ArrayList<String>();
-		List<DbxFileInfo> fileInfoList = dbxFileSystem.listFolder(new DbxPath(path));
+		List<DbxFileInfo> fileInfoList = dbxFileSystem.listFolder(new DbxPath(
+				path));
 
 		for (DbxFileInfo dbxFileInfo : fileInfoList) {
 			String name = dbxFileInfo.path.getName();
 			if (name.endsWith(extension)) {
 				if (!(returnExtension))
-					name = name.substring(0, name.length() - extension.length());
+					name = name
+							.substring(0, name.length() - extension.length());
 				folderContent.add(name);
 			}
 		}
@@ -51,7 +61,8 @@ public class DropBoxDao implements IMdcDao {
 	}
 
 	@Override
-	public boolean existsFile(String path) throws InvalidPathException, DbxException {
+	public boolean existsFile(String path) throws InvalidPathException,
+			DbxException {
 		return dbxFileSystem.exists(new DbxPath(path));
 	}
 
@@ -130,4 +141,70 @@ public class DropBoxDao implements IMdcDao {
 		return bitMap;
 	}
 
+	@Override
+	public void saveAllFilesFromPath(Context ctxt, String path,
+			String destination) throws Exception {
+
+		List<DbxFileInfo> fileInfoList = dbxFileSystem.listFolder(new DbxPath(
+				path));
+
+		File outputPath = new File(Environment.getExternalStorageDirectory()
+				.getPath() + "/" + destination + "/");
+		outputPath.mkdirs();
+		Log.i("DUMP", "START_DUMP");
+
+		for (DbxFileInfo dbxFileInfo : fileInfoList) {
+			InputStream inputStream = null;
+			OutputStream outputStream = null;
+			DbxFile dbxFile = null;
+
+			try {
+				dbxFile = dbxFileSystem.open(dbxFileInfo.path);
+				// read this file into InputStream
+				inputStream = dbxFile.getReadStream();
+
+				// write the inputStream to a FileOutputStream
+				outputStream = new FileOutputStream(new File(outputPath,
+						dbxFileInfo.path.getName()));
+
+				int read = 0;
+				byte[] bytes = new byte[1024];
+
+				while ((read = inputStream.read(bytes)) != -1) {
+					outputStream.write(bytes, 0, read);
+				}
+
+				Log.i("DUMP", dbxFileInfo.path.getName() + " Done!");
+
+			} catch (IOException e) {
+				Log.e("DUMP", dbxFileInfo.path.getName());
+				e.printStackTrace();
+			} finally {
+				if (inputStream != null) {
+					try {
+						inputStream.close();
+					} catch (IOException e) {
+						e.printStackTrace();
+					}
+				}
+				if (outputStream != null) {
+					try {
+						outputStream.flush();
+						outputStream.close();
+						String str = outputPath.getAbsolutePath() + "/"
+								+ dbxFileInfo.path.getName();
+						MediaScannerConnection.scanFile(ctxt,
+								new String[] { str }, null, null);
+					} catch (IOException e) {
+						e.printStackTrace();
+					}
+
+				}
+				if (dbxFile != null) {
+					dbxFile.close();
+				}
+			}
+		}
+		Log.i("DUMP", "END_DUMP");
+	}
 }

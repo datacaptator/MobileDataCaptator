@@ -17,6 +17,8 @@
     <string name="select_project">Selecteer een Project</string>
     <string name="button_open_project">Open project</string>
     <string name="select_project_first">Selecteer eerst een Project!</string>
+    <string name="VraagExportData">Wil u alle data van project "%1$s" opslaan?</string>
+    <string name="exportLocatie">MDC_Dump</string>
 
     <!-- SelectFicheActivity -->
     <string name="project">Project:</string>

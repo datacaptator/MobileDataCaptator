@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.List;
 
+import android.content.Context;
 import android.graphics.Bitmap;
 
 public interface IMdcDao {
@@ -24,5 +25,7 @@ public interface IMdcDao {
 	public void appendStringToFile(String path, String string) throws Exception;
 
 	public Bitmap getBitmapFromFile(String path) throws Exception;
+	
+	public void saveAllFilesFromPath(Context ctxt, String path, String destination)throws Exception;
 
 }
