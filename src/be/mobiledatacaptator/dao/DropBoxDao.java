@@ -155,6 +155,9 @@ public class DropBoxDao implements IMdcDao {
 
 		List<DbxFileInfo> fileInfoList = dbxFileSystem.listFolder(path);
 
+		File temp = new File("/storage/extSdCard/Mdc_Dump", path.toString());
+		temp.mkdirs();
+
 		for (DbxFileInfo dbxFileInfo : fileInfoList) {
 			InputStream inputStream = null;
 			OutputStream outputStream = null;
@@ -171,7 +174,6 @@ public class DropBoxDao implements IMdcDao {
 					// write the inputStream to a FileOutputStream
 					File outputPath = new File("/storage/extSdCard/Mdc_Dump",
 							dbxFileInfo.path.toString());
-					outputPath.getParentFile().mkdirs();
 					outputStream = new FileOutputStream(outputPath);
 
 					int read = 0;
@@ -196,12 +198,7 @@ public class DropBoxDao implements IMdcDao {
 					}
 					if (outputStream != null) {
 						try {
-							outputStream.flush();
 							outputStream.close();
-							// String str = outputPath.getAbsolutePath() + "/"
-							// + dbxFileInfo.path.getName();
-							// MediaScannerConnection.scanFile(ctxt,
-							// new String[] { str }, null, null);
 						} catch (IOException e) {
 							e.printStackTrace();
 						}
