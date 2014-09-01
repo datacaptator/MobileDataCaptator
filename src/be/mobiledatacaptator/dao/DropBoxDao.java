@@ -9,11 +9,8 @@ import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
 
-import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.media.MediaScannerConnection;
-import android.os.Environment;
 import android.util.Log;
 
 import com.dropbox.sync.android.DbxException;
@@ -29,6 +26,12 @@ public class DropBoxDao implements IMdcDao {
 
 	public void setDbxFileSystem(DbxFileSystem dbxFileSystem) {
 		this.dbxFileSystem = dbxFileSystem;
+		try {
+			this.dbxFileSystem.setMaxFileCacheSize(262144000);
+		} catch (DbxException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 
 	@Override
@@ -142,69 +145,73 @@ public class DropBoxDao implements IMdcDao {
 	}
 
 	@Override
-	public void saveAllFilesFromPath(Context ctxt, String path,
-			String destination) throws Exception {
+	public void dumpToSd() throws Exception {
+		Log.i("DUMP", "START DUMP");
+		dumpFolder(new DbxPath("MobileDataCaptator"));
+		Log.i("DUMP", "END DUMP");
+	}
 
-		List<DbxFileInfo> fileInfoList = dbxFileSystem.listFolder(new DbxPath(
-				path));
+	private void dumpFolder(DbxPath path) throws Exception {
 
-		File outputPath = new File(Environment.getExternalStorageDirectory()
-				.getPath() + "/" + destination + "/");
-		outputPath.mkdirs();
-		Log.i("DUMP", "START_DUMP");
+		List<DbxFileInfo> fileInfoList = dbxFileSystem.listFolder(path);
 
 		for (DbxFileInfo dbxFileInfo : fileInfoList) {
 			InputStream inputStream = null;
 			OutputStream outputStream = null;
 			DbxFile dbxFile = null;
 
-			try {
-				dbxFile = dbxFileSystem.open(dbxFileInfo.path);
-				// read this file into InputStream
-				inputStream = dbxFile.getReadStream();
+			if (dbxFileInfo.isFolder) {
+				dumpFolder(dbxFileInfo.path);
+			} else {
+				try {
+					dbxFile = dbxFileSystem.open(dbxFileInfo.path);
+					// read this file into InputStream
+					inputStream = dbxFile.getReadStream();
 
-				// write the inputStream to a FileOutputStream
-				outputStream = new FileOutputStream(new File(outputPath,
-						dbxFileInfo.path.getName()));
+					// write the inputStream to a FileOutputStream
+					File outputPath = new File("/storage/extSdCard/Mdc_Dump",
+							dbxFileInfo.path.toString());
+					outputPath.getParentFile().mkdirs();
+					outputStream = new FileOutputStream(outputPath);
 
-				int read = 0;
-				byte[] bytes = new byte[1024];
+					int read = 0;
+					byte[] bytes = new byte[1024];
 
-				while ((read = inputStream.read(bytes)) != -1) {
-					outputStream.write(bytes, 0, read);
-				}
-
-				Log.i("DUMP", dbxFileInfo.path.getName() + " Done!");
-
-			} catch (IOException e) {
-				Log.e("DUMP", dbxFileInfo.path.getName());
-				e.printStackTrace();
-			} finally {
-				if (inputStream != null) {
-					try {
-						inputStream.close();
-					} catch (IOException e) {
-						e.printStackTrace();
-					}
-				}
-				if (outputStream != null) {
-					try {
-						outputStream.flush();
-						outputStream.close();
-						String str = outputPath.getAbsolutePath() + "/"
-								+ dbxFileInfo.path.getName();
-						MediaScannerConnection.scanFile(ctxt,
-								new String[] { str }, null, null);
-					} catch (IOException e) {
-						e.printStackTrace();
+					while ((read = inputStream.read(bytes)) != -1) {
+						outputStream.write(bytes, 0, read);
 					}
 
-				}
-				if (dbxFile != null) {
-					dbxFile.close();
+					Log.i("DUMP", dbxFileInfo.path.toString() + " Done!");
+
+				} catch (IOException e) {
+					Log.e("DUMP", dbxFileInfo.path.toString());
+					e.printStackTrace();
+				} finally {
+					if (inputStream != null) {
+						try {
+							inputStream.close();
+						} catch (IOException e) {
+							e.printStackTrace();
+						}
+					}
+					if (outputStream != null) {
+						try {
+							outputStream.flush();
+							outputStream.close();
+							// String str = outputPath.getAbsolutePath() + "/"
+							// + dbxFileInfo.path.getName();
+							// MediaScannerConnection.scanFile(ctxt,
+							// new String[] { str }, null, null);
+						} catch (IOException e) {
+							e.printStackTrace();
+						}
+
+					}
+					if (dbxFile != null) {
+						dbxFile.close();
+					}
 				}
 			}
 		}
-		Log.i("DUMP", "END_DUMP");
 	}
 }

@@ -179,15 +179,7 @@ public class SelectProjectActivity extends Activity {
 						switch (which) {
 						case DialogInterface.BUTTON_POSITIVE:
 							try {
-								String path = unitOfWork.getActiveProject()
-										.getDataLocation();
-								UnitOfWork
-										.getInstance()
-										.getDao()
-										.saveAllFilesFromPath(
-												ctxt,
-												path,
-												getString(R.string.exportLocatie));
+								UnitOfWork.getInstance().getDao().dumpToSd();
 							} catch (Exception e) {
 								e.printStackTrace();
 							}
@@ -201,9 +193,7 @@ public class SelectProjectActivity extends Activity {
 
 				AlertDialog.Builder builder = new AlertDialog.Builder(this);
 
-				String projectName = unitOfWork.getActiveProject().getName();
-				String builderMessage = String.format(
-						getString(R.string.VraagExportData), projectName);
+				String builderMessage = getString(R.string.VraagExportData);
 
 				builder.setNegativeButton(R.string.button_no,
 						dialogClickListener)

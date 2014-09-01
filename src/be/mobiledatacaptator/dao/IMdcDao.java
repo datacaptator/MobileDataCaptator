@@ -26,6 +26,6 @@ public interface IMdcDao {
 
 	public Bitmap getBitmapFromFile(String path) throws Exception;
 	
-	public void saveAllFilesFromPath(Context ctxt, String path, String destination)throws Exception;
+	public void dumpToSd()throws Exception;
 
 }
