@@ -24,12 +24,15 @@ public class DropBoxDao implements IMdcDao {
 
 	private DbxFileSystem dbxFileSystem;
 
+	public DbxFileSystem getDbxFileSystem() {
+		return dbxFileSystem;
+	}
+
 	public void setDbxFileSystem(DbxFileSystem dbxFileSystem) {
 		this.dbxFileSystem = dbxFileSystem;
 		try {
 			this.dbxFileSystem.setMaxFileCacheSize(262144000);
 		} catch (DbxException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}

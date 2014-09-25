@@ -65,9 +65,9 @@
     <string name="button_draw_circle">Cirkel</string>
     <string name="button_draw_line">Lijn</string>
     <string name="button_draw_shape">Shape</string>
-    <string name="button_draw_shape_rotated">rShape</string>
-    <string name="button_draw_multi_line">Polyline</string>
-    <string name="button_draw_multi_Shape">PolyShape</string>
+    <string name="button_draw_shape_rotated">RShape</string>
+    <string name="button_draw_multi_line">PLine</string>
+    <string name="button_draw_multi_Shape">PShape</string>
     <string name="button_draw_text">Tekst</string>
     <string name="button_increase_character">+</string>
     <string name="button_draw_undo">Undo</string>

@@ -384,7 +384,6 @@ public class DrawingActivity extends Activity implements OnClickListener, OnItem
 		} catch (Exception e) {
 			MdcExceptionLogger.error(e, this);
 		}
-
 	}
 
 	@Override

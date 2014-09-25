@@ -7,6 +7,7 @@ import be.mobiledatacaptator.model.UnitOfWork;
 import be.mobiledatacaptator.utilities.MdcExceptionLogger;
 import be.mobiledatacaptator.utilities.MdcUtil;
 
+import com.dropbox.sync.android.DbxAccount;
 import com.dropbox.sync.android.DbxAccountManager;
 import com.dropbox.sync.android.DbxFileSystem;
 
@@ -28,7 +29,8 @@ public class StartDropBoxApi extends Activity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		try {
-			dbxAccountManager = DbxAccountManager.getInstance(getApplicationContext(), APPKEY, APPSECRET);
+			dbxAccountManager = DbxAccountManager.getInstance(
+					getApplicationContext(), APPKEY, APPSECRET);
 
 			if (dbxAccountManager.hasLinkedAccount()) {
 				initDao();
@@ -55,8 +57,15 @@ public class StartDropBoxApi extends Activity {
 
 	private void initDao() {
 		try {
-			((DropBoxDao) UnitOfWork.getInstance().getDao()).setDbxFileSystem(DbxFileSystem
-					.forAccount(dbxAccountManager.getLinkedAccount()));
+			DbxAccount account = ((DropBoxDao) UnitOfWork.getInstance().getDao()).getDbxFileSystem() == null ? null
+					: ((DropBoxDao) UnitOfWork.getInstance().getDao())
+							.getDbxFileSystem().getAccount();
+			if (account == null || !account.isLinked()) {
+				((DropBoxDao) UnitOfWork.getInstance().getDao())
+						.setDbxFileSystem(DbxFileSystem
+								.forAccount(dbxAccountManager
+										.getLinkedAccount()));
+			}
 			finish();
 		} catch (Exception e) {
 			MdcUtil.showToastShort(e.getMessage(), getApplicationContext());

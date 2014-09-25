@@ -42,15 +42,16 @@ import be.mobiledatacaptator.model.UnitOfWork;
 import be.mobiledatacaptator.utilities.MdcExceptionLogger;
 import be.mobiledatacaptator.utilities.MdcUtil;
 
-public class TakePhotoActivity extends Activity implements OnClickListener, OnItemLongClickListener,
-		OnItemClickListener {
+public class TakePhotoActivity extends Activity implements OnClickListener,
+		OnItemLongClickListener, OnItemClickListener {
 
 	final static int TAKE_PICTURE = 0;
 	private Project project;
 	private UnitOfWork unitOfWork;
 	private ListView listViewPhotos;
 	private Intent startCameraIntent;
-	private String prefixFichePhotoName, photoNameToSave, tempFileName, textSelectedPhoto;
+	private String prefixFichePhotoName, photoNameToSave, tempFileName,
+			textSelectedPhoto;
 	private List<String> listFotoNames, listThisFicheFotoNames;
 	private TableLayout tableLayoutPhotoCategory;
 	private Button buttonFreeSuffix, buttonDisplayPhoto, buttonDeletePhoto;
@@ -65,7 +66,8 @@ public class TakePhotoActivity extends Activity implements OnClickListener, OnIt
 			project = unitOfWork.getActiveProject();
 
 			// format prefixFichePhotoName = PUT3014
-			prefixFichePhotoName = getIntent().getExtras().getString("prefixFichePhotoName");
+			prefixFichePhotoName = getIntent().getExtras().getString(
+					"prefixFichePhotoName");
 
 			listViewPhotos = (ListView) findViewById(R.id.listViewPhotos);
 			tableLayoutPhotoCategory = (TableLayout) findViewById(R.id.tableLayoutPhotoCategory);
@@ -81,7 +83,8 @@ public class TakePhotoActivity extends Activity implements OnClickListener, OnIt
 			buttonDisplayPhoto.setOnClickListener(this);
 			buttonDeletePhoto.setOnClickListener(this);
 
-			setTitle(MdcUtil.setActivityTitle(unitOfWork, getApplicationContext()));
+			setTitle(MdcUtil.setActivityTitle(unitOfWork,
+					getApplicationContext()));
 
 			int index = 0;
 			for (PhotoCategory photoCat : project.getPhotoCategories()) {
@@ -92,7 +95,8 @@ public class TakePhotoActivity extends Activity implements OnClickListener, OnIt
 			loadPhotoNames();
 
 			// hide the keyboard
-			getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
+			getWindow().setSoftInputMode(
+					WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
 		} catch (Exception e) {
 			MdcExceptionLogger.error(e, this);
 		}
@@ -115,8 +119,9 @@ public class TakePhotoActivity extends Activity implements OnClickListener, OnIt
 
 	private void loadPhotoNames() {
 		try {
-			listFotoNames = unitOfWork.getDao().getAllFilesFromPathWithExtension(project.getDataLocation(), ".jpg",
-					false);
+			listFotoNames = unitOfWork.getDao()
+					.getAllFilesFromPathWithExtension(
+							project.getDataLocation(), ".jpg", false);
 
 			listThisFicheFotoNames = new ArrayList<String>();
 
@@ -127,7 +132,8 @@ public class TakePhotoActivity extends Activity implements OnClickListener, OnIt
 			}
 
 			ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,
-					android.R.layout.simple_list_item_activated_1, listThisFicheFotoNames);
+					android.R.layout.simple_list_item_activated_1,
+					listThisFicheFotoNames);
 			listViewPhotos.setAdapter(adapter);
 			listViewPhotos.setItemsCanFocus(true);
 			listViewPhotos.setChoiceMode(AbsListView.CHOICE_MODE_SINGLE);
@@ -137,18 +143,21 @@ public class TakePhotoActivity extends Activity implements OnClickListener, OnIt
 		}
 	}
 
-	private void addPhotoCategoriesToLayout(PhotoCategory photoCategorie, int index) {
+	private void addPhotoCategoriesToLayout(PhotoCategory photoCategorie,
+			int index) {
 		try {
 			// Android provides a service
 			// getSystemService(Context.LAYOUT_INFLATER_SERVICE)' to inflate a
 			// layout
 			LayoutInflater inflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-			View newPhotoCategoryView = inflater.inflate(R.layout.new_table_row_photo_category, null);
+			View newPhotoCategoryView = inflater.inflate(
+					R.layout.new_table_row_photo_category, null);
 
 			// Get a reference to the buttonNewPhotoCategory on the
 			// new_table_row_photo_category.xml and set
 			// its text + register its onClickListener
-			Button buttonNewPhotoCategory = (Button) newPhotoCategoryView.findViewById(R.id.buttonNewPhotoCategory);
+			Button buttonNewPhotoCategory = (Button) newPhotoCategoryView
+					.findViewById(R.id.buttonNewPhotoCategory);
 			buttonNewPhotoCategory.setText(photoCategorie.getName());
 			buttonNewPhotoCategory.setTag(photoCategorie.getSuffix());
 			buttonNewPhotoCategory.setOnClickListener(photoCategoryListener);
@@ -167,7 +176,8 @@ public class TakePhotoActivity extends Activity implements OnClickListener, OnIt
 			List<Integer> numbers = new ArrayList<Integer>();
 			for (String thisFotoName : listThisFicheFotoNames) {
 				if (thisFotoName.startsWith(photoNameToSave)) {
-					String numberFoto = thisFotoName.substring(photoNameToSave.length());
+					String numberFoto = thisFotoName.substring(photoNameToSave
+							.length());
 
 					Pattern p = Pattern.compile("\\d+");
 					Matcher m = p.matcher(numberFoto);
@@ -197,7 +207,8 @@ public class TakePhotoActivity extends Activity implements OnClickListener, OnIt
 
 		try {
 
-			File storageDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES);
+			File storageDir = Environment
+					.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES);
 			File image;
 
 			image = File.createTempFile(photoNameToSave, /* prefix */
@@ -207,8 +218,10 @@ public class TakePhotoActivity extends Activity implements OnClickListener, OnIt
 
 			tempFileName = image.getAbsolutePath();
 
-			startCameraIntent = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
-			startCameraIntent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(image));
+			startCameraIntent = new Intent(
+					android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
+			startCameraIntent.putExtra(MediaStore.EXTRA_OUTPUT,
+					Uri.fromFile(image));
 
 			startActivityForResult(startCameraIntent, TAKE_PICTURE);
 
@@ -232,20 +245,26 @@ public class TakePhotoActivity extends Activity implements OnClickListener, OnIt
 					String suffix = editTextFreeSuffix.getText().toString();
 
 					if (suffix.length() > 0) {
-						photoNameToSave = prefixFichePhotoName + "_" + suffix + "_";
+						photoNameToSave = prefixFichePhotoName + "_" + suffix
+								+ "_";
 						photoNameToSave = composePhotoName(photoNameToSave);
 
 						startCamera(photoNameToSave);
 
 					} else {
-						MdcUtil.showToastShort(getString(R.string.enter_suffix), getApplicationContext());
+						MdcUtil.showToastShort(
+								getString(R.string.enter_suffix),
+								getApplicationContext());
 					}
 
 				} else {
-					TableRow buttonTableRow = (TableRow) buttonClicked.getParent();
-					Button buttonNewPhotoCategory = (Button) buttonTableRow.findViewById(R.id.buttonNewPhotoCategory);
+					TableRow buttonTableRow = (TableRow) buttonClicked
+							.getParent();
+					Button buttonNewPhotoCategory = (Button) buttonTableRow
+							.findViewById(R.id.buttonNewPhotoCategory);
 
-					photoNameToSave = prefixFichePhotoName + "_" + buttonNewPhotoCategory.getTag().toString() + "_";
+					photoNameToSave = prefixFichePhotoName + "_"
+							+ buttonNewPhotoCategory.getTag().toString() + "_";
 					photoNameToSave = composePhotoName(photoNameToSave);
 
 					startCamera(photoNameToSave);
@@ -310,19 +329,26 @@ public class TakePhotoActivity extends Activity implements OnClickListener, OnIt
 			if (origHeight > destHeight) {
 				origWidth = (int) (origWidth / ((double) origHeight / destHeight));
 				origHeight = destHeight;
-				bitmap = Bitmap.createScaledBitmap(bitmap, origWidth, origHeight, false);
+				bitmap = Bitmap.createScaledBitmap(bitmap, origWidth,
+						origHeight, false);
 			}
 
 			// Breedte aanpassen
 			if (origWidth > destWidth) {
 				bitmap = Bitmap.createScaledBitmap(bitmap, destWidth,
-						(int) (origHeight / ((double) origWidth / destWidth)), false);
+						(int) (origHeight / ((double) origWidth / destWidth)),
+						false);
 			}
 
 			// Wegschrijven
 			try {
-				bitmap.compress(Bitmap.CompressFormat.JPEG, 80, new FileOutputStream(tempFile));
-				unitOfWork.getDao().saveFile(project.getDataLocation() + photoNameToSave + ".jpg", tempFile);
+				FileOutputStream stream = new FileOutputStream(tempFile);
+				bitmap.compress(Bitmap.CompressFormat.JPEG, 80, stream);
+				stream.flush();
+				stream.close();
+				unitOfWork.getDao().saveFile(
+						project.getDataLocation() + photoNameToSave + ".jpg",
+						tempFile);
 			} catch (Exception e) {
 				MdcExceptionLogger.error(e, this);
 			}
@@ -346,18 +372,25 @@ public class TakePhotoActivity extends Activity implements OnClickListener, OnIt
 				if (textSelectedPhoto != null && !textSelectedPhoto.isEmpty()) {
 					deleteSelectedPhoto(textSelectedPhoto);
 				} else {
-					MdcUtil.showToastShort(getString(R.string.select_photo_first), getApplicationContext());
+					MdcUtil.showToastShort(
+							getString(R.string.select_photo_first),
+							getApplicationContext());
 				}
 				break;
 
 			case R.id.buttonDisplayPhoto:
 				try {
-					if (textSelectedPhoto != null && !textSelectedPhoto.isEmpty()) {
-						final Intent displayPhotoIntent = new Intent(this, DisplayPhotoActivity.class);
-						displayPhotoIntent.putExtra("photoToDisplay", textSelectedPhoto);
+					if (textSelectedPhoto != null
+							&& !textSelectedPhoto.isEmpty()) {
+						final Intent displayPhotoIntent = new Intent(this,
+								DisplayPhotoActivity.class);
+						displayPhotoIntent.putExtra("photoToDisplay",
+								textSelectedPhoto);
 						startActivity(displayPhotoIntent);
 					} else {
-						MdcUtil.showToastShort(getString(R.string.select_photo_first), getApplicationContext());
+						MdcUtil.showToastShort(
+								getString(R.string.select_photo_first),
+								getApplicationContext());
 					}
 				} catch (Exception e) {
 					MdcExceptionLogger.error(e, this);
@@ -374,28 +407,41 @@ public class TakePhotoActivity extends Activity implements OnClickListener, OnIt
 
 	private void deleteSelectedPhoto(String selectedPhotoName) {
 		try {
-			AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
+			AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(
+					this);
 			alertDialogBuilder.setTitle(getString(R.string.delete_photo_));
 			alertDialogBuilder
-					.setMessage(String.format(getString(R.string.click_yes_to_delete_photo), textSelectedPhoto))
+					.setMessage(
+							String.format(
+									getString(R.string.click_yes_to_delete_photo),
+									textSelectedPhoto))
 					.setCancelable(false)
-					.setPositiveButton(getString(R.string.button_yes), new DialogInterface.OnClickListener() {
-						@Override
-						public void onClick(DialogInterface dialog, int id) {
-							try {
-								unitOfWork.getDao().delete(project.getDataLocation() + textSelectedPhoto + ".jpg");
-								textSelectedPhoto = null;
-								loadPhotoNames();
-							} catch (Exception e) {
-								MdcExceptionLogger.error(e, TakePhotoActivity.this);
-							}
-						}
-					}).setNegativeButton(getString(R.string.button_no), new DialogInterface.OnClickListener() {
-						@Override
-						public void onClick(DialogInterface dialog, int id) {
-							dialog.cancel();
-						}
-					});
+					.setPositiveButton(getString(R.string.button_yes),
+							new DialogInterface.OnClickListener() {
+								@Override
+								public void onClick(DialogInterface dialog,
+										int id) {
+									try {
+										unitOfWork.getDao().delete(
+												project.getDataLocation()
+														+ textSelectedPhoto
+														+ ".jpg");
+										textSelectedPhoto = null;
+										loadPhotoNames();
+									} catch (Exception e) {
+										MdcExceptionLogger.error(e,
+												TakePhotoActivity.this);
+									}
+								}
+							})
+					.setNegativeButton(getString(R.string.button_no),
+							new DialogInterface.OnClickListener() {
+								@Override
+								public void onClick(DialogInterface dialog,
+										int id) {
+									dialog.cancel();
+								}
+							});
 			AlertDialog alertDialog = alertDialogBuilder.create();
 			alertDialog.show();
 		} catch (Exception e) {
@@ -404,9 +450,11 @@ public class TakePhotoActivity extends Activity implements OnClickListener, OnIt
 	}
 
 	@Override
-	public boolean onItemLongClick(AdapterView<?> arg0, View arg1, int indexListItem, long arg3) {
+	public boolean onItemLongClick(AdapterView<?> arg0, View arg1,
+			int indexListItem, long arg3) {
 		try {
-			textSelectedPhoto = (String) listViewPhotos.getItemAtPosition(indexListItem);
+			textSelectedPhoto = (String) listViewPhotos
+					.getItemAtPosition(indexListItem);
 			deleteSelectedPhoto(textSelectedPhoto);
 			return true;
 		} catch (Exception e) {
@@ -416,9 +464,11 @@ public class TakePhotoActivity extends Activity implements OnClickListener, OnIt
 	}
 
 	@Override
-	public void onItemClick(AdapterView<?> arg0, View arg1, int indexListItem, long arg3) {
+	public void onItemClick(AdapterView<?> arg0, View arg1, int indexListItem,
+			long arg3) {
 		try {
-			textSelectedPhoto = (String) listViewPhotos.getItemAtPosition(indexListItem);
+			textSelectedPhoto = (String) listViewPhotos
+					.getItemAtPosition(indexListItem);
 		} catch (Exception e) {
 			MdcExceptionLogger.error(e, this);
 		}
