@@ -43,6 +43,7 @@
     <string name="ValVerplicht">Verplicht!</string>
     <string name="ValTeLaag">Voldoet niet aan minimum</string>
     <string name="ValTeHoog">Voldoet niet aan maximum</string>
+    <string name="TabExist">Tab bestaat reeds!</string>
 
     <!-- TakePhotoActivity -->
     <string name="enter_photo_name">Geef Foto-naam in</string>

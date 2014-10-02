@@ -28,7 +28,8 @@ import android.widget.TextView;
 import be.mobiledatacaptator.R;
 import be.mobiledatacaptator.utilities.MdcUtil;
 
-public class DataField extends TableRow implements TextWatcher, OnItemSelectedListener {
+public class DataField extends TableRow implements TextWatcher,
+		OnItemSelectedListener {
 
 	private String name;
 	private String label;
@@ -77,14 +78,18 @@ public class DataField extends TableRow implements TextWatcher, OnItemSelectedLi
 
 		if (type == VeldType.CHOICE) {
 			if (spinnerChoice.getSelectedItem() != null) {
-				element.appendChild(doc.createTextNode(spinnerChoice.getSelectedItem().toString()));
-				if (((ChoiceItem) spinnerChoice.getSelectedItem()).getId() > -1)
-					element.setAttribute(getContext().getString(R.string.IdnForXmlAttr),
-							String.valueOf(((ChoiceItem) spinnerChoice.getSelectedItem()).getId()));
+				element.appendChild(doc.createTextNode(spinnerChoice
+						.getSelectedItem().toString()));
+				if (((ChoiceItem) spinnerChoice.getSelectedItem()).getId() > -9999)
+					element.setAttribute(
+							getContext().getString(R.string.IdnForXmlAttr),
+							String.valueOf(((ChoiceItem) spinnerChoice
+									.getSelectedItem()).getId()));
 			}
 		} else {
 			if (editTextValue.getText() != null) {
-				element.appendChild(doc.createTextNode(editTextValue.getText().toString()));
+				element.appendChild(doc.createTextNode(editTextValue.getText()
+						.toString()));
 			}
 		}
 	}
@@ -101,14 +106,16 @@ public class DataField extends TableRow implements TextWatcher, OnItemSelectedLi
 		if (xmlTemplate.hasAttribute("Link"))
 			link = xmlTemplate.getAttribute("Link");
 		if (xmlTemplate.hasAttribute("Required"))
-			if (xmlTemplate.getAttribute("Required").toLowerCase(Locale.getDefault()).equals("true"))
+			if (xmlTemplate.getAttribute("Required")
+					.toLowerCase(Locale.getDefault()).equals("true"))
 				required = true;
 		if (xmlTemplate.hasAttribute("Min"))
 			min = Double.parseDouble(xmlTemplate.getAttribute("Min"));
 		if (xmlTemplate.hasAttribute("Max"))
 			max = Double.parseDouble(xmlTemplate.getAttribute("Max"));
 		if (xmlTemplate.hasAttribute("Type")) {
-			String strType = xmlTemplate.getAttribute("Type").toLowerCase(Locale.getDefault());
+			String strType = xmlTemplate.getAttribute("Type").toLowerCase(
+					Locale.getDefault());
 			if (strType.equals("text"))
 				type = VeldType.TEXT;
 			if (strType.equals("choice"))
@@ -120,28 +127,31 @@ public class DataField extends TableRow implements TextWatcher, OnItemSelectedLi
 		}
 		NodeList temp = xmlTemplate.getElementsByTagName("Choices");
 		if (temp.getLength() > 0) {
-			NodeList keuzes = ((Element) temp.item(0)).getElementsByTagName("Choice");
+			NodeList keuzes = ((Element) temp.item(0))
+					.getElementsByTagName("Choice");
 			// Blanco Item toevoegen
-			choiceItems.add(new ChoiceItem(-1, ""));
+			choiceItems.add(new ChoiceItem(-9999, ""));
 			for (int l = 0; l < keuzes.getLength(); l++) {
 				Element keuzeNode = (Element) keuzes.item(l);
-				choiceItems.add(new ChoiceItem(Integer.parseInt(keuzeNode.getAttribute("idn")), keuzeNode
-						.getAttribute("Text")));
+				choiceItems.add(new ChoiceItem(Integer.parseInt(keuzeNode
+						.getAttribute("idn")), keuzeNode.getAttribute("Text")));
 			}
 		}
 
 		// Label plaatsen
 		textViewLabel = new TextView(getContext());
 		textViewLabel.setText(label + ": ");
-		textViewLabel.setTextAppearance(getContext(), android.R.style.TextAppearance_DeviceDefault_Medium);
+		textViewLabel.setTextAppearance(getContext(),
+				android.R.style.TextAppearance_DeviceDefault_Medium);
 		addView(textViewLabel);
 
 		if (type == VeldType.CHOICE) {
 
 			// Idien keuzelijst, spinner plaatsen
 			spinnerChoice = new Spinner(getContext());
-			ArrayAdapter<ChoiceItem> adapter = new ArrayAdapter<ChoiceItem>(getContext(),
-					android.R.layout.simple_spinner_item, choiceItems);
+			ArrayAdapter<ChoiceItem> adapter = new ArrayAdapter<ChoiceItem>(
+					getContext(), android.R.layout.simple_spinner_item,
+					choiceItems);
 			adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 			spinnerChoice.setAdapter(adapter);
 			spinnerChoice.setOnItemSelectedListener(this);
@@ -156,7 +166,8 @@ public class DataField extends TableRow implements TextWatcher, OnItemSelectedLi
 			if (type == VeldType.DOUBLE)
 				editTextValue.setKeyListener(new DigitsKeyListener(true, true));
 			if (type == VeldType.INT)
-				editTextValue.setKeyListener(new DigitsKeyListener(true, false));
+				editTextValue
+						.setKeyListener(new DigitsKeyListener(true, false));
 
 			editTextValue.addTextChangedListener(this);
 			addView(editTextValue);
@@ -170,7 +181,8 @@ public class DataField extends TableRow implements TextWatcher, OnItemSelectedLi
 
 		// Locken indien nodig
 		if (xmlTemplate.hasAttribute("Locked")) {
-			if (xmlTemplate.getAttribute("Locked").toLowerCase(Locale.getDefault()).equals("true")) {
+			if (xmlTemplate.getAttribute("Locked")
+					.toLowerCase(Locale.getDefault()).equals("true")) {
 				if (type == VeldType.CHOICE) {
 					spinnerChoice.setEnabled(false);
 				} else {
@@ -278,7 +290,9 @@ public class DataField extends TableRow implements TextWatcher, OnItemSelectedLi
 									d1 = new BigDecimal(getValue());
 								} else {
 									DataField df = getFirstNonEmtyDatafieldByName(linkArr[i]);
-									d1 = new BigDecimal(df != null ? df.getValue() : linkArr[i]);
+									d1 = new BigDecimal(
+											df != null ? df.getValue()
+													: linkArr[i]);
 								}
 							} catch (NumberFormatException e) {
 								d1 = new BigDecimal(0);
@@ -290,7 +304,9 @@ public class DataField extends TableRow implements TextWatcher, OnItemSelectedLi
 										d2 = new BigDecimal(getValue());
 									} else {
 										DataField df = getFirstNonEmtyDatafieldByName(linkArr[i]);
-										d2 = new BigDecimal(df != null ? df.getValue() : linkArr[i]);
+										d2 = new BigDecimal(
+												df != null ? df.getValue()
+														: linkArr[i]);
 									}
 								} catch (NumberFormatException e) {
 									d2 = new BigDecimal(0);
@@ -309,23 +325,47 @@ public class DataField extends TableRow implements TextWatcher, OnItemSelectedLi
 								}
 								i++;
 							}
-							getDatafieldByName(toFieldName).setValue(d1.toString());
+							getDatafieldByName(toFieldName).setValue(
+									d1.toString());
 						}
 					} else if (linkArr[i].equals("TABTITLE")) { // Vorm:
 																// "TABTITLE;prefix;suffix"
-						tab.setName(linkArr[++i] + getValue() + linkArr[++i]);
-						tab.getGroup().notifyDataSetChanged();
+						String tName = linkArr[++i] + getValue() + linkArr[++i];
+						List<Tab> tabs = tab.getGroup().getTabs();
+						Boolean uniek = true;
+						for (Tab t : tabs) {
+							if (t.getName().equals(tName)
+									&& !tab.getName().equals(tName)) {
+								uniek = false;
+							}
+						}
+						if (uniek) {
+							tab.setName(tName);
+							tab.getGroup().notifyDataSetChanged();
+						} else {
+							MdcUtil.showToastShort(R.string.TabExist,
+									this.getContext());
+							setValue("");
+						}
 					} else if (linkArr[i].equals("GET")) {
 						i++;
 						if (linkArr[i].equals("getFICHENAME")) {
-							setValue(UnitOfWork.getInstance().getActiveFiche().getName()
-									.substring(UnitOfWork.getInstance().getActiveProject().getFilePrefix().length()));
+							setValue(UnitOfWork
+									.getInstance()
+									.getActiveFiche()
+									.getName()
+									.substring(
+											UnitOfWork.getInstance()
+													.getActiveProject()
+													.getFilePrefix().length()));
 						} else if (linkArr[i].equals("getDATE")) {
-							SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd");
+							SimpleDateFormat dateFormat = new SimpleDateFormat(
+									"yyyy/MM/dd");
 							Date date = new Date();
 							setValue(dateFormat.format(date));
 						} else if (linkArr[i].equals("getTIME")) {
-							SimpleDateFormat dateFormat = new SimpleDateFormat("HH:mm:ss");
+							SimpleDateFormat dateFormat = new SimpleDateFormat(
+									"HH:mm:ss");
 							Date date = new Date();
 							setValue(dateFormat.format(date));
 						} else {
@@ -338,7 +378,8 @@ public class DataField extends TableRow implements TextWatcher, OnItemSelectedLi
 				}
 			}
 		} catch (Exception e) {
-			MdcUtil.showToastLong(getContext().getString(R.string.LinkFout), getContext());
+			MdcUtil.showToastLong(getContext().getString(R.string.LinkFout),
+					getContext());
 		}
 	}
 
@@ -378,10 +419,12 @@ public class DataField extends TableRow implements TextWatcher, OnItemSelectedLi
 	private DataField getFirstNonEmtyDatafieldByName(String name) {
 		String fne = "FIRSTNONEMPTY";
 		if (name.toUpperCase().startsWith("FIRSTNONEMPTY")) {
-			String[] fields = name.substring(fne.length() + 1, name.length() - 1).split(",");
+			String[] fields = name.substring(fne.length() + 1,
+					name.length() - 1).split(",");
 			for (String s : fields) {
 				DataField dataField = getDatafieldByName(s);
-				if (dataField.getValue() != null && !dataField.getValue().isEmpty())
+				if (dataField.getValue() != null
+						&& !dataField.getValue().isEmpty())
 					return dataField;
 			}
 			return null;
@@ -409,14 +452,16 @@ public class DataField extends TableRow implements TextWatcher, OnItemSelectedLi
 	}
 
 	@Override
-	public void onItemSelected(AdapterView<?> arg0, View arg1, int arg2, long arg3) {
+	public void onItemSelected(AdapterView<?> arg0, View arg1, int arg2,
+			long arg3) {
 		if (activateLink)
 			executeLink();
 	}
 
 	// -----------------------------------------------------------------------------------------------------
 	@Override
-	public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+	public void beforeTextChanged(CharSequence s, int start, int count,
+			int after) {
 	}
 
 	@Override
