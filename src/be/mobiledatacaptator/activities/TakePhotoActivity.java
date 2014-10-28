@@ -303,7 +303,7 @@ public class TakePhotoActivity extends Activity implements OnClickListener,
 			File tempFile = new File(tempFileName);
 			Bitmap bitmap = BitmapFactory.decodeFile(tempFileName);
 
-			// Groote aanpassen
+			// Grootte aanpassen
 			int origWidth = bitmap.getWidth();
 			int origHeight = bitmap.getHeight();
 
