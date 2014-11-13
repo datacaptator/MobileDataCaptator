@@ -155,6 +155,9 @@ public class DataField extends TableRow implements TextWatcher,
 			adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 			spinnerChoice.setAdapter(adapter);
 			spinnerChoice.setOnItemSelectedListener(this);
+			spinnerChoice.setLayoutParams(new TableRow.LayoutParams(
+					TableRow.LayoutParams.WRAP_CONTENT,
+					TableRow.LayoutParams.WRAP_CONTENT, 1f));
 			addView(spinnerChoice);
 
 		} else {
@@ -162,6 +165,9 @@ public class DataField extends TableRow implements TextWatcher,
 			// Anders textveld plaatsen
 			editTextValue = new EditText(getContext());
 			editTextValue.setSingleLine();
+			editTextValue.setLayoutParams(new TableRow.LayoutParams(
+					TableRow.LayoutParams.WRAP_CONTENT,
+					TableRow.LayoutParams.WRAP_CONTENT, 1f));
 			editTextValue.setImeOptions(EditorInfo.IME_ACTION_NEXT);
 			if (type == VeldType.DOUBLE)
 				editTextValue.setKeyListener(new DigitsKeyListener(true, true));
